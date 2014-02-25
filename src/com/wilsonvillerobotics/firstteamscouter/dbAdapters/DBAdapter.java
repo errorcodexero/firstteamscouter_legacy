@@ -11,7 +11,7 @@ public class DBAdapter {
 
     public static final String DATABASE_NAME = "FIRSTTeamScouter"; //$NON-NLS-1$
 
-    public static final int DATABASE_VERSION = 5;
+    public static final int DATABASE_VERSION = 1;
     
     private static final int CREATE_TABLE_SQL = 0;
     private static final int DELETE_TABLE_SQL = 1;
@@ -238,7 +238,7 @@ public class DBAdapter {
     		TeamMatchDBAdapter.COLUMN_NAME_TEAM_ID + TEXT_TYPE + COMMA_SEP +
     		TeamMatchDBAdapter.COLUMN_NAME_MATCH_ID + TEXT_TYPE + COMMA_SEP +
     		TeamMatchDBAdapter.COLUMN_NAME_MATCH_DATA_SAVED + BOOL_TYPE + COMMA_SEP +
-    		TeamMatchDBAdapter.COLUMN_NAME_AUTO_SCORE + TEXT_TYPE + COMMA_SEP +
+    		TeamMatchDBAdapter.COLUMN_NAME_AUTO_SCORE + INT_TYPE + COMMA_SEP +
     		TeamMatchDBAdapter.COLUMN_NAME_AUTO_HI_SCORE + INT_TYPE + COMMA_SEP +
     		TeamMatchDBAdapter.COLUMN_NAME_AUTO_LO_SCORE + INT_TYPE + COMMA_SEP +
     		TeamMatchDBAdapter.COLUMN_NAME_AUTO_HI_MISS + INT_TYPE + COMMA_SEP +
@@ -265,7 +265,10 @@ public class DBAdapter {
     		TeamMatchDBAdapter.COLUMN_NAME_DEFEND_RED + INT_TYPE + COMMA_SEP +
     		TeamMatchDBAdapter.COLUMN_NAME_DEFEND_WHITE + INT_TYPE + COMMA_SEP +
     		TeamMatchDBAdapter.COLUMN_NAME_DEFEND_BLUE + INT_TYPE + COMMA_SEP +
-    		TeamMatchDBAdapter.COLUMN_NAME_DEFEND_GOAL + INT_TYPE +
+    		TeamMatchDBAdapter.COLUMN_NAME_DEFEND_GOAL + INT_TYPE + COMMA_SEP +
+    		TeamMatchDBAdapter.COLUMN_NAME_BROKE_DOWN + BOOL_TYPE + COMMA_SEP +
+    		TeamMatchDBAdapter.COLUMN_NAME_NO_MOVE + BOOL_TYPE + COMMA_SEP +
+    		TeamMatchDBAdapter.COLUMN_NAME_LOST_CONNECTION + BOOL_TYPE +
     		");",
     		
     		"DROP TABLE IF EXISTS " + TeamMatchDBAdapter.TABLE_NAME

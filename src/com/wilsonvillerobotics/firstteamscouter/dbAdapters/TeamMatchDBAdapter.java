@@ -48,6 +48,9 @@ public class TeamMatchDBAdapter implements BaseColumns {
     public static final String COLUMN_NAME_DEFEND_WHITE = "defend_white";
     public static final String COLUMN_NAME_DEFEND_BLUE = "defend_blue";
     public static final String COLUMN_NAME_DEFEND_GOAL = "defend_goal";
+    public static final String COLUMN_NAME_BROKE_DOWN = "broke_down";
+    public static final String COLUMN_NAME_NO_MOVE = "no_move";
+    public static final String COLUMN_NAME_LOST_CONNECTION = "lost_connection";
 
     private String[] allColumnNames = new String[]{
     		_ID,
@@ -82,7 +85,10 @@ public class TeamMatchDBAdapter implements BaseColumns {
     	    COLUMN_NAME_DEFEND_RED,
     	    COLUMN_NAME_DEFEND_WHITE,
     	    COLUMN_NAME_DEFEND_BLUE,
-    	    COLUMN_NAME_DEFEND_GOAL
+    	    COLUMN_NAME_DEFEND_GOAL,
+    	    COLUMN_NAME_BROKE_DOWN,
+    	    COLUMN_NAME_NO_MOVE,
+    	    COLUMN_NAME_LOST_CONNECTION
     };
     
     private DatabaseHelper mDbHelper;
@@ -205,6 +211,7 @@ public class TeamMatchDBAdapter implements BaseColumns {
      * @return true if the entry was successfully updated, false otherwise
      */
     public boolean updateTeamMatch(int team_match_id, String team_id, String match_id, Boolean tmSaved, Boolean move,
+    		Boolean brokeDown, Boolean noMove, Boolean lostConnection,
     		Hashtable<String, Integer> intVals) {
     		//int auto_score, int tele_score, int other_score, 
     		//int offensive_rating, int defensive_rating){
@@ -215,6 +222,9 @@ public class TeamMatchDBAdapter implements BaseColumns {
         args.put(COLUMN_NAME_MATCH_ID, match_id);
         args.put(COLUMN_NAME_MATCH_DATA_SAVED, Boolean.toString(tmSaved));
         args.put(COLUMN_NAME_AUTO_MOVE, Boolean.toString(move));
+        args.put(COLUMN_NAME_BROKE_DOWN, Boolean.toString(move));
+        args.put(COLUMN_NAME_NO_MOVE, Boolean.toString(move));
+        args.put(COLUMN_NAME_LOST_CONNECTION, Boolean.toString(move));
         
         Enumeration<String> keys = intVals.keys();
         while(keys.hasMoreElements()) {

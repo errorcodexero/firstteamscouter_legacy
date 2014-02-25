@@ -84,6 +84,10 @@ public class TeamMatchData {
 
 	protected int[] zoneDefended;
 	
+	protected Boolean brokeDown;
+	protected Boolean noMove;
+	protected Boolean lostConnection;
+	
 	private Boolean tmDataSaved;
 	
 	public TeamMatchData(Context c, int tmID) { //, String tnum, String mnum) {
@@ -119,6 +123,10 @@ public class TeamMatchData {
 		
 		this.passSuccess = 0;
 		this.passMiss = 0;
+		
+		this.brokeDown = false;
+		this.noMove = false;
+		this.lostConnection = false;
 		
 		this.tmDataSaved = false;
 
@@ -197,6 +205,10 @@ public class TeamMatchData {
 				
 				this.passSuccess = tmCursor.getInt(tmCursor.getColumnIndexOrThrow(TeamMatchDBAdapter.COLUMN_NAME_PASS_SUCCESS));
 				this.passMiss = tmCursor.getInt(tmCursor.getColumnIndexOrThrow(TeamMatchDBAdapter.COLUMN_NAME_PASS_MISS));
+				
+				this.brokeDown = Boolean.parseBoolean(tmCursor.getString(tmCursor.getColumnIndexOrThrow(TeamMatchDBAdapter.COLUMN_NAME_BROKE_DOWN)));
+				this.noMove = Boolean.parseBoolean(tmCursor.getString(tmCursor.getColumnIndexOrThrow(TeamMatchDBAdapter.COLUMN_NAME_NO_MOVE)));
+				this.lostConnection = Boolean.parseBoolean(tmCursor.getString(tmCursor.getColumnIndexOrThrow(TeamMatchDBAdapter.COLUMN_NAME_LOST_CONNECTION)));
 				
 				for (ZONE z : ZONE.values()) {
 					this.zoneAssisted[z.id] = (z.dbAssistColName != "") ? tmCursor.getInt(tmCursor.getColumnIndexOrThrow(z.dbAssistColName)) : -1;
@@ -355,15 +367,8 @@ public class TeamMatchData {
 						htIntValues.put(z.dbAssistColName, this.getZoneAssists(z));
 					}
 				}
-				//htIntValues.put(TeamMatchDBAdapter.COLUMN_NAME_ASSIST_RED, this.getZoneAssists(ZONE.RED_ZONE));
-				//htIntValues.put(TeamMatchDBAdapter.COLUMN_NAME_ASSIST_WHITE, this.getZoneAssists(ZONE.WHITE_ZONE));
-				//htIntValues.put(TeamMatchDBAdapter.COLUMN_NAME_ASSIST_BLUE, this.getZoneAssists(ZONE.BLUE_ZONE));
-				//htIntValues.put(TeamMatchDBAdapter.COLUMN_NAME_DEFEND_RED, this.getZoneDefends(ZONE.RED_ZONE));
-				//htIntValues.put(TeamMatchDBAdapter.COLUMN_NAME_DEFEND_WHITE, this.getZoneDefends(ZONE.WHITE_ZONE));
-				//htIntValues.put(TeamMatchDBAdapter.COLUMN_NAME_DEFEND_BLUE, this.getZoneDefends(ZONE.BLUE_ZONE));
-				//htIntValues.put(TeamMatchDBAdapter.COLUMN_NAME_DEFEND_GOAL, this.getZoneDefends(ZONE.GOAL_ZONE));
 
-				Boolean retVal = this.tmDBAdapter.updateTeamMatch(this.teamMatchID, this.teamNumber, this.matchNumber, this.tmDataSaved, this.autoMove, htIntValues);
+				Boolean retVal = this.tmDBAdapter.updateTeamMatch(this.teamMatchID, this.teamNumber, this.matchNumber, this.tmDataSaved, this.autoMove, this.brokeDown, this.noMove, this.lostConnection, htIntValues);
 				FTSUtilities.printToConsole("Update Successful? : " + retVal.toString());
 				return retVal;
 			} catch (NumberFormatException e) {

@@ -42,7 +42,9 @@ public class TabsPagerAdapter extends FragmentPagerAdapter {
         	tmtFrag.setTeamMatchData(tmData);
         	return tmtFrag;
         case 2:
-        	return TeamMatchNotesFragment.newInstance(this.teamMatchID, this.teamNumber, this.matchNumber);
+        	TeamMatchNotesFragment tmnFrag = TeamMatchNotesFragment.newInstance(this.teamMatchID, this.teamNumber, this.matchNumber);
+        	tmnFrag.setTeamMatchData(tmData);
+        	return tmnFrag;
         }
  
         return null;
