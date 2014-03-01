@@ -20,6 +20,65 @@ public class TeamMatchData {
 	private int TRUSS_TOSS_POINTS = 10;
 	private int TRUSS_CATCH_POINTS = 10;
 	
+	public enum ROBOT_ROLE {
+		SHOOTER (0, "Shooter"),
+		DEFENDER (1, "Defender"),
+		PASSER (2, "Passer"),
+		CATCHER (3, "Catcher"),
+		GOALIE (4, "Goalie"),
+		NOT_SET (5, "Not Set");
+		
+		private int id;
+		private String strRobotRole;
+		ROBOT_ROLE(int id, String robotRole) {
+			this.id = id;
+			this.strRobotRole = robotRole;
+		}
+		
+		public String myRobotRole() {
+			return this.strRobotRole;
+		}
+	}
+	
+	public enum BALL_CONTROL {
+		GROUND_PICKUP (0, "Ground Pickup"),
+		HUMAN_LOAD (1, "Human Load"),
+		HI_TO_LO (2, "Hi to Lo"),
+		LO_TO_HI (3, "Lo to Hi"),
+		HI_TO_HI (4, "Hi to Hi"),
+		LO_TO_LO (5, "Lo to Lo");
+		
+		private int id;
+		private String strBallControl;
+		BALL_CONTROL(int id, String ballControlType) {
+			this.id = id;
+			this.strBallControl = ballControlType;
+		}
+		
+		public String myBallControlType() {
+			return this.strBallControl;
+		}
+	}
+	
+	public enum STARTING_LOC {
+		FIELD_RIGHT (0, "Field Right"),
+		FIELD_CENTER (1, "Field Center"),
+		FIELD_LEFT (2, "Field Left"),
+		FIELD_GOAL (3, "Field Goal"),
+		FIELD_NOT_SET (4, "Field Position Not Set");
+		
+		private int id;
+		private String positionName;
+		STARTING_LOC(int id, String posName) {
+			this.id = id;
+			this.positionName = posName;
+		}
+		
+		public String myPositionName() {
+			return this.positionName;
+		}
+	}
+	
 	public enum ZONE {
 		RED_ZONE (0, TeamMatchDBAdapter.COLUMN_NAME_DEFEND_RED, TeamMatchDBAdapter.COLUMN_NAME_ASSIST_RED),
 		WHITE_ZONE (1, TeamMatchDBAdapter.COLUMN_NAME_DEFEND_WHITE, TeamMatchDBAdapter.COLUMN_NAME_ASSIST_WHITE),
@@ -77,8 +136,10 @@ public class TeamMatchData {
 	protected int tossCatch;
 	protected int tossMiss;
 	
-	protected int passSuccess;
-	protected int passMiss;
+	protected int shortPassSuccess;
+	protected int shortPassMiss;
+	protected int longPassSuccess;
+	protected int longPassMiss;
 
 	protected int[] zoneAssisted;
 
@@ -87,6 +148,24 @@ public class TeamMatchData {
 	protected Boolean brokeDown;
 	protected Boolean noMove;
 	protected Boolean lostConnection;
+	
+	protected Boolean robotRole[];
+	/*protected Boolean roleShooter;
+	protected Boolean roleDefender;
+	protected Boolean rolePasser;
+	protected Boolean roleCatcher;
+	protected Boolean roleGoalie;*/
+	
+    protected STARTING_LOC startingLocation;
+    
+    protected Boolean ballControl[];
+
+    /*protected Boolean ballControlGroundPickup;
+    protected Boolean ballControlHumanLoad;
+    protected Boolean ballControlHoToLo;
+    protected Boolean ballControlLoToHi;
+    protected Boolean ballControlHiToHi;
+    protected Boolean ballControlLoToLo;*/
 	
 	private Boolean tmDataSaved;
 	
@@ -121,8 +200,10 @@ public class TeamMatchData {
 		this.tossCatch = 0;
 		this.tossMiss = 0;
 		
-		this.passSuccess = 0;
-		this.passMiss = 0;
+		this.shortPassSuccess = 0;
+		this.shortPassMiss = 0;
+		this.longPassSuccess = 0;
+		this.longPassMiss = 0;
 		
 		this.brokeDown = false;
 		this.noMove = false;
@@ -135,6 +216,18 @@ public class TeamMatchData {
 		for (ZONE z : ZONE.values()) {
 			this.zoneAssisted[z.id] = 0;
 			this.zoneDefended[z.id] = 0;
+		}
+		
+		this.robotRole = new Boolean[ROBOT_ROLE.values().length];
+		for(ROBOT_ROLE rr : ROBOT_ROLE.values()) {
+			this.robotRole[rr.id] = false;  
+		}
+		
+		this.startingLocation = STARTING_LOC.FIELD_NOT_SET;
+		
+		this.ballControl = new Boolean[BALL_CONTROL.values().length];
+		for(BALL_CONTROL bc : BALL_CONTROL.values()) {
+			this.ballControl[bc.id] = false;  
 		}
 		
 		this.tmDBAdapter = null;
@@ -203,8 +296,10 @@ public class TeamMatchData {
 				this.tossCatch = tmCursor.getInt(tmCursor.getColumnIndexOrThrow(TeamMatchDBAdapter.COLUMN_NAME_TOSS_CATCH));
 				this.tossMiss = tmCursor.getInt(tmCursor.getColumnIndexOrThrow(TeamMatchDBAdapter.COLUMN_NAME_TRUSS_MISS));
 				
-				this.passSuccess = tmCursor.getInt(tmCursor.getColumnIndexOrThrow(TeamMatchDBAdapter.COLUMN_NAME_PASS_SUCCESS));
-				this.passMiss = tmCursor.getInt(tmCursor.getColumnIndexOrThrow(TeamMatchDBAdapter.COLUMN_NAME_PASS_MISS));
+				this.shortPassSuccess = tmCursor.getInt(tmCursor.getColumnIndexOrThrow(TeamMatchDBAdapter.COLUMN_NAME_SHORT_PASS_SUCCESS));
+				this.shortPassMiss = tmCursor.getInt(tmCursor.getColumnIndexOrThrow(TeamMatchDBAdapter.COLUMN_NAME_SHORT_PASS_MISS));
+				this.longPassSuccess = tmCursor.getInt(tmCursor.getColumnIndexOrThrow(TeamMatchDBAdapter.COLUMN_NAME_LONG_PASS_SUCCESS));
+				this.longPassMiss = tmCursor.getInt(tmCursor.getColumnIndexOrThrow(TeamMatchDBAdapter.COLUMN_NAME_LONG_PASS_MISS));
 				
 				this.brokeDown = Boolean.parseBoolean(tmCursor.getString(tmCursor.getColumnIndexOrThrow(TeamMatchDBAdapter.COLUMN_NAME_BROKE_DOWN)));
 				this.noMove = Boolean.parseBoolean(tmCursor.getString(tmCursor.getColumnIndexOrThrow(TeamMatchDBAdapter.COLUMN_NAME_NO_MOVE)));
@@ -214,6 +309,10 @@ public class TeamMatchData {
 					this.zoneAssisted[z.id] = (z.dbAssistColName != "") ? tmCursor.getInt(tmCursor.getColumnIndexOrThrow(z.dbAssistColName)) : -1;
 					this.zoneDefended[z.id] = tmCursor.getInt(tmCursor.getColumnIndexOrThrow(z.dbDefendColName));
 				}
+				
+				/***
+				 * TO DO - Add the new fields for ball control, robot role, and starting location
+				 */
 			} else {
 				FTSUtilities.printToConsole("TeamMatchData::loadTeamMatchData : No Saved Data : tmDataSaved:: " + this.tmDataSaved.toString() + "\n");
 			}
@@ -355,8 +454,18 @@ public class TeamMatchData {
 				htIntValues.put(TeamMatchDBAdapter.COLUMN_NAME_TRUSS_MISS, this.trussMiss);
 				htIntValues.put(TeamMatchDBAdapter.COLUMN_NAME_TOSS_CATCH, this.tossCatch);
 				htIntValues.put(TeamMatchDBAdapter.COLUMN_NAME_TOSS_MISS, this.tossMiss);
-				htIntValues.put(TeamMatchDBAdapter.COLUMN_NAME_PASS_SUCCESS, this.passSuccess);
-				htIntValues.put(TeamMatchDBAdapter.COLUMN_NAME_PASS_MISS, this.passMiss);
+				htIntValues.put(TeamMatchDBAdapter.COLUMN_NAME_SHORT_PASS_SUCCESS, this.shortPassSuccess);
+				htIntValues.put(TeamMatchDBAdapter.COLUMN_NAME_SHORT_PASS_MISS, this.shortPassMiss);
+				htIntValues.put(TeamMatchDBAdapter.COLUMN_NAME_LONG_PASS_SUCCESS, this.longPassSuccess);
+				htIntValues.put(TeamMatchDBAdapter.COLUMN_NAME_LONG_PASS_MISS, this.longPassMiss);
+				
+//				Hashtable<String, Boolean> htBoolValues = new Hashtable<String, Boolean>();
+//				htBoolValues.put(TeamMatchDBAdapter.COLUMN_NAME_LONG_PASS_MISS, this.tmDataSaved);
+//				htBoolValues.put(TeamMatchDBAdapter.this.autoMove
+//						htBoolValues.put(TeamMatchDBAdapter. this.brokeDown
+//								htBoolValues.put(TeamMatchDBAdapter. this.noMove
+//										htBoolValues.put(TeamMatchDBAdapter. this.lostConnection
+				
 				
 				for (ZONE z : ZONE.values()) {
 					FTSUtilities.printToConsole("TeamMatchData::save : Zone: " + z.name().toString() + "\nAssist: " + z.dbAssistColName +
@@ -367,6 +476,12 @@ public class TeamMatchData {
 						htIntValues.put(z.dbAssistColName, this.getZoneAssists(z));
 					}
 				}
+				
+				/***
+				 * Add new fields for robot role, starting position, and ball control
+				 * 
+				 * Create a Boolean hash like the int hash above to hold all of the Boolean values
+				 */
 
 				Boolean retVal = this.tmDBAdapter.updateTeamMatch(this.teamMatchID, this.teamNumber, this.matchNumber, this.tmDataSaved, this.autoMove, this.brokeDown, this.noMove, this.lostConnection, htIntValues);
 				FTSUtilities.printToConsole("Update Successful? : " + retVal.toString());

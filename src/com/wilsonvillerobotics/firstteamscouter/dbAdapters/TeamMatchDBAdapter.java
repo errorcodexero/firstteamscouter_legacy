@@ -42,8 +42,10 @@ public class TeamMatchDBAdapter implements BaseColumns {
     public static final String COLUMN_NAME_ASSIST_RED = "assist_red";
     public static final String COLUMN_NAME_ASSIST_WHITE = "assist_white";
     public static final String COLUMN_NAME_ASSIST_BLUE = "assist_blue";
-    public static final String COLUMN_NAME_PASS_SUCCESS = "pass_success";
-    public static final String COLUMN_NAME_PASS_MISS = "pass_miss";
+    public static final String COLUMN_NAME_SHORT_PASS_SUCCESS = "short_pass_success";
+    public static final String COLUMN_NAME_SHORT_PASS_MISS = "short_pass_miss";
+    public static final String COLUMN_NAME_LONG_PASS_SUCCESS = "long_pass_success";
+    public static final String COLUMN_NAME_LONG_PASS_MISS = "long_pass_miss";
     public static final String COLUMN_NAME_DEFEND_RED = "defend_red";
     public static final String COLUMN_NAME_DEFEND_WHITE = "defend_white";
     public static final String COLUMN_NAME_DEFEND_BLUE = "defend_blue";
@@ -51,6 +53,21 @@ public class TeamMatchDBAdapter implements BaseColumns {
     public static final String COLUMN_NAME_BROKE_DOWN = "broke_down";
     public static final String COLUMN_NAME_NO_MOVE = "no_move";
     public static final String COLUMN_NAME_LOST_CONNECTION = "lost_connection";
+    public static final String COLUMN_NAME_ROLE_SHOOTER = "role_shooter";
+    public static final String COLUMN_NAME_ROLE_DEFENDER = "role_defender";
+    public static final String COLUMN_NAME_ROLE_PASSER = "role_passer";
+    public static final String COLUMN_NAME_ROLE_CATCHER = "role_catcher";
+    public static final String COLUMN_NAME_ROLE_GOALIE = "role_goalie";
+    public static final String COLUMN_NAME_START_LOCATION = "starting_location";
+    
+    // These should be part of the robot data, not the match data
+    public static final String COLUMN_NAME_BALL_CONTROL_GROUND_PICKUP = "ball_control_ground_pickup";
+    public static final String COLUMN_NAME_BALL_CONTROL_HUMAN_LOAD = "ball_control_human_load";
+    public static final String COLUMN_NAME_BALL_CONTROL_HI_TO_LO = "ball_control_hi_to_lo";
+    public static final String COLUMN_NAME_BALL_CONTROL_LO_TO_HI = "ball_control_lo_to_hi";
+    public static final String COLUMN_NAME_BALL_CONTROL_HI_TO_HI = "ball_control_hi_to_hi";
+    public static final String COLUMN_NAME_BALL_CONTROL_LO_TO_LO = "ball_control_lo_to_lo";
+    
 
     private String[] allColumnNames = new String[]{
     		_ID,
@@ -80,15 +97,29 @@ public class TeamMatchDBAdapter implements BaseColumns {
     	    COLUMN_NAME_ASSIST_RED,
     	    COLUMN_NAME_ASSIST_WHITE,
     	    COLUMN_NAME_ASSIST_BLUE,
-    	    COLUMN_NAME_PASS_SUCCESS,
-    	    COLUMN_NAME_PASS_MISS,
+    	    COLUMN_NAME_SHORT_PASS_SUCCESS,
+    	    COLUMN_NAME_SHORT_PASS_MISS,
+    	    COLUMN_NAME_LONG_PASS_SUCCESS,
+    	    COLUMN_NAME_LONG_PASS_MISS,
     	    COLUMN_NAME_DEFEND_RED,
     	    COLUMN_NAME_DEFEND_WHITE,
     	    COLUMN_NAME_DEFEND_BLUE,
     	    COLUMN_NAME_DEFEND_GOAL,
     	    COLUMN_NAME_BROKE_DOWN,
     	    COLUMN_NAME_NO_MOVE,
-    	    COLUMN_NAME_LOST_CONNECTION
+    	    COLUMN_NAME_LOST_CONNECTION,
+    	    COLUMN_NAME_ROLE_SHOOTER,
+    	    COLUMN_NAME_ROLE_DEFENDER,
+    	    COLUMN_NAME_ROLE_PASSER,
+    	    COLUMN_NAME_ROLE_CATCHER,
+    	    COLUMN_NAME_ROLE_GOALIE,
+    	    COLUMN_NAME_START_LOCATION,
+    	    COLUMN_NAME_BALL_CONTROL_GROUND_PICKUP,
+    	    COLUMN_NAME_BALL_CONTROL_HUMAN_LOAD,
+    	    COLUMN_NAME_BALL_CONTROL_HI_TO_LO,
+    	    COLUMN_NAME_BALL_CONTROL_LO_TO_HI,
+    	    COLUMN_NAME_BALL_CONTROL_HI_TO_HI,
+    	    COLUMN_NAME_BALL_CONTROL_LO_TO_LO
     };
     
     private DatabaseHelper mDbHelper;

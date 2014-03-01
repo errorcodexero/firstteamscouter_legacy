@@ -68,6 +68,10 @@ public class SelectMatchTeamActivity extends Activity {
     @Override
     protected void onRestart() {
         super.onRestart();
+        if(tmDBAdapter == null) {
+        	tmDBAdapter = new TeamMatchDBAdapter(this.getBaseContext());
+        }
+        tmDBAdapter.open();
     }
 
     @Override
