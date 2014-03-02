@@ -3,39 +3,31 @@
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
     android:alignmentMode="alignBounds"
-    android:background="#00ff00"
-    android:columnCount="9"
+    android:background="@drawable/field_end_800_367"
+    android:columnCount="11"
     android:orientation="horizontal"
     android:paddingLeft="25dp"
     android:paddingRight="25dp"
-    android:rowCount="17"
+    android:rowCount="18"
     android:rowOrderPreserved="true" >
 
     <TextView
         android:id="@+id/lblAutoHiScore"
         android:layout_column="0"
-        android:layout_columnSpan="2"
+        android:layout_columnSpan="3"
         android:layout_gravity="center"
         android:layout_row="0"
         android:text="@string/label_auto_hi"
         android:textAppearance="?android:attr/textAppearanceMedium" />
 
-    <Space
-        android:id="@+id/spacerCol1"
-        android:layout_width="50dp"
-        android:layout_height="wrap_content"
-        android:layout_column="2"
-        android:layout_row="0"
-        android:layout_rowSpan="11" />
-    
     <TextView
         android:id="@+id/txtAutoScore"
         android:layout_width="100dp"
         android:layout_height="40dp"
-        android:layout_column="3"
+        android:layout_column="8"
         android:layout_columnSpan="1"
         android:layout_gravity="center"
-        android:layout_row="1"
+        android:layout_row="0"
         android:gravity="center_vertical"
         android:textAppearance="?android:attr/textAppearanceMedium" />
 
@@ -43,124 +35,108 @@
         android:id="@+id/lblAutoScore"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_column="3"
+        android:layout_column="6"
         android:layout_gravity="left|center_vertical"
         android:layout_row="0"
         android:text="@string/label_auto_score"
         android:textAppearance="?android:attr/textAppearanceMedium" />
-    
+
     <Button
         android:id="@+id/btnAutoHiScoreHot"
         android:layout_width="80dp"
         android:layout_height="80dp"
         android:layout_column="0"
-        android:layout_gravity="left|center_vertical"
-        android:layout_marginRight="20dp"
+        android:layout_gravity="center"
         android:layout_row="1"
+        android:background="@android:drawable/btn_default"
         android:text="@string/text_button_hot_score" />
 
     <Button
         android:id="@+id/btnAutoHiScoreCold"
         android:layout_width="80dp"
         android:layout_height="80dp"
-        android:layout_column="1"
-        android:layout_gravity="right|center_vertical"
-        android:layout_marginLeft="20dp"
-        android:layout_row="1"
-        android:text="@string/text_button_cold_score" />
-
-    <Space
-        android:id="@+id/spacerRow8"
-        android:layout_width="wrap_content"
-        android:layout_height="50dp"
-        android:layout_column="0"
-        android:layout_columnSpan="8"
-        android:layout_row="8" />
-
-    <Space
-        android:id="@+id/spacerRow10"
-        android:layout_width="wrap_content"
-        android:layout_height="50dp"
-        android:layout_column="0"
-        android:layout_columnSpan="8"
-        android:layout_row="10" />
-
-    <Button
-        android:id="@+id/btnAutoCollect"
-        android:layout_width="80dp"
-        android:layout_height="80dp"
-        android:layout_column="0"
-        android:layout_columnSpan="2"
-        android:layout_gravity="center"
-        android:layout_row="11"
-        android:text="@string/text_button_auto_collect" />
-
-    <Button
-        android:id="@+id/btnAutoMove"
-        android:layout_width="80dp"
-        android:layout_height="80dp"
         android:layout_column="2"
-        android:layout_columnSpan="3"
         android:layout_gravity="center"
-        android:layout_row="11"
-        android:text="@string/text_button_auto_move" />
+        android:layout_row="1"
+        android:background="@android:drawable/btn_default"
+        android:text="@string/text_button_cold_score" />
 
     <Button
         android:id="@+id/btnAutoHiMiss"
         android:layout_width="80dp"
         android:layout_height="80dp"
-        android:layout_column="0"
-        android:layout_columnSpan="2"
+        android:layout_column="3"
         android:layout_gravity="center"
-        android:layout_row="9"
+        android:layout_row="8"
+        android:background="@android:drawable/btn_default"
         android:text="@string/text_button_miss_score" />
+
+    <Button
+        android:id="@+id/btnAutoCollect"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:layout_column="8"
+        android:layout_gravity="center"
+        android:layout_row="11"
+        android:background="@android:drawable/btn_default"
+        android:text="@string/text_button_auto_collect" />
 
     <Button
         android:id="@+id/btnAutoDefend"
         android:layout_width="80dp"
         android:layout_height="80dp"
-        android:layout_column="5"
-        android:layout_columnSpan="2"
+        android:layout_column="9"
         android:layout_gravity="center"
         android:layout_row="11"
+        android:background="@android:drawable/btn_default"
         android:text="@string/text_button_auto_defend" />
-
-    <Button
-        android:id="@+id/btnAutoLoMiss"
-        android:layout_width="80dp"
-        android:layout_height="80dp"
-        android:layout_column="5"
-        android:layout_columnSpan="2"
-        android:layout_gravity="center"
-        android:layout_row="9"
-        android:text="@string/text_button_miss_score" />
 
     <Button
         android:id="@+id/btnAutoLoScoreHot"
         android:layout_width="80dp"
         android:layout_height="80dp"
-        android:layout_column="5"
+        android:layout_column="0"
         android:layout_gravity="center"
-        android:layout_marginRight="20dp"
-        android:layout_row="1"
+        android:layout_row="11"
+        android:background="@android:drawable/btn_default"
         android:text="@string/text_button_hot_score" />
 
     <Button
         android:id="@+id/btnAutoLoScoreCold"
         android:layout_width="80dp"
         android:layout_height="80dp"
-        android:layout_column="6"
+        android:layout_column="1"
         android:layout_gravity="center"
-        android:layout_marginLeft="20dp"
-        android:layout_row="1"
+        android:layout_row="12"
+        android:background="@android:drawable/btn_default"
         android:text="@string/text_button_cold_score" />
+
+    <Button
+        android:id="@+id/btnAutoLoMiss"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:layout_column="3"
+        android:layout_gravity="center"
+        android:layout_row="12"
+        android:background="@android:drawable/btn_default"
+        android:text="@string/text_button_miss_score" />
+
+    <Button
+        android:id="@+id/btnAutoMove"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:layout_column="7"
+        android:layout_gravity="center"
+        android:layout_row="11"
+        android:background="@android:drawable/btn_default"
+        android:text="@string/text_button_auto_move" />
 
     <TextView
         android:id="@+id/lblAutoLoScore"
-        android:layout_column="5"
-        android:layout_columnSpan="2"
-        android:layout_gravity="center"
-        android:layout_row="0"
+        android:layout_column="0"
+        android:layout_columnSpan="3"
+        android:layout_gravity="bottom|center_horizontal"
+        android:layout_row="8"
         android:text="@string/label_auto_lo"
         android:textAppearance="?android:attr/textAppearanceMedium" />
 

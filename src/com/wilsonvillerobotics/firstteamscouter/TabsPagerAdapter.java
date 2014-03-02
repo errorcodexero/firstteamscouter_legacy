@@ -34,14 +34,18 @@ public class TabsPagerAdapter extends FragmentPagerAdapter {
  
         switch (index) {
         case 0:
+        	TeamMatchStartingPositionFragment tmspFrag = TeamMatchStartingPositionFragment.newInstance(this.teamMatchID);
+        	tmspFrag.setTeamMatchData(tmData);
+        	return tmspFrag;
+        case 1:
             TeamMatchAutoModeFragment tmaFrag = TeamMatchAutoModeFragment.newInstance(this.teamMatchID);
             tmaFrag.setTeamMatchData(tmData);
             return tmaFrag;
-        case 1:
+        case 2:
         	TeamMatchTeleModeFragment tmtFrag =  TeamMatchTeleModeFragment.newInstance(this.teamMatchID);
         	tmtFrag.setTeamMatchData(tmData);
         	return tmtFrag;
-        case 2:
+        case 3:
         	TeamMatchNotesFragment tmnFrag = TeamMatchNotesFragment.newInstance(this.teamMatchID, this.teamNumber, this.matchNumber);
         	tmnFrag.setTeamMatchData(tmData);
         	return tmnFrag;
@@ -66,7 +70,7 @@ public class TabsPagerAdapter extends FragmentPagerAdapter {
     @Override
     public int getCount() {
         // get item count - equal to number of tabs
-        return 3;
+        return 4;
     }
  
 }

@@ -109,10 +109,6 @@ public class TeamMatchAutoModeFragment extends Fragment implements OnClickListen
     
     public void setTeamMatchData(TeamMatchData tmD) {
     	this.tmData = tmD;
-    	
-//    	if(this.tmData.hasSavedData()) {
-//    		this.updateAutoScore();
-//    	}
     }
     
 	private void updateAutoScore() {
@@ -121,10 +117,6 @@ public class TeamMatchAutoModeFragment extends Fragment implements OnClickListen
 		}
 	}
 
-	public void btnSaveOnClick(View v) {
-		
-	}
-	
 	public void btnAutoHiScoreHotOnClick(View v) {
 		this.tmData.addAutoHiScore();
 		this.tmData.addHiHotBonus();
@@ -148,11 +140,11 @@ public class TeamMatchAutoModeFragment extends Fragment implements OnClickListen
 	}
 	
 	public void btnAutoHiMissOnClick(View v) {
-		
+		this.tmData.addAutoHiMiss();
 	}
 	
 	public void btnAutoLoMissOnClick(View v) {
-		
+		this.tmData.addAutoLoMiss();
 	}
 	
 	protected void btnAutoDefendOnClick(View v) {

@@ -62,10 +62,12 @@ public class TeamMatchData {
 	
 	public enum STARTING_LOC {
 		FIELD_RIGHT (0, "Field Right"),
-		FIELD_CENTER (1, "Field Center"),
-		FIELD_LEFT (2, "Field Left"),
-		FIELD_GOAL (3, "Field Goal"),
-		FIELD_NOT_SET (4, "Field Position Not Set");
+		FIELD_RIGHT_CENTER (1, "Field Right Center"),
+		FIELD_CENTER (2, "Field Center"),
+		FIELD_LEFT_CENTER (3, "Field Left Center"),
+		FIELD_LEFT (4, "Field Left"),
+		FIELD_GOAL (5, "Field Goal"),
+		FIELD_NOT_SET (6, "Field Position Not Set");
 		
 		private int id;
 		private String positionName;
@@ -554,5 +556,9 @@ public class TeamMatchData {
 	
 	public int getZoneDefends(ZONE z) {
 		return this.zoneDefended[z.id];
+	}
+	
+	public void setStartingLoc(STARTING_LOC sl) {
+		this.startingLocation = sl;
 	}
 }

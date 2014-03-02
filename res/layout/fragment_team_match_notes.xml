@@ -6,7 +6,7 @@
     android:orientation="vertical" >
 
     <TextView
-        android:id="@+id/textView1"
+        android:id="@+id/txtWidth"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
@@ -21,7 +21,7 @@
         android:layout_width="100dp"
         android:layout_height="75dp"
         android:layout_alignParentLeft="true"
-        android:layout_below="@+id/textView1"
+        android:layout_below="@+id/txtWidth"
         android:layout_marginLeft="32dp"
         android:text="ToggleButton"
         android:textOff="&quot;Broke Down&quot;"

@@ -1,105 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <GridLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:alignmentMode="alignBounds"
-    android:background="#0000ff"
-    android:columnCount="10"
+    android:background="@drawable/field_800x367_blue_on_left"
+    android:columnCount="17"
     android:orientation="horizontal"
-    android:paddingLeft="25dp"
-    android:paddingRight="25dp"
-    android:rowCount="18"
-    android:rowOrderPreserved="true" >
+    android:rowCount="12" >
 
     <Space
         android:layout_width="80dp"
-        android:layout_column="1"
-    />
-    
-    <Space
-        android:layout_width="80dp"
-        android:layout_column="3"
-    />
-    
-    <Space
-        android:layout_width="80dp"
-        android:layout_column="5"
-    />
-    
-    <Space
-        android:layout_width="40dp"
-        android:layout_column="7"
-    />
-    
-    <Space
-        android:layout_height="20dp"
-        android:layout_row="3"
-    />
+        android:layout_column="1" />
 
     <Space
-        android:layout_height="20dp"
-        android:layout_row="5"
-    />
-    
+        android:layout_width="80dp"
+        android:layout_column="7" />
+
     <Space
-        android:layout_height="20dp"
-        android:layout_row="7"
-    />
-    
-    <TextView
-        android:id="@+id/lblTeleHiScore"
-        android:layout_column="0"
-        android:layout_gravity="center"
-        android:layout_row="0"
-        android:text="@string/label_tele_hi"
-        android:textAppearance="?android:attr/textAppearanceMedium" />
-
-    <Button
-        android:id="@+id/btnTeleHiScore"
         android:layout_width="80dp"
-        android:layout_height="80dp"
-        android:layout_column="0"
-        android:layout_gravity="center"
-        android:layout_row="2"
-        android:text="@string/text_button_score" />
-
-    <Button
-        android:id="@+id/btnTeleHiMiss"
-        android:layout_width="80dp"
-        android:layout_height="80dp"
-        android:layout_column="0"
-        android:layout_gravity="center"
-        android:layout_row="4"
-        android:text="@string/text_button_miss_score" />
-
-    <Button
-        android:id="@+id/btnTrussToss"
-        android:layout_width="80dp"
-        android:layout_height="80dp"
-        android:layout_column="0"
-        android:layout_gravity="left|center_vertical"
-        android:layout_marginRight="10dp"
-        android:layout_row="6"
-        android:text="@string/text_button_truss_toss" />
-
-    <Button
-        android:id="@+id/btnTrussMiss"
-        android:layout_width="80dp"
-        android:layout_height="80dp"
-        android:layout_column="1"
-        android:layout_gravity="right|center_vertical"
-        android:layout_marginLeft="10dp"
-        android:layout_row="6"
-        android:text="@string/text_button_truss_miss" />
+        android:layout_column="13" />
 
     <TextView
         android:id="@+id/lblTeleScore"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_column="2"
+        android:layout_columnSpan="3"
         android:layout_gravity="center"
         android:layout_row="0"
+        android:gravity="left|center_vertical"
         android:text="@string/label_tele_score"
         android:textAppearance="?android:attr/textAppearanceMedium" />
 
@@ -107,164 +35,214 @@
         android:id="@+id/txtTeleScore"
         android:layout_width="100dp"
         android:layout_height="40dp"
-        android:layout_column="2"
-        android:layout_row="2"
-        android:gravity="center_vertical"
+        android:layout_column="5"
+        android:layout_columnSpan="2"
+        android:layout_gravity="right|center_vertical"
+        android:layout_row="0"
+        android:gravity="left|center_vertical"
         android:textAppearance="?android:attr/textAppearanceMedium" />
 
     <TextView
         android:id="@+id/txtTeleStat"
         android:layout_width="80dp"
         android:layout_height="40dp"
-        android:layout_column="2"
-        android:layout_columnSpan="1"
-        android:layout_gravity="center"
-        android:layout_row="4"
-        android:textAppearance="?android:attr/textAppearanceMedium" />
-
-    <Button
-        android:id="@+id/btnTossCaught"
-        android:layout_width="80dp"
-        android:layout_height="80dp"
-        android:layout_column="3"
-        android:layout_gravity="left|center_vertical"
-        android:layout_marginRight="10dp"
-        android:layout_row="6"
-        android:text="@string/text_button_catch_caught" />
-
-    <TextView
-        android:id="@+id/lblTeleLoScore"
-        android:layout_column="4"
-        android:layout_columnSpan="1"
+        android:layout_column="9"
+        android:layout_columnSpan="3"
         android:layout_gravity="center"
         android:layout_row="0"
-        android:text="@string/label_tele_lo"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
+
+    <TextView
+        android:id="@+id/lblTelePossess"
+        android:layout_column="4"
+        android:layout_columnSpan="1"
+        android:layout_gravity="right|center_vertical"
+        android:layout_row="6"
+        android:layout_rowSpan="2"
+        android:text="@string/label_possess"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
+
+    <TextView
+        android:id="@+id/lblTeleDefend"
+        android:layout_column="4"
+        android:layout_columnSpan="1"
+        android:layout_gravity="right|center_vertical"
+        android:layout_row="3"
+        android:text="@string/label_defend"
         android:textAppearance="?android:attr/textAppearanceMedium" />
 
     <Button
         android:id="@+id/btnTeleLoScore"
-        android:layout_width="80dp"
-        android:layout_height="80dp"
-        android:layout_column="4"
+        android:layout_width="78dp"
+        android:layout_height="78dp"
+        android:layout_column="0"
+        android:layout_gravity="center"
+        android:layout_marginLeft="4dp"
+        android:layout_row="9"
+        android:layout_rowSpan="1"
+        android:background="@android:drawable/btn_default"
+        android:text="@string/text_button_lo_score" />
+
+    <Button
+        android:id="@+id/btnTeleHiScore"
+        android:layout_width="78dp"
+        android:layout_height="78dp"
+        android:layout_column="0"
+        android:layout_gravity="center"
+        android:layout_marginLeft="4dp"
+        android:layout_marginTop="5dp"
+        android:layout_row="0"
+        android:layout_rowSpan="1"
+        android:background="@android:drawable/btn_default"
+        android:text="@string/text_button_hi_score" />
+
+    <Button
+        android:id="@+id/btnTeleHiMiss"
+        android:layout_width="78dp"
+        android:layout_height="78dp"
+        android:layout_column="1"
         android:layout_gravity="center"
         android:layout_row="2"
-        android:text="@string/text_button_score" />
+        android:layout_rowSpan="2"
+        android:background="@android:drawable/btn_default"
+        android:text="@string/text_button_hi_miss" />
 
     <Button
         android:id="@+id/btnTeleLoMiss"
-        android:layout_width="80dp"
-        android:layout_height="80dp"
-        android:layout_column="4"
+        android:layout_width="78dp"
+        android:layout_height="78dp"
+        android:layout_column="1"
         android:layout_gravity="center"
-        android:layout_row="4"
-        android:text="@string/text_button_miss_score" />
+        android:layout_row="6"
+        android:layout_rowSpan="2"
+        android:background="@android:drawable/btn_default"
+        android:text="@string/text_button_lo_miss" />
+
+    <Button
+        android:id="@+id/btnTrussToss"
+        android:layout_width="78dp"
+        android:layout_height="78dp"
+        android:layout_column="5"
+        android:layout_gravity="left|top"
+        android:layout_row="9"
+        android:background="@android:drawable/btn_default"
+        android:text="@string/text_button_truss_toss" />
+
+    <Button
+        android:id="@+id/btnTrussMiss"
+        android:layout_width="78dp"
+        android:layout_height="78dp"
+        android:layout_column="6"
+        android:layout_gravity="left|top"
+        android:layout_row="9"
+        android:background="@android:drawable/btn_default"
+        android:text="@string/text_button_truss_miss" />
+
+    <Button
+        android:id="@+id/btnTossCaught"
+        android:layout_width="78dp"
+        android:layout_height="78dp"
+        android:layout_column="7"
+        android:layout_gravity="left|top"
+        android:layout_row="9"
+        android:background="@android:drawable/btn_default"
+        android:text="@string/text_button_catch_caught" />
 
     <Button
         android:id="@+id/btnTossMiss"
-        android:layout_width="80dp"
-        android:layout_height="80dp"
-        android:layout_column="4"
-        android:layout_gravity="right|center_vertical"
-        android:layout_marginLeft="10dp"
-        android:layout_row="6"
+        android:layout_width="78dp"
+        android:layout_height="78dp"
+        android:layout_column="8"
+        android:layout_gravity="left|top"
+        android:layout_row="9"
+        android:background="@android:drawable/btn_default"
         android:text="@string/text_button_catch_miss" />
-
-    <TextView
-        android:id="@+id/lblTeleAssist"
-        android:layout_column="6"
-        android:layout_columnSpan="1"
-        android:layout_gravity="center"
-        android:layout_row="0"
-        android:text="@string/label_assist"
-        android:textAppearance="?android:attr/textAppearanceMedium" />
-
-    <Button
-        android:id="@+id/btnAssistRedZone"
-        android:layout_width="80dp"
-        android:layout_height="80dp"
-        android:layout_column="6"
-        android:layout_gravity="center"
-        android:layout_row="2"
-        android:text="@string/text_button_red" />
-
-    <Button
-        android:id="@+id/btnAssistWhiteZone"
-        android:layout_width="80dp"
-        android:layout_height="80dp"
-        android:layout_column="6"
-        android:layout_gravity="center"
-        android:layout_row="4"
-        android:text="@string/text_button_white" />
 
     <Button
         android:id="@+id/btnAssistBlueZone"
-        android:layout_width="80dp"
-        android:layout_height="80dp"
-        android:layout_column="6"
+        android:layout_width="78dp"
+        android:layout_height="78dp"
+        android:layout_column="5"
         android:layout_gravity="center"
         android:layout_row="6"
+        android:layout_rowSpan="2"
+        android:background="@android:drawable/btn_default"
         android:text="@string/text_button_blue" />
 
-    <TextView
-        android:id="@+id/lblTeleDefend"
-        android:layout_column="8"
-        android:layout_columnSpan="1"
+    <Button
+        android:id="@+id/btnDefendBlueZone"
+        android:layout_width="78dp"
+        android:layout_height="78dp"
+        android:layout_column="5"
         android:layout_gravity="center"
-        android:layout_row="0"
-        android:text="@string/label_defend"
-        android:textAppearance="?android:attr/textAppearanceMedium" />
+        android:layout_row="3"
+        android:layout_rowSpan="2"
+        android:background="@android:drawable/btn_default"
+        android:text="@string/text_button_blue" />
 
-	<LinearLayout
-	    android:layout_width="80dp"
-	    android:layout_height="wrap_content"
-	    android:layout_column="8"
-	    android:layout_gravity="center"
-	    android:layout_row="2"
-	    android:layout_rowSpan="6"
-	    android:orientation="vertical" >
-		    
-	    <Button
-	        android:id="@+id/btnDefendRedZone"
-	        android:layout_width="80dp"
-	        android:layout_height="80dp"
-	        android:layout_gravity="center_horizontal"
-	        android:text="@string/text_button_red" />
-	
-		<Space
-        	android:layout_height="10dp"
-        	android:layout_width="fill_parent"
-    	/>
+    <Button
+        android:id="@+id/btnAssistWhiteZone"
+        android:layout_width="78dp"
+        android:layout_height="78dp"
+        android:layout_column="6"
+        android:layout_columnSpan="2"
+        android:layout_gravity="center"
+        android:layout_row="6"
+        android:layout_rowSpan="2"
+        android:background="@android:drawable/btn_default"
+        android:text="@string/text_button_white" />
 
-	    <Button
-	        android:id="@+id/btnDefendWhiteZone"
-	        android:layout_width="80dp"
-	        android:layout_height="80dp"
-	        android:layout_gravity="center_horizontal"
-	        android:text="@string/text_button_white" />
-	
-		<Space
-        	android:layout_height="10dp"
-        	android:layout_width="fill_parent"
-    	/>
+    <Button
+        android:id="@+id/btnDefendWhiteZone"
+        android:layout_width="78dp"
+        android:layout_height="78dp"
+        android:layout_column="6"
+        android:layout_columnSpan="2"
+        android:layout_gravity="center"
+        android:layout_row="3"
+        android:layout_rowSpan="2"
+        android:background="@android:drawable/btn_default"
+        android:text="@string/text_button_white" />
 
-	    <Button
-	        android:id="@+id/btnDefendBlueZone"
-	        android:layout_width="80dp"
-	        android:layout_height="80dp"
-	        android:layout_gravity="center_horizontal"
-	        android:text="@string/text_button_blue" />
+    <Button
+        android:id="@+id/btnAssistRedZone"
+        android:layout_width="78dp"
+        android:layout_height="78dp"
+        android:layout_column="8"
+        android:layout_columnSpan="2"
+        android:layout_gravity="center"
+        android:layout_row="6"
+        android:layout_rowSpan="2"
+        android:background="@android:drawable/btn_default"
+        android:text="@string/text_button_red" />
 
-		<Space
-        	android:layout_height="10dp"
-        	android:layout_width="fill_parent"
-    	/>
+    <Button
+        android:id="@+id/btnDefendRedZone"
+        android:layout_width="78dp"
+        android:layout_height="78dp"
+        android:layout_column="8"
+        android:layout_columnSpan="2"
+        android:layout_gravity="center"
+        android:layout_row="3"
+        android:layout_rowSpan="2"
+        android:background="@android:drawable/btn_default"
+        android:text="@string/text_button_red" />
 
-	    <Button
-	        android:id="@+id/btnDefendGoalZone"
-	        android:layout_width="80dp"
-	        android:layout_height="80dp"
-	        android:layout_gravity="center_horizontal"
-	        android:text="@string/text_button_goal" />
+    <Button
+        android:id="@+id/btnDefendGoalZone"
+        android:layout_width="78dp"
+        android:layout_height="78dp"
+        android:layout_column="11"
+        android:layout_gravity="center"
+        android:layout_marginLeft="50dp"
+        android:layout_row="3"
+        android:layout_rowSpan="2"
+        android:background="@android:drawable/btn_default"
+        android:text="@string/text_button_goal" />
 
-	</LinearLayout>
+    <Space
+        android:layout_height="50dp"
+        android:layout_column="1"
+        android:layout_row="5" />
+
 </GridLayout>

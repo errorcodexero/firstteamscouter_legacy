@@ -25,7 +25,7 @@ public class EnterTeamMatchDataActivity extends FragmentActivity implements Acti
 	
 	private int viewState = 0;
 	
-	private String[] tabs = { "Auto Mode", "Tele Mode", "Notes" };
+	private String[] tabs = { "Starting Position", "Auto Mode", "Tele Mode", "Notes" };
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
