@@ -68,6 +68,8 @@ public class TeamMatchDBAdapter implements BaseColumns {
     public static final String COLUMN_NAME_BALL_CONTROL_HI_TO_HI = "ball_control_hi_to_hi";
     public static final String COLUMN_NAME_BALL_CONTROL_LO_TO_LO = "ball_control_lo_to_lo";
     
+    // This needs to be moved to the team_match_notes_data
+    public static final String COLUMN_NAME_TEAM_MATCH_NOTES = "team_match_notes";
 
     private String[] allColumnNames = new String[]{
     		_ID,
@@ -119,7 +121,8 @@ public class TeamMatchDBAdapter implements BaseColumns {
     	    COLUMN_NAME_BALL_CONTROL_HI_TO_LO,
     	    COLUMN_NAME_BALL_CONTROL_LO_TO_HI,
     	    COLUMN_NAME_BALL_CONTROL_HI_TO_HI,
-    	    COLUMN_NAME_BALL_CONTROL_LO_TO_LO
+    	    COLUMN_NAME_BALL_CONTROL_LO_TO_LO,
+    	    COLUMN_NAME_TEAM_MATCH_NOTES
     };
     
     private DatabaseHelper mDbHelper;
@@ -241,9 +244,7 @@ public class TeamMatchDBAdapter implements BaseColumns {
      * @param num_team_members
      * @return true if the entry was successfully updated, false otherwise
      */
-    public boolean updateTeamMatch(int team_match_id, String team_id, String match_id, Boolean tmSaved, Boolean move,
-    		Boolean brokeDown, Boolean noMove, Boolean lostConnection,
-    		Hashtable<String, Integer> intVals) {
+    public boolean updateTeamMatch(int team_match_id, String team_id, String match_id, String tmNotes, Hashtable<String, Boolean> boolVals, Hashtable<String, Integer> intVals) {
     		//int auto_score, int tele_score, int other_score, 
     		//int offensive_rating, int defensive_rating){
     	FTSUtilities.printToConsole("TeamMatchDBAdapter::updateTeamMatch\n");
@@ -251,15 +252,22 @@ public class TeamMatchDBAdapter implements BaseColumns {
         args.put(COLUMN_NAME_TEAM_MATCH_ID, team_match_id);
         args.put(COLUMN_NAME_TEAM_ID, team_id);
         args.put(COLUMN_NAME_MATCH_ID, match_id);
-        args.put(COLUMN_NAME_MATCH_DATA_SAVED, Boolean.toString(tmSaved));
-        args.put(COLUMN_NAME_AUTO_MOVE, Boolean.toString(move));
-        args.put(COLUMN_NAME_BROKE_DOWN, Boolean.toString(move));
-        args.put(COLUMN_NAME_NO_MOVE, Boolean.toString(move));
-        args.put(COLUMN_NAME_LOST_CONNECTION, Boolean.toString(move));
+        args.put(COLUMN_NAME_TEAM_MATCH_NOTES, tmNotes);
+//        args.put(COLUMN_NAME_MATCH_DATA_SAVED, Boolean.toString(tmSaved));
+//        args.put(COLUMN_NAME_AUTO_MOVE, Boolean.toString(move));
+//        args.put(COLUMN_NAME_BROKE_DOWN, Boolean.toString(move));
+//        args.put(COLUMN_NAME_NO_MOVE, Boolean.toString(move));
+//        args.put(COLUMN_NAME_LOST_CONNECTION, Boolean.toString(move));
         
-        Enumeration<String> keys = intVals.keys();
-        while(keys.hasMoreElements()) {
-        	String key = keys.nextElement();
+        Enumeration<String> boolKeys = boolVals.keys();
+        while(boolKeys.hasMoreElements()) {
+        	String key = boolKeys.nextElement();
+        	args.put(key, Boolean.toString(boolVals.get(key)));
+        }
+
+        Enumeration<String> intKeys = intVals.keys();
+        while(intKeys.hasMoreElements()) {
+        	String key = intKeys.nextElement();
         	args.put(key, intVals.get(key));
         }
         

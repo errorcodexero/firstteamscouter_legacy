@@ -76,6 +76,15 @@ public class TeamMatchData {
 			this.positionName = posName;
 		}
 		
+		public static STARTING_LOC getLocForID(int ID) {
+			for(STARTING_LOC sl : STARTING_LOC.values()) {
+				if(sl.id == ID) {
+					return sl;
+				}
+			}
+			return STARTING_LOC.FIELD_NOT_SET;
+		}
+		
 		public String myPositionName() {
 			return this.positionName;
 		}
@@ -105,6 +114,8 @@ public class TeamMatchData {
 		}
 	}
 
+    private Boolean tmDataSaved;
+	
 	protected TeamMatchDBAdapter tmDBAdapter;
 	protected Context context;
 	
@@ -112,25 +123,47 @@ public class TeamMatchData {
 	
 	protected String teamNumber;
 	protected String matchNumber;
-	
+
 	//protected Hashtable<String, Integer> statHash;
-	
+
+	/*****************************************
+	 * 										 *
+	 *				 MEASURES				 *
+	 *										 *
+	 *****************************************/
+
+	/*****************************************
+	 *			Starting Location			 *
+	 *****************************************/
+	protected STARTING_LOC startingLocation;
+    
+	/*****************************************
+	 *			  Autonomous Mode			 *
+	 *****************************************/
 	protected int autoHiScore;
-	protected int autoLoScore;
+	protected int autoHiHot;
 	protected int autoHiMiss;
+	
+	protected int autoLoScore;
+	protected int autoLoHot;
 	protected int autoLoMiss;
 	
-	protected int autoHiHot;
-	protected int autoLoHot;
-	
-	protected int autoCollect;
 	protected Boolean autoMove;
+	protected int autoCollect;
 	protected int autoDefend;
 	
+	/*****************************************
+	 *				Teleop Mode			 	 *
+	 *****************************************/
 	protected int teleHiScore;
-	protected int teleLoScore;
 	protected int teleHiMiss;
+	
+	protected int teleLoScore;
 	protected int teleLoMiss;
+	
+	protected int[] zonePossessed;
+
+	protected int[] zoneDefended;
 	
 	protected int trussToss;
 	protected int trussMiss;
@@ -143,34 +176,19 @@ public class TeamMatchData {
 	protected int longPassSuccess;
 	protected int longPassMiss;
 
-	protected int[] zoneAssisted;
-
-	protected int[] zoneDefended;
-	
+	/*****************************************
+	 *				  Notes			 	 	 *
+	 *****************************************/
 	protected Boolean brokeDown;
 	protected Boolean noMove;
 	protected Boolean lostConnection;
+	protected String teamMatchNotes;
 	
 	protected Boolean robotRole[];
-	/*protected Boolean roleShooter;
-	protected Boolean roleDefender;
-	protected Boolean rolePasser;
-	protected Boolean roleCatcher;
-	protected Boolean roleGoalie;*/
 	
-    protected STARTING_LOC startingLocation;
-    
     protected Boolean ballControl[];
 
-    /*protected Boolean ballControlGroundPickup;
-    protected Boolean ballControlHumanLoad;
-    protected Boolean ballControlHoToLo;
-    protected Boolean ballControlLoToHi;
-    protected Boolean ballControlHiToHi;
-    protected Boolean ballControlLoToLo;*/
-	
-	private Boolean tmDataSaved;
-	
+
 	public TeamMatchData(Context c, int tmID) { //, String tnum, String mnum) {
 		this.context = c;
 		this.teamMatchID = tmID;
@@ -180,21 +198,28 @@ public class TeamMatchData {
 		//this.statHash = new Hashtable<String, Integer>();
 		//this.statHash.put("autoHiScore", 0);
 		this.autoHiScore = 0;
-		this.autoLoScore = 0;
-		this.autoHiMiss = 0;
-		this.autoLoMiss = 0;
-		
 		this.autoHiHot = 0;
+		this.autoHiMiss = 0;
+		
+		this.autoLoScore = 0;
 		this.autoLoHot = 0;
+		this.autoLoMiss = 0;
 		
 		this.autoCollect = 0;
 		this.autoDefend = 0;
 		this.autoMove = false;
 		
 		this.teleHiScore = 0;
-		this.teleLoScore = 0;
 		this.teleHiMiss = 0;
+		this.teleLoScore = 0;
 		this.teleLoMiss = 0;
+		
+		this.zonePossessed = new int[ZONE.values().length];
+		this.zoneDefended = new int[ZONE.values().length];
+		for (ZONE z : ZONE.values()) {
+			this.zonePossessed[z.id] = 0;
+			this.zoneDefended[z.id] = 0;
+		}
 		
 		this.trussToss = 0;
 		this.trussMiss = 0;
@@ -213,13 +238,6 @@ public class TeamMatchData {
 		
 		this.tmDataSaved = false;
 
-		this.zoneAssisted = new int[ZONE.values().length];
-		this.zoneDefended = new int[ZONE.values().length];
-		for (ZONE z : ZONE.values()) {
-			this.zoneAssisted[z.id] = 0;
-			this.zoneDefended[z.id] = 0;
-		}
-		
 		this.robotRole = new Boolean[ROBOT_ROLE.values().length];
 		for(ROBOT_ROLE rr : ROBOT_ROLE.values()) {
 			this.robotRole[rr.id] = false;  
@@ -231,6 +249,8 @@ public class TeamMatchData {
 		for(BALL_CONTROL bc : BALL_CONTROL.values()) {
 			this.ballControl[bc.id] = false;  
 		}
+		
+		this.teamMatchNotes = "";
 		
 		this.tmDBAdapter = null;
 		this.openDB();
@@ -263,211 +283,79 @@ public class TeamMatchData {
 //		}
 	}
 	
-	public void loadTeamMatchData() {
-		FTSUtilities.printToConsole("TeamMatchData::loadTeamMatchData : Loading Data\n");
-		Cursor tmCursor = null;
+	public void closeDB() {
 		try {
-			tmCursor = this.tmDBAdapter.getTeamMatch(this.teamMatchID);
-			
-			this.matchNumber = tmCursor.getString(tmCursor.getColumnIndexOrThrow(TeamMatchDBAdapter.COLUMN_NAME_MATCH_ID));
-			this.teamNumber = tmCursor.getString(tmCursor.getColumnIndexOrThrow(TeamMatchDBAdapter.COLUMN_NAME_TEAM_ID));
-			this.tmDataSaved = Boolean.parseBoolean(tmCursor.getString(tmCursor.getColumnIndexOrThrow(TeamMatchDBAdapter.COLUMN_NAME_MATCH_DATA_SAVED)));
-			
-			if(this.tmDataSaved) {
-				FTSUtilities.printToConsole("TeamMatchData::loadTeamMatchData : Loading Saved Data\n");
-				this.autoHiScore = tmCursor.getInt(tmCursor.getColumnIndexOrThrow(TeamMatchDBAdapter.COLUMN_NAME_AUTO_HI_SCORE));
-				this.autoLoScore = tmCursor.getInt(tmCursor.getColumnIndexOrThrow(TeamMatchDBAdapter.COLUMN_NAME_AUTO_LO_SCORE));
-				this.autoHiMiss = tmCursor.getInt(tmCursor.getColumnIndexOrThrow(TeamMatchDBAdapter.COLUMN_NAME_AUTO_HI_MISS));
-				this.autoLoMiss = tmCursor.getInt(tmCursor.getColumnIndexOrThrow(TeamMatchDBAdapter.COLUMN_NAME_AUTO_LO_MISS));
-				
-				this.autoHiHot = tmCursor.getInt(tmCursor.getColumnIndexOrThrow(TeamMatchDBAdapter.COLUMN_NAME_AUTO_HI_HOT));
-				this.autoLoHot = tmCursor.getInt(tmCursor.getColumnIndexOrThrow(TeamMatchDBAdapter.COLUMN_NAME_AUTO_LO_HOT));
-				
-				this.autoCollect = tmCursor.getInt(tmCursor.getColumnIndexOrThrow(TeamMatchDBAdapter.COLUMN_NAME_AUTO_COLLECT));
-				this.autoDefend = tmCursor.getInt(tmCursor.getColumnIndexOrThrow(TeamMatchDBAdapter.COLUMN_NAME_AUTO_DEFEND));
-				this.autoMove = Boolean.parseBoolean(tmCursor.getString(tmCursor.getColumnIndexOrThrow(TeamMatchDBAdapter.COLUMN_NAME_AUTO_MOVE)));
-				
-				this.teleHiScore = tmCursor.getInt(tmCursor.getColumnIndexOrThrow(TeamMatchDBAdapter.COLUMN_NAME_TELE_HI_SCORE));
-				this.teleLoScore = tmCursor.getInt(tmCursor.getColumnIndexOrThrow(TeamMatchDBAdapter.COLUMN_NAME_TELE_LO_SCORE));
-				this.teleHiMiss = tmCursor.getInt(tmCursor.getColumnIndexOrThrow(TeamMatchDBAdapter.COLUMN_NAME_TELE_HI_MISS));
-				this.teleLoMiss = tmCursor.getInt(tmCursor.getColumnIndexOrThrow(TeamMatchDBAdapter.COLUMN_NAME_TELE_LO_MISS));
-				
-				this.trussToss = tmCursor.getInt(tmCursor.getColumnIndexOrThrow(TeamMatchDBAdapter.COLUMN_NAME_TRUSS_TOSS));
-				this.trussMiss = tmCursor.getInt(tmCursor.getColumnIndexOrThrow(TeamMatchDBAdapter.COLUMN_NAME_TRUSS_MISS));
-				
-				this.tossCatch = tmCursor.getInt(tmCursor.getColumnIndexOrThrow(TeamMatchDBAdapter.COLUMN_NAME_TOSS_CATCH));
-				this.tossMiss = tmCursor.getInt(tmCursor.getColumnIndexOrThrow(TeamMatchDBAdapter.COLUMN_NAME_TRUSS_MISS));
-				
-				this.shortPassSuccess = tmCursor.getInt(tmCursor.getColumnIndexOrThrow(TeamMatchDBAdapter.COLUMN_NAME_SHORT_PASS_SUCCESS));
-				this.shortPassMiss = tmCursor.getInt(tmCursor.getColumnIndexOrThrow(TeamMatchDBAdapter.COLUMN_NAME_SHORT_PASS_MISS));
-				this.longPassSuccess = tmCursor.getInt(tmCursor.getColumnIndexOrThrow(TeamMatchDBAdapter.COLUMN_NAME_LONG_PASS_SUCCESS));
-				this.longPassMiss = tmCursor.getInt(tmCursor.getColumnIndexOrThrow(TeamMatchDBAdapter.COLUMN_NAME_LONG_PASS_MISS));
-				
-				this.brokeDown = Boolean.parseBoolean(tmCursor.getString(tmCursor.getColumnIndexOrThrow(TeamMatchDBAdapter.COLUMN_NAME_BROKE_DOWN)));
-				this.noMove = Boolean.parseBoolean(tmCursor.getString(tmCursor.getColumnIndexOrThrow(TeamMatchDBAdapter.COLUMN_NAME_NO_MOVE)));
-				this.lostConnection = Boolean.parseBoolean(tmCursor.getString(tmCursor.getColumnIndexOrThrow(TeamMatchDBAdapter.COLUMN_NAME_LOST_CONNECTION)));
-				
-				for (ZONE z : ZONE.values()) {
-					this.zoneAssisted[z.id] = (z.dbAssistColName != "") ? tmCursor.getInt(tmCursor.getColumnIndexOrThrow(z.dbAssistColName)) : -1;
-					this.zoneDefended[z.id] = tmCursor.getInt(tmCursor.getColumnIndexOrThrow(z.dbDefendColName));
-				}
-				
-				/***
-				 * TO DO - Add the new fields for ball control, robot role, and starting location
-				 */
-			} else {
-				FTSUtilities.printToConsole("TeamMatchData::loadTeamMatchData : No Saved Data : tmDataSaved:: " + this.tmDataSaved.toString() + "\n");
-			}
+			FTSUtilities.printToConsole("TeamMatchData::closeDB : CLOSING DB\n");
+			this.tmDBAdapter.close();
+		} catch (Exception e) {
+			FTSUtilities.printToConsole("TeamMatchData::closeDB : EXCEPTION when closing DB\n");
 		}
-		catch (SQLException e) {
-			e.printStackTrace();
-		}
-		catch (Exception e) {
-			e.printStackTrace();
-		}
+	}
+	
+	private Hashtable<String, Integer> getIntValueHash() {
+		Hashtable<String, Integer> htIntValues = new Hashtable<String, Integer>();
+		htIntValues.put(TeamMatchDBAdapter.COLUMN_NAME_START_LOCATION, this.startingLocation.id);
+		htIntValues.put(TeamMatchDBAdapter.COLUMN_NAME_AUTO_SCORE, this.getAutoScore()); 
+		htIntValues.put(TeamMatchDBAdapter.COLUMN_NAME_AUTO_HI_SCORE, this.autoHiScore);
+		htIntValues.put(TeamMatchDBAdapter.COLUMN_NAME_AUTO_HI_HOT, this.autoHiHot);
+		htIntValues.put(TeamMatchDBAdapter.COLUMN_NAME_AUTO_HI_MISS, this.autoHiMiss);
+		htIntValues.put(TeamMatchDBAdapter.COLUMN_NAME_AUTO_LO_SCORE, this.autoLoScore);
+		htIntValues.put(TeamMatchDBAdapter.COLUMN_NAME_AUTO_LO_HOT, this.autoLoHot);
+		htIntValues.put(TeamMatchDBAdapter.COLUMN_NAME_AUTO_LO_MISS, this.autoLoMiss);
+		htIntValues.put(TeamMatchDBAdapter.COLUMN_NAME_AUTO_COLLECT, this.autoCollect);
+		htIntValues.put(TeamMatchDBAdapter.COLUMN_NAME_AUTO_COLLECT, this.autoDefend);
+		htIntValues.put(TeamMatchDBAdapter.COLUMN_NAME_TELE_SCORE, this.getTeleScore());
+		htIntValues.put(TeamMatchDBAdapter.COLUMN_NAME_TELE_HI_SCORE, this.teleHiScore);
+		htIntValues.put(TeamMatchDBAdapter.COLUMN_NAME_TELE_HI_MISS, this.teleHiMiss);
+		htIntValues.put(TeamMatchDBAdapter.COLUMN_NAME_TELE_LO_SCORE, this.teleLoScore);
+		htIntValues.put(TeamMatchDBAdapter.COLUMN_NAME_TELE_LO_MISS, this.teleLoMiss);
+		htIntValues.put(TeamMatchDBAdapter.COLUMN_NAME_ASSIST_RED, this.getZoneAssists(ZONE.RED_ZONE));
+		htIntValues.put(TeamMatchDBAdapter.COLUMN_NAME_ASSIST_WHITE, this.getZoneAssists(ZONE.WHITE_ZONE));
+		htIntValues.put(TeamMatchDBAdapter.COLUMN_NAME_ASSIST_BLUE, this.getZoneAssists(ZONE.BLUE_ZONE));
+		htIntValues.put(TeamMatchDBAdapter.COLUMN_NAME_DEFEND_RED, this.getZoneDefends(ZONE.RED_ZONE));
+		htIntValues.put(TeamMatchDBAdapter.COLUMN_NAME_DEFEND_WHITE, this.getZoneDefends(ZONE.WHITE_ZONE));
+		htIntValues.put(TeamMatchDBAdapter.COLUMN_NAME_DEFEND_BLUE, this.getZoneDefends(ZONE.BLUE_ZONE));
+		htIntValues.put(TeamMatchDBAdapter.COLUMN_NAME_DEFEND_GOAL, this.getZoneDefends(ZONE.GOAL_ZONE));
+		htIntValues.put(TeamMatchDBAdapter.COLUMN_NAME_TRUSS_TOSS, this.trussToss);
+		htIntValues.put(TeamMatchDBAdapter.COLUMN_NAME_TRUSS_MISS, this.trussMiss);
+		htIntValues.put(TeamMatchDBAdapter.COLUMN_NAME_TOSS_CATCH, this.tossCatch);
+		htIntValues.put(TeamMatchDBAdapter.COLUMN_NAME_TOSS_MISS, this.tossMiss);
+		htIntValues.put(TeamMatchDBAdapter.COLUMN_NAME_SHORT_PASS_SUCCESS, this.shortPassSuccess);
+		htIntValues.put(TeamMatchDBAdapter.COLUMN_NAME_SHORT_PASS_MISS, this.shortPassMiss);
+		htIntValues.put(TeamMatchDBAdapter.COLUMN_NAME_LONG_PASS_SUCCESS, this.longPassSuccess);
+		htIntValues.put(TeamMatchDBAdapter.COLUMN_NAME_LONG_PASS_MISS, this.longPassMiss);
 		
-		if(tmCursor != null) {
-			tmCursor.close();
-		}
+		return htIntValues;
 	}
 	
-	public String getteamNumber() {
-		return this.teamNumber;
-	}
-	
-	public void setTeamNumber(String tnum) {
-		this.teamNumber = tnum;
-	}
-	
-	public String getMatchNumber() {
-		return this.matchNumber;
-	}
-	
-	public void setMatchhNumber(String mnum) {
-		this.matchNumber = mnum;
-	}
-	
-	public int getAutoHiScore() {
-		int score = (this.autoHiScore * this.HI_POINTS);
-		score += (this.autoHiHot * this.AUTO_SCORE_HOT_BONUS);
-		return score;
-	}
-	
-	public int getAutoLoScore() {
-		int score = (this.autoLoScore * this.LO_POINTS);
-		score += (this.autoLoHot * this.AUTO_SCORE_HOT_BONUS);
-		return score;
-	}
-	
-	public int getAutoScore() {
-		return this.getAutoHiScore() + this.getAutoLoScore() + this.getAutoScoreBonus();
-	}
-	
-	public int getAutoScoreBonus() {
-		return (this.autoHiScore + this.autoLoScore) * this.AUTO_SCORE_BONUS;
-	}
-	
-	public void addAutoHiScore() {
-		this.autoHiScore++;
-	}
-	
-	public void addAutoHiMiss() {
-		this.autoHiMiss++;
-	}
-
-	public void addAutoLoScore() {
-		this.autoLoScore++;
-	}
-
-	public void addAutoLoMiss() {
-		this.autoLoMiss++;
-	}
-
-	public int getTeleScore() {
-		return (this.teleHiScore * this.HI_POINTS) + 
-				(this.teleLoScore * this.LO_POINTS) + 
-				(this.trussToss * this.TRUSS_TOSS_POINTS) +
-				(this.tossCatch * this.TRUSS_CATCH_POINTS);
-	}
-	
-	public void addTeleHiScore() {
-		this.teleHiScore++;
-	}
-
-	public void addTeleHiMiss() {
-		this.teleHiMiss++;
-	}
-
-	public void addTeleLoScore() {
-		this.teleLoScore++;
-	}
-
-	public void addTeleLoMiss() {
-		this.teleLoMiss++;
-	}
-	
-	public int teleHiAttempts() {
-		return this.teleHiScore + this.teleHiMiss;
-	}
-	
-	public int teleLoAttempts() {
-		return this.teleLoScore + this.teleLoMiss;
-	}
-	
-	public int totalTeleAttempts() {
-		return this.teleHiAttempts() + this.teleLoAttempts();
-	}
-
-	public double getTeleShotPercentage() {
-		double teleAttempts = (double)this.totalTeleAttempts();
-		double retVal = 0.0;
-		if(teleAttempts > 0) {
-			retVal = 100.0 * ((this.teleHiScore + this.teleLoScore) / teleAttempts);
-		}
+	private Hashtable<String, Boolean> getBoolValueHash() {
+		Hashtable<String, Boolean> htBoolValues = new Hashtable<String, Boolean>();
+		htBoolValues.put(TeamMatchDBAdapter.COLUMN_NAME_MATCH_DATA_SAVED, this.tmDataSaved);
+		htBoolValues.put(TeamMatchDBAdapter.COLUMN_NAME_AUTO_MOVE, this.autoMove);
+		htBoolValues.put(TeamMatchDBAdapter.COLUMN_NAME_BROKE_DOWN, this.brokeDown);
+		htBoolValues.put(TeamMatchDBAdapter.COLUMN_NAME_NO_MOVE, this.noMove);
+		htBoolValues.put(TeamMatchDBAdapter.COLUMN_NAME_LOST_CONNECTION, this.lostConnection);
+		htBoolValues.put(TeamMatchDBAdapter.COLUMN_NAME_ROLE_SHOOTER, this.robotRole[ROBOT_ROLE.SHOOTER.id]);
+		htBoolValues.put(TeamMatchDBAdapter.COLUMN_NAME_ROLE_DEFENDER, this.robotRole[ROBOT_ROLE.DEFENDER.id]);
+		htBoolValues.put(TeamMatchDBAdapter.COLUMN_NAME_ROLE_PASSER, this.robotRole[ROBOT_ROLE.PASSER.id]);
+		htBoolValues.put(TeamMatchDBAdapter.COLUMN_NAME_ROLE_CATCHER, this.robotRole[ROBOT_ROLE.CATCHER.id]);
+		htBoolValues.put(TeamMatchDBAdapter.COLUMN_NAME_ROLE_GOALIE, this.robotRole[ROBOT_ROLE.GOALIE.id]);
+		htBoolValues.put(TeamMatchDBAdapter.COLUMN_NAME_BALL_CONTROL_GROUND_PICKUP, this.ballControl[BALL_CONTROL.GROUND_PICKUP.id]);
+		htBoolValues.put(TeamMatchDBAdapter.COLUMN_NAME_BALL_CONTROL_HUMAN_LOAD, this.ballControl[BALL_CONTROL.HUMAN_LOAD.id]);
+		htBoolValues.put(TeamMatchDBAdapter.COLUMN_NAME_BALL_CONTROL_HI_TO_LO, this.ballControl[BALL_CONTROL.HI_TO_LO.id]);
+		htBoolValues.put(TeamMatchDBAdapter.COLUMN_NAME_BALL_CONTROL_LO_TO_HI, this.ballControl[BALL_CONTROL.LO_TO_HI.id]);
+		htBoolValues.put(TeamMatchDBAdapter.COLUMN_NAME_BALL_CONTROL_HI_TO_HI, this.ballControl[BALL_CONTROL.HI_TO_HI.id]);
+		htBoolValues.put(TeamMatchDBAdapter.COLUMN_NAME_BALL_CONTROL_LO_TO_LO, this.ballControl[BALL_CONTROL.LO_TO_LO.id]);
 		
-		return retVal;
-		//return "0.0";
-	}
-	
-	public int getIntForBool(boolean boolVal) {
-		return (boolVal ? 1 : 0);
+		return htBoolValues;
 	}
 
 	public boolean save() {
 		this.savingData();
 		if(this.tmDBAdapter != null) {
 			try{
-				Hashtable<String, Integer> htIntValues = new Hashtable<String, Integer>();
-				htIntValues.put(TeamMatchDBAdapter.COLUMN_NAME_AUTO_SCORE, this.getAutoScore()); 
-				htIntValues.put(TeamMatchDBAdapter.COLUMN_NAME_TELE_SCORE, this.getTeleScore());
-				htIntValues.put(TeamMatchDBAdapter.COLUMN_NAME_AUTO_HI_SCORE, this.autoHiScore);
-				htIntValues.put(TeamMatchDBAdapter.COLUMN_NAME_AUTO_LO_SCORE, this.autoLoScore);
-				htIntValues.put(TeamMatchDBAdapter.COLUMN_NAME_AUTO_HI_MISS, this.autoHiMiss);
-				htIntValues.put(TeamMatchDBAdapter.COLUMN_NAME_AUTO_LO_MISS, this.autoLoMiss);
-				htIntValues.put(TeamMatchDBAdapter.COLUMN_NAME_AUTO_HI_HOT, this.autoHiHot);
-				htIntValues.put(TeamMatchDBAdapter.COLUMN_NAME_AUTO_LO_HOT, this.autoLoHot);
-				htIntValues.put(TeamMatchDBAdapter.COLUMN_NAME_AUTO_COLLECT, this.autoCollect);
-				htIntValues.put(TeamMatchDBAdapter.COLUMN_NAME_AUTO_COLLECT, this.autoDefend);
-				htIntValues.put(TeamMatchDBAdapter.COLUMN_NAME_TELE_HI_SCORE, this.teleHiScore);
-				htIntValues.put(TeamMatchDBAdapter.COLUMN_NAME_TELE_LO_SCORE, this.teleLoScore);
-				htIntValues.put(TeamMatchDBAdapter.COLUMN_NAME_TELE_HI_MISS, this.teleHiMiss);
-				htIntValues.put(TeamMatchDBAdapter.COLUMN_NAME_TELE_LO_MISS, this.teleLoMiss);
-				htIntValues.put(TeamMatchDBAdapter.COLUMN_NAME_TRUSS_TOSS, this.trussToss);
-				htIntValues.put(TeamMatchDBAdapter.COLUMN_NAME_TRUSS_MISS, this.trussMiss);
-				htIntValues.put(TeamMatchDBAdapter.COLUMN_NAME_TOSS_CATCH, this.tossCatch);
-				htIntValues.put(TeamMatchDBAdapter.COLUMN_NAME_TOSS_MISS, this.tossMiss);
-				htIntValues.put(TeamMatchDBAdapter.COLUMN_NAME_SHORT_PASS_SUCCESS, this.shortPassSuccess);
-				htIntValues.put(TeamMatchDBAdapter.COLUMN_NAME_SHORT_PASS_MISS, this.shortPassMiss);
-				htIntValues.put(TeamMatchDBAdapter.COLUMN_NAME_LONG_PASS_SUCCESS, this.longPassSuccess);
-				htIntValues.put(TeamMatchDBAdapter.COLUMN_NAME_LONG_PASS_MISS, this.longPassMiss);
-				
-//				Hashtable<String, Boolean> htBoolValues = new Hashtable<String, Boolean>();
-//				htBoolValues.put(TeamMatchDBAdapter.COLUMN_NAME_LONG_PASS_MISS, this.tmDataSaved);
-//				htBoolValues.put(TeamMatchDBAdapter.this.autoMove
-//						htBoolValues.put(TeamMatchDBAdapter. this.brokeDown
-//								htBoolValues.put(TeamMatchDBAdapter. this.noMove
-//										htBoolValues.put(TeamMatchDBAdapter. this.lostConnection
-				
+				Hashtable<String, Integer> htIntValues = getIntValueHash();
+				Hashtable<String, Boolean> htBoolValues = getBoolValueHash();
 				
 				for (ZONE z : ZONE.values()) {
 					FTSUtilities.printToConsole("TeamMatchData::save : Zone: " + z.name().toString() + "\nAssist: " + z.dbAssistColName +
@@ -485,7 +373,7 @@ public class TeamMatchData {
 				 * Create a Boolean hash like the int hash above to hold all of the Boolean values
 				 */
 
-				Boolean retVal = this.tmDBAdapter.updateTeamMatch(this.teamMatchID, this.teamNumber, this.matchNumber, this.tmDataSaved, this.autoMove, this.brokeDown, this.noMove, this.lostConnection, htIntValues);
+				Boolean retVal = this.tmDBAdapter.updateTeamMatch(this.teamMatchID, this.teamNumber, this.matchNumber, this.teamMatchNotes, htBoolValues, htIntValues);
 				FTSUtilities.printToConsole("Update Successful? : " + retVal.toString());
 				return retVal;
 			} catch (NumberFormatException e) {
@@ -508,13 +396,157 @@ public class TeamMatchData {
 		return this.tmDataSaved;
 	}
 
-	public void closeDB() {
+	public void loadTeamMatchData() {
+		FTSUtilities.printToConsole("TeamMatchData::loadTeamMatchData : Loading Data\n");
+		Cursor tmCursor = null;
+		/*
+		//this.statHash = new Hashtable<String, Integer>();
+		//this.statHash.put("autoHiScore", 0);
+		 */
 		try {
-			FTSUtilities.printToConsole("TeamMatchData::closeDB : CLOSING DB\n");
-			this.tmDBAdapter.close();
-		} catch (Exception e) {
-			FTSUtilities.printToConsole("TeamMatchData::closeDB : EXCEPTION when closing DB\n");
+			tmCursor = this.tmDBAdapter.getTeamMatch(this.teamMatchID);
+			
+			this.matchNumber = tmCursor.getString(tmCursor.getColumnIndexOrThrow(TeamMatchDBAdapter.COLUMN_NAME_MATCH_ID));
+			this.teamNumber = tmCursor.getString(tmCursor.getColumnIndexOrThrow(TeamMatchDBAdapter.COLUMN_NAME_TEAM_ID));
+			this.tmDataSaved = Boolean.parseBoolean(tmCursor.getString(tmCursor.getColumnIndexOrThrow(TeamMatchDBAdapter.COLUMN_NAME_MATCH_DATA_SAVED)));
+			
+			if(this.tmDataSaved) {
+				FTSUtilities.printToConsole("TeamMatchData::loadTeamMatchData : Loading Saved Data\n");
+				this.autoHiScore = tmCursor.getInt(tmCursor.getColumnIndexOrThrow(TeamMatchDBAdapter.COLUMN_NAME_AUTO_HI_SCORE));
+				this.autoHiHot = tmCursor.getInt(tmCursor.getColumnIndexOrThrow(TeamMatchDBAdapter.COLUMN_NAME_AUTO_HI_HOT));
+				this.autoHiMiss = tmCursor.getInt(tmCursor.getColumnIndexOrThrow(TeamMatchDBAdapter.COLUMN_NAME_AUTO_HI_MISS));
+				
+				this.autoLoScore = tmCursor.getInt(tmCursor.getColumnIndexOrThrow(TeamMatchDBAdapter.COLUMN_NAME_AUTO_LO_SCORE));
+				this.autoLoHot = tmCursor.getInt(tmCursor.getColumnIndexOrThrow(TeamMatchDBAdapter.COLUMN_NAME_AUTO_LO_HOT));
+				this.autoLoMiss = tmCursor.getInt(tmCursor.getColumnIndexOrThrow(TeamMatchDBAdapter.COLUMN_NAME_AUTO_LO_MISS));
+				
+				this.autoCollect = tmCursor.getInt(tmCursor.getColumnIndexOrThrow(TeamMatchDBAdapter.COLUMN_NAME_AUTO_COLLECT));
+				this.autoDefend = tmCursor.getInt(tmCursor.getColumnIndexOrThrow(TeamMatchDBAdapter.COLUMN_NAME_AUTO_DEFEND));
+				this.autoMove = Boolean.parseBoolean(tmCursor.getString(tmCursor.getColumnIndexOrThrow(TeamMatchDBAdapter.COLUMN_NAME_AUTO_MOVE)));
+				
+				this.teleHiScore = tmCursor.getInt(tmCursor.getColumnIndexOrThrow(TeamMatchDBAdapter.COLUMN_NAME_TELE_HI_SCORE));
+				this.teleHiMiss = tmCursor.getInt(tmCursor.getColumnIndexOrThrow(TeamMatchDBAdapter.COLUMN_NAME_TELE_HI_MISS));
+				
+				this.teleLoScore = tmCursor.getInt(tmCursor.getColumnIndexOrThrow(TeamMatchDBAdapter.COLUMN_NAME_TELE_LO_SCORE));
+				this.teleLoMiss = tmCursor.getInt(tmCursor.getColumnIndexOrThrow(TeamMatchDBAdapter.COLUMN_NAME_TELE_LO_MISS));
+				
+				for (ZONE z : ZONE.values()) {
+					this.zonePossessed[z.id] = (z.dbAssistColName != "") ? tmCursor.getInt(tmCursor.getColumnIndexOrThrow(z.dbAssistColName)) : -1;
+					this.zoneDefended[z.id] = tmCursor.getInt(tmCursor.getColumnIndexOrThrow(z.dbDefendColName));
+				}
+				
+				this.trussToss = tmCursor.getInt(tmCursor.getColumnIndexOrThrow(TeamMatchDBAdapter.COLUMN_NAME_TRUSS_TOSS));
+				this.trussMiss = tmCursor.getInt(tmCursor.getColumnIndexOrThrow(TeamMatchDBAdapter.COLUMN_NAME_TRUSS_MISS));
+				
+				this.tossCatch = tmCursor.getInt(tmCursor.getColumnIndexOrThrow(TeamMatchDBAdapter.COLUMN_NAME_TOSS_CATCH));
+				this.tossMiss = tmCursor.getInt(tmCursor.getColumnIndexOrThrow(TeamMatchDBAdapter.COLUMN_NAME_TRUSS_MISS));
+				
+				this.shortPassSuccess = tmCursor.getInt(tmCursor.getColumnIndexOrThrow(TeamMatchDBAdapter.COLUMN_NAME_SHORT_PASS_SUCCESS));
+				this.shortPassMiss = tmCursor.getInt(tmCursor.getColumnIndexOrThrow(TeamMatchDBAdapter.COLUMN_NAME_SHORT_PASS_MISS));
+				this.longPassSuccess = tmCursor.getInt(tmCursor.getColumnIndexOrThrow(TeamMatchDBAdapter.COLUMN_NAME_LONG_PASS_SUCCESS));
+				this.longPassMiss = tmCursor.getInt(tmCursor.getColumnIndexOrThrow(TeamMatchDBAdapter.COLUMN_NAME_LONG_PASS_MISS));
+				
+				this.brokeDown = Boolean.parseBoolean(tmCursor.getString(tmCursor.getColumnIndexOrThrow(TeamMatchDBAdapter.COLUMN_NAME_BROKE_DOWN)));
+				this.noMove = Boolean.parseBoolean(tmCursor.getString(tmCursor.getColumnIndexOrThrow(TeamMatchDBAdapter.COLUMN_NAME_NO_MOVE)));
+				this.lostConnection = Boolean.parseBoolean(tmCursor.getString(tmCursor.getColumnIndexOrThrow(TeamMatchDBAdapter.COLUMN_NAME_LOST_CONNECTION)));
+				
+				this.robotRole[ROBOT_ROLE.SHOOTER.id] = Boolean.parseBoolean(tmCursor.getString(tmCursor.getColumnIndexOrThrow(TeamMatchDBAdapter.COLUMN_NAME_ROLE_SHOOTER)));
+				this.robotRole[ROBOT_ROLE.DEFENDER.id] = Boolean.parseBoolean(tmCursor.getString(tmCursor.getColumnIndexOrThrow(TeamMatchDBAdapter.COLUMN_NAME_ROLE_DEFENDER)));
+				this.robotRole[ROBOT_ROLE.PASSER.id] = Boolean.parseBoolean(tmCursor.getString(tmCursor.getColumnIndexOrThrow(TeamMatchDBAdapter.COLUMN_NAME_ROLE_PASSER)));
+				this.robotRole[ROBOT_ROLE.CATCHER.id] = Boolean.parseBoolean(tmCursor.getString(tmCursor.getColumnIndexOrThrow(TeamMatchDBAdapter.COLUMN_NAME_ROLE_CATCHER)));
+				this.robotRole[ROBOT_ROLE.GOALIE.id] = Boolean.parseBoolean(tmCursor.getString(tmCursor.getColumnIndexOrThrow(TeamMatchDBAdapter.COLUMN_NAME_ROLE_GOALIE)));
+
+				this.startingLocation = STARTING_LOC.getLocForID(tmCursor.getInt(tmCursor.getColumnIndexOrThrow(TeamMatchDBAdapter.COLUMN_NAME_START_LOCATION)));
+
+				this.ballControl[BALL_CONTROL.GROUND_PICKUP.id] = Boolean.parseBoolean(tmCursor.getString(tmCursor.getColumnIndexOrThrow(TeamMatchDBAdapter.COLUMN_NAME_BALL_CONTROL_GROUND_PICKUP)));
+				this.ballControl[BALL_CONTROL.HUMAN_LOAD.id] = Boolean.parseBoolean(tmCursor.getString(tmCursor.getColumnIndexOrThrow(TeamMatchDBAdapter.COLUMN_NAME_BALL_CONTROL_HUMAN_LOAD)));
+				this.ballControl[BALL_CONTROL.HI_TO_LO.id] = Boolean.parseBoolean(tmCursor.getString(tmCursor.getColumnIndexOrThrow(TeamMatchDBAdapter.COLUMN_NAME_BALL_CONTROL_HI_TO_LO)));
+				this.ballControl[BALL_CONTROL.LO_TO_HI.id] = Boolean.parseBoolean(tmCursor.getString(tmCursor.getColumnIndexOrThrow(TeamMatchDBAdapter.COLUMN_NAME_BALL_CONTROL_LO_TO_HI)));
+				this.ballControl[BALL_CONTROL.HI_TO_HI.id] = Boolean.parseBoolean(tmCursor.getString(tmCursor.getColumnIndexOrThrow(TeamMatchDBAdapter.COLUMN_NAME_BALL_CONTROL_HI_TO_HI)));
+				this.ballControl[BALL_CONTROL.LO_TO_LO.id] = Boolean.parseBoolean(tmCursor.getString(tmCursor.getColumnIndexOrThrow(TeamMatchDBAdapter.COLUMN_NAME_BALL_CONTROL_LO_TO_LO)));
+				
+				this.teamMatchNotes = tmCursor.getString(tmCursor.getColumnIndexOrThrow(TeamMatchDBAdapter.COLUMN_NAME_TEAM_MATCH_NOTES));
+
+			} else {
+				FTSUtilities.printToConsole("TeamMatchData::loadTeamMatchData : No Saved Data : tmDataSaved:: " + this.tmDataSaved.toString() + "\n");
+			}
 		}
+		catch (SQLException e) {
+			e.printStackTrace();
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		if(tmCursor != null) {
+			tmCursor.close();
+		}
+	}
+	
+	/*************************************
+	 *									 *
+	 *             GETTERS				 *
+	 * 									 *
+	 *************************************/
+	public String getteamNumber() {
+		return this.teamNumber;
+	}
+	
+	public String getMatchNumber() {
+		return this.matchNumber;
+	}
+	
+	public int getAutoHiScore() {
+		int score = (this.autoHiScore * this.HI_POINTS);
+		score += (this.autoHiHot * this.AUTO_SCORE_HOT_BONUS);
+		return score;
+	}
+	
+	public int getAutoLoScore() {
+		int score = (this.autoLoScore * this.LO_POINTS);
+		score += (this.autoLoHot * this.AUTO_SCORE_HOT_BONUS);
+		return score;
+	}
+	
+	public int getAutoScore() {
+		return this.getAutoHiScore() + this.getAutoLoScore() + this.getAutoScoreBonus();
+	}
+	
+	public int getAutoScoreBonus() {
+		return (this.autoHiScore + this.autoLoScore) * this.AUTO_SCORE_BONUS;
+	}
+	
+	public int getTeleScore() {
+		return (this.teleHiScore * this.HI_POINTS) + 
+				(this.teleLoScore * this.LO_POINTS) + 
+				(this.trussToss * this.TRUSS_TOSS_POINTS) +
+				(this.tossCatch * this.TRUSS_CATCH_POINTS);
+	}
+	
+	public int teleHiAttempts() {
+		return this.teleHiScore + this.teleHiMiss;
+	}
+	
+	public int teleLoAttempts() {
+		return this.teleLoScore + this.teleLoMiss;
+	}
+	
+	public int totalTeleAttempts() {
+		return this.teleHiAttempts() + this.teleLoAttempts();
+	}
+
+	public double getTeleShotPercentage() {
+		double teleAttempts = (double)this.totalTeleAttempts();
+		double retVal = 0.0;
+		if(teleAttempts > 0) {
+			retVal = 100.0 * ((this.teleHiScore + this.teleLoScore) / teleAttempts);
+		}
+		
+		return retVal;
+	}
+	
+	public int getIntForBool(boolean boolVal) {
+		return (boolVal ? 1 : 0);
 	}
 
 	private int getDefensiveRating() {
@@ -522,8 +554,103 @@ public class TeamMatchData {
 		return retVal;
 	}
 
-	public void addAutoDefend() {
-		this.autoDefend++;
+	public int getZoneAssists(ZONE z) {
+		return this.zonePossessed[z.id];
+	}
+	
+	public int getZoneDefends(ZONE z) {
+		return this.zoneDefended[z.id];
+	}
+
+	public String getNoteText() {
+		return this.teamMatchNotes;
+	}
+	
+	public STARTING_LOC getStartingPosition() {
+		return this.startingLocation;
+	}
+	
+	public Boolean isRobotRoleChecked(ROBOT_ROLE rr) {
+		return this.robotRole[rr.id];
+	}
+	
+	public Boolean isBallControlChecked(BALL_CONTROL bc) {
+		return this.ballControl[bc.id];
+	}
+	
+	/*************************************
+	 *									 *
+	 *              SETTERS				 *
+	 * 									 *
+	 *************************************/
+	public void setStartingLoc(STARTING_LOC sl) {
+		FTSUtilities.printToConsole("TeamMatchData::setStartingLoc : Setting SL : " + sl.toString() + "\n");
+		this.startingLocation = sl;
+	}
+	
+	public void setMatchhNumber(String mnum) {
+		this.matchNumber = mnum;
+	}
+	
+	public void setTeamNumber(String tnum) {
+		this.teamNumber = tnum;
+	}
+	
+	public void clearStartingLoc() {
+		this.startingLocation = STARTING_LOC.FIELD_NOT_SET;
+	}
+
+	public void addRobotRole(ROBOT_ROLE role) {
+		this.robotRole[role.id] = true;
+	}
+	
+	public void removeRobotRole(ROBOT_ROLE role) {
+		this.robotRole[role.id] = false;
+	}
+
+	public void addBallControl(BALL_CONTROL bc) {
+		this.ballControl[bc.id] = true;
+	}
+	
+	public void removeBallControl(BALL_CONTROL bc) {
+		this.ballControl[bc.id] = false;
+	}
+	
+	public void setNoteText(CharSequence s) {
+		this.teamMatchNotes = s.toString();
+	}
+
+	/*************************************
+	 *									 *
+	 *           INCREMENTERS			 *
+	 * 									 *
+	 *************************************/
+
+	/*************************************
+	 *            AUTONOMOUS			 *
+	 *************************************/
+	public void addAutoHiScore() {
+		this.autoHiScore++;
+	}
+	
+	public void addHiHotBonus() {
+		this.autoHiHot++;
+	}
+
+	public void addAutoHiMiss() {
+		this.autoHiMiss++;
+	}
+
+	public void addAutoLoScore() {
+		this.autoLoScore++;
+	}
+
+	public void addLoHotBonus() {
+		this.autoLoHot++;
+	}
+	
+	public void addAutoLoMiss() {
+		this.autoLoMiss++;
 	}
 
 	public void movedInAuto() {
@@ -534,31 +661,215 @@ public class TeamMatchData {
 		this.autoCollect++;
 	}
 
-	public void addHiHotBonus() {
-		this.autoHiHot++;
+	public void addAutoDefend() {
+		this.autoDefend++;
+		defendedZone(ZONE.GOAL_ZONE);
 	}
 
-	public void addLoHotBonus() {
-		this.autoLoHot++;
+	/*************************************
+	 *              TELEOP	 			 *
+	 *************************************/
+	public void addTeleHiScore() {
+		this.teleHiScore++;
+	}
+
+	public void addTeleHiMiss() {
+		this.teleHiMiss++;
+	}
+
+	public void addTeleLoScore() {
+		this.teleLoScore++;
+	}
+
+	public void addTeleLoMiss() {
+		this.teleLoMiss++;
+	}
+	
+	public void addTeleLongPass() {
+		this.longPassSuccess++;
+	}
+	
+	public void addTeleLongPassMiss() {
+		this.longPassMiss++;
+	}
+	
+	public void addTeleShortPass() {
+		this.shortPassSuccess++;
+	}
+	
+	public void addTeleShortPassMiss() {
+		this.shortPassMiss++;
 	}
 	
 	public void defendedZone(ZONE z) {
 		this.zoneDefended[z.id]++;
 	}
 	
-	public void assistedZone(ZONE z) {
-		this.zoneAssisted[z.id]++;
+	public void possessedZone(ZONE z) {
+		this.zonePossessed[z.id]++;
 	}
 	
-	public int getZoneAssists(ZONE z) {
-		return this.zoneAssisted[z.id];
+	public void addTeleTrussToss() {
+		this.trussToss++;
 	}
 	
-	public int getZoneDefends(ZONE z) {
-		return this.zoneDefended[z.id];
+	public void addTeleTrussMiss() {
+		this.trussMiss++;
 	}
 	
-	public void setStartingLoc(STARTING_LOC sl) {
-		this.startingLocation = sl;
+	public void addTeleTossCatch() {
+		this.tossCatch++;
+	}
+	
+	public void addTeleTossMiss() {
+		this.tossMiss++;
+	}
+	
+	/*************************************
+	 *									 *
+	 *           DECREMENTERS			 *
+	 * 									 *
+	 *************************************/
+
+	/*************************************
+	 *            AUTONOMOUS			 *
+	 *************************************/
+	public void lowerAutoHiScore() {
+		if(this.autoHiScore > 0) {
+			this.autoHiScore--;
+		}
+	}
+	
+	public void lowerHiHotBonus() {
+		if(this.autoHiHot > 0) {
+			this.autoHiHot--;
+		}
+	}
+
+	public void lowerAutoHiMiss() {
+		if(this.autoHiMiss > 0) {
+			this.autoHiMiss--;
+		}
+	}
+
+	public void lowerAutoLoScore() {
+		if(this.autoLoScore > 0) {
+			this.autoLoScore--;
+		}
+	}
+
+	public void lowerLoHotBonus() {
+		if(this.autoLoHot > 0) {
+			this.autoLoHot--;
+		}
+	}
+	
+	public void lowerAutoLoMiss() {
+		if(this.autoLoMiss > 0) {
+			this.autoLoMiss--;
+		}
+	}
+
+	public void didNotMoveInAuto() {
+		this.autoMove = false;
+	}
+
+	public void lowerAutoCollect() {
+		if(this.autoCollect > 0) {
+			this.autoCollect--;
+		}
+	}
+
+	public void lowerAutoDefend() {
+		if(this.autoDefend > 0) {
+			this.autoDefend--;
+			didNotDefendZone(ZONE.GOAL_ZONE);
+		}
+	}
+
+	/*************************************
+	 *              TELEOP	 			 *
+	 *************************************/
+	public void lowerTeleHiScore() {
+		if(this.teleHiScore > 0) {
+			this.teleHiScore--;
+		}
+	}
+
+	public void lowerTeleHiMiss() {
+		if(this.teleHiMiss > 0) {
+			this.teleHiMiss--;
+		}
+	}
+
+	public void lowerTeleLoScore() {
+		if(this.teleLoScore > 0) {
+			this.teleLoScore--;
+		}
+	}
+
+	public void lowerTeleLoMiss() {
+		if(this.teleLoMiss > 0) {
+			this.teleLoMiss--;
+		}
+	}
+	
+	public void lowerTeleLongPass() {
+		if(this.longPassSuccess > 0) {
+			this.longPassSuccess--;
+		}
+	}
+	
+	public void lowerTeleLongPassMiss() {
+		if(this.longPassMiss > 0) {
+			this.longPassMiss--;		}
+	}
+	
+	public void lowerTeleShortPass() {
+		if(this.shortPassSuccess > 0) {
+			this.shortPassSuccess--;
+		}
+	}
+	
+	public void lowerTeleShortPassMiss() {
+		if(this.shortPassMiss > 0) {
+			this.shortPassMiss--;
+		}
+	}
+	
+	public void didNotDefendZone(ZONE z) {
+		if(this.zoneDefended[z.id] > 0) {
+			this.zoneDefended[z.id]--;
+		}
+	}
+	
+	public void didNotPossessZone(ZONE z) {
+		if(this.zonePossessed[z.id] > 0) {
+			this.zonePossessed[z.id]--;
+		}
+	}
+
+	public void lowerTeleTrussToss() {
+		if(this.trussToss > 0) {
+			this.trussToss--;
+		}
+	}
+	
+	public void lowerTeleTrussMiss() {
+		if(this.trussMiss > 0) {
+			this.trussMiss--;
+		}
+	}
+	
+	public void lowerTeleTossCatch() {
+		if(this.tossCatch > 0) {
+			this.tossCatch--;
+		}
+	}
+	
+	public void lowerTeleTossMiss() {
+		if(this.tossMiss > 0) {
+			this.tossMiss--;
+		}
 	}
 }

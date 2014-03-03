@@ -5,7 +5,7 @@
     android:background="@drawable/field_800x367_blue_on_left"
     android:columnCount="17"
     android:orientation="horizontal"
-    android:rowCount="12" >
+    android:rowCount="15" >
 
     <Space
         android:layout_width="80dp"
@@ -25,7 +25,8 @@
         android:layout_height="wrap_content"
         android:layout_column="2"
         android:layout_columnSpan="3"
-        android:layout_gravity="center"
+        android:layout_gravity="top|center_horizontal"
+        android:layout_marginTop="5dp"
         android:layout_row="0"
         android:gravity="left|center_vertical"
         android:text="@string/label_tele_score"
@@ -37,7 +38,8 @@
         android:layout_height="40dp"
         android:layout_column="5"
         android:layout_columnSpan="2"
-        android:layout_gravity="right|center_vertical"
+        android:layout_gravity="right|top"
+        android:layout_marginTop="5dp"
         android:layout_row="0"
         android:gravity="left|center_vertical"
         android:textAppearance="?android:attr/textAppearanceMedium" />
@@ -46,9 +48,10 @@
         android:id="@+id/txtTeleStat"
         android:layout_width="80dp"
         android:layout_height="40dp"
-        android:layout_column="9"
+        android:layout_column="7"
         android:layout_columnSpan="3"
-        android:layout_gravity="center"
+        android:layout_gravity="top|center_horizontal"
+        android:layout_marginTop="5dp"
         android:layout_row="0"
         android:textAppearance="?android:attr/textAppearanceMedium" />
 
@@ -57,8 +60,8 @@
         android:layout_column="4"
         android:layout_columnSpan="1"
         android:layout_gravity="right|center_vertical"
-        android:layout_row="6"
-        android:layout_rowSpan="2"
+        android:layout_row="3"
+        android:layout_rowSpan="1"
         android:text="@string/label_possess"
         android:textAppearance="?android:attr/textAppearanceMedium" />
 
@@ -67,7 +70,8 @@
         android:layout_column="4"
         android:layout_columnSpan="1"
         android:layout_gravity="right|center_vertical"
-        android:layout_row="3"
+        android:layout_row="6"
+        android:layout_rowSpan="2"
         android:text="@string/label_defend"
         android:textAppearance="?android:attr/textAppearanceMedium" />
 
@@ -78,7 +82,7 @@
         android:layout_column="0"
         android:layout_gravity="center"
         android:layout_marginLeft="4dp"
-        android:layout_row="9"
+        android:layout_row="10"
         android:layout_rowSpan="1"
         android:background="@android:drawable/btn_default"
         android:text="@string/text_button_lo_score" />
@@ -124,7 +128,7 @@
         android:layout_height="78dp"
         android:layout_column="5"
         android:layout_gravity="left|top"
-        android:layout_row="9"
+        android:layout_row="10"
         android:background="@android:drawable/btn_default"
         android:text="@string/text_button_truss_toss" />
 
@@ -134,7 +138,7 @@
         android:layout_height="78dp"
         android:layout_column="6"
         android:layout_gravity="left|top"
-        android:layout_row="9"
+        android:layout_row="10"
         android:background="@android:drawable/btn_default"
         android:text="@string/text_button_truss_miss" />
 
@@ -144,7 +148,7 @@
         android:layout_height="78dp"
         android:layout_column="7"
         android:layout_gravity="left|top"
-        android:layout_row="9"
+        android:layout_row="10"
         android:background="@android:drawable/btn_default"
         android:text="@string/text_button_catch_caught" />
 
@@ -154,23 +158,12 @@
         android:layout_height="78dp"
         android:layout_column="8"
         android:layout_gravity="left|top"
-        android:layout_row="9"
+        android:layout_row="10"
         android:background="@android:drawable/btn_default"
         android:text="@string/text_button_catch_miss" />
 
     <Button
-        android:id="@+id/btnAssistBlueZone"
-        android:layout_width="78dp"
-        android:layout_height="78dp"
-        android:layout_column="5"
-        android:layout_gravity="center"
-        android:layout_row="6"
-        android:layout_rowSpan="2"
-        android:background="@android:drawable/btn_default"
-        android:text="@string/text_button_blue" />
-
-    <Button
-        android:id="@+id/btnDefendBlueZone"
+        android:id="@+id/btnPossessBlueZone"
         android:layout_width="78dp"
         android:layout_height="78dp"
         android:layout_column="5"
@@ -181,13 +174,24 @@
         android:text="@string/text_button_blue" />
 
     <Button
-        android:id="@+id/btnAssistWhiteZone"
+        android:id="@+id/btnDefendBlueZone"
+        android:layout_width="78dp"
+        android:layout_height="78dp"
+        android:layout_column="5"
+        android:layout_gravity="center"
+        android:layout_row="6"
+        android:layout_rowSpan="2"
+        android:background="@android:drawable/btn_default"
+        android:text="@string/text_button_blue" />
+
+    <Button
+        android:id="@+id/btnPossessWhiteZone"
         android:layout_width="78dp"
         android:layout_height="78dp"
         android:layout_column="6"
         android:layout_columnSpan="2"
         android:layout_gravity="center"
-        android:layout_row="6"
+        android:layout_row="3"
         android:layout_rowSpan="2"
         android:background="@android:drawable/btn_default"
         android:text="@string/text_button_white" />
@@ -199,19 +203,19 @@
         android:layout_column="6"
         android:layout_columnSpan="2"
         android:layout_gravity="center"
-        android:layout_row="3"
+        android:layout_row="6"
         android:layout_rowSpan="2"
         android:background="@android:drawable/btn_default"
         android:text="@string/text_button_white" />
 
     <Button
-        android:id="@+id/btnAssistRedZone"
+        android:id="@+id/btnPossessRedZone"
         android:layout_width="78dp"
         android:layout_height="78dp"
         android:layout_column="8"
         android:layout_columnSpan="2"
         android:layout_gravity="center"
-        android:layout_row="6"
+        android:layout_row="3"
         android:layout_rowSpan="2"
         android:background="@android:drawable/btn_default"
         android:text="@string/text_button_red" />
@@ -223,7 +227,7 @@
         android:layout_column="8"
         android:layout_columnSpan="2"
         android:layout_gravity="center"
-        android:layout_row="3"
+        android:layout_row="6"
         android:layout_rowSpan="2"
         android:background="@android:drawable/btn_default"
         android:text="@string/text_button_red" />
@@ -235,7 +239,7 @@
         android:layout_column="11"
         android:layout_gravity="center"
         android:layout_marginLeft="50dp"
-        android:layout_row="3"
+        android:layout_row="6"
         android:layout_rowSpan="2"
         android:background="@android:drawable/btn_default"
         android:text="@string/text_button_goal" />
@@ -244,5 +248,56 @@
         android:layout_height="50dp"
         android:layout_column="1"
         android:layout_row="5" />
+
+    <Switch
+        android:id="@+id/switchUndo"
+        android:layout_column="9"
+        android:layout_columnSpan="3"
+        android:layout_gravity="top|center_horizontal"
+        android:layout_marginTop="5dp"
+        android:layout_row="0"
+        android:text="@string/text_button_Undo" />
+
+    <Button
+        android:id="@+id/btnTeleLongPass"
+        android:layout_width="78dp"
+        android:layout_height="78dp"
+        android:layout_column="1"
+        android:layout_gravity="left|top"
+        android:layout_row="10"
+        android:background="@android:drawable/btn_default"
+        android:text="@string/text_button_long_pass" />
+
+    <Button
+        android:id="@+id/btnTeleLongPassMiss"
+        android:layout_width="78dp"
+        android:layout_height="78dp"
+        android:layout_column="4"
+        android:layout_gravity="left|top"
+        android:layout_row="10"
+        android:background="@android:drawable/btn_default"
+        android:text="@string/text_button_long_pass_miss" />
+
+    <Button
+        android:id="@+id/btnTeleShortPass"
+        android:layout_width="78dp"
+        android:layout_height="78dp"
+        android:layout_column="10"
+        android:layout_columnSpan="1"
+        android:layout_gravity="left"
+        android:layout_row="10"
+        android:background="@android:drawable/btn_default"
+        android:text="@string/text_button_short_pass" />
+
+    <Button
+        android:id="@+id/btnTeleShortPassMiss"
+        android:layout_width="78dp"
+        android:layout_height="78dp"
+        android:layout_column="11"
+        android:layout_columnSpan="2"
+        android:layout_gravity="left"
+        android:layout_row="10"
+        android:background="@android:drawable/btn_default"
+        android:text="@string/text_button_short_pass_miss" />
 
 </GridLayout>

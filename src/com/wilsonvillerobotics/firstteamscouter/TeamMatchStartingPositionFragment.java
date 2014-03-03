@@ -22,7 +22,7 @@ public class TeamMatchStartingPositionFragment extends Fragment implements OnCli
 
 	private TeamMatchData tmData;
 	private int teamMatchID;
-	Hashtable<STARTING_LOC, Button> buttonHash;
+	Hashtable<STARTING_LOC, ToggleButton> buttonHash;
 	
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -32,7 +32,7 @@ public class TeamMatchStartingPositionFragment extends Fragment implements OnCli
     	
         View rootView = inflater.inflate(R.layout.fragment_team_match_starting_position, container, false);
         
-        buttonHash = new Hashtable<STARTING_LOC, Button>();
+        buttonHash = new Hashtable<STARTING_LOC, ToggleButton>();
         
         //txtWidth = (TextView) rootView.findViewById(R.id.txtWidth);
         //txtHeight = (TextView) rootView.findViewById(R.id.txtHeight);
@@ -61,8 +61,21 @@ public class TeamMatchStartingPositionFragment extends Fragment implements OnCli
 		btnStartRight.setOnClickListener(this);
 		buttonHash.put(STARTING_LOC.FIELD_RIGHT, btnStartRight);
 
+		updateToggleButtonStates();
+		
 		return rootView;
 	}
+    
+    private void updateToggleButtonStates() {
+    	FTSUtilities.printToConsole("TeamMatchStartingPositionFragment::updateToggleButtons\n");
+    	if(this.tmData != null) {
+    		STARTING_LOC startPos = this.tmData.getStartingPosition();
+    		FTSUtilities.printToConsole("TeamMatchStartingPositionFragment::updateToggleButtons : SL: " + startPos.toString() + "\n");
+    		if(startPos != STARTING_LOC.FIELD_NOT_SET) {
+    			this.buttonHash.get(startPos).setChecked(true);
+    		}
+    	}
+    }
     
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
@@ -132,6 +145,7 @@ public class TeamMatchStartingPositionFragment extends Fragment implements OnCli
 
 		for(STARTING_LOC l : buttonHash.keySet()) {
 			if(l != loc) {
+				FTSUtilities.printToConsole("TeamMatchStartingPositionFragment::resetToggleButtonsExcept : Resetting: " + l.toString() + "\n");
 				tempButton = (ToggleButton) buttonHash.get(l);
 				tempButton.setChecked(false);
 				tempButton.setPressed(false);
@@ -141,15 +155,17 @@ public class TeamMatchStartingPositionFragment extends Fragment implements OnCli
 	
 	private void setStartingLoc(STARTING_LOC sl) {
 		if(this.tmData != null) {
+			FTSUtilities.printToConsole("TeamMatchStartingPositionFragment::setStartingLoc : Setting SL in tmData: " + sl.toString() + "\n");
 			this.tmData.setStartingLoc(sl);
 		}
 	}
 	
 	private void setOrResetStartingLoc(STARTING_LOC sl, boolean isChecked) {
-		FTSUtilities.printToConsole("TeamMatchStartingPositionFragment::setOrResetStartingLoc : SL: " + sl.toString() + "\n");
 		if(isChecked) {
+			FTSUtilities.printToConsole("TeamMatchStartingPositionFragment::setOrResetStartingLoc : Setting SL: " + sl.toString() + "\n");
 			this.setStartingLoc(sl);
 		} else {
+			FTSUtilities.printToConsole("TeamMatchStartingPositionFragment::setOrResetStartingLoc : Resetting SL: " + sl.toString() + "\n");
 			this.setStartingLoc(STARTING_LOC.FIELD_NOT_SET);
 		}
 	}

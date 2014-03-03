@@ -1,13 +1,22 @@
 package com.wilsonvillerobotics.firstteamscouter;
 
+import java.util.Hashtable;
+
+import com.wilsonvillerobotics.firstteamscouter.TeamMatchData.STARTING_LOC;
+
 import android.app.ActionBar;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.CompoundButton;
+import android.widget.CompoundButton.OnCheckedChangeListener;
+import android.widget.Switch;
 import android.widget.TextView;
+import android.widget.ToggleButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 
@@ -16,50 +25,60 @@ public class TeamMatchAutoModeFragment extends Fragment implements OnClickListen
 	private Integer teamMatchID;
 	private TeamMatchData tmData;
 	
+	private Integer buttonIDs[] = {
+			R.id.btnAutoHiScoreHot,
+			R.id.btnAutoLoScoreHot,
+			R.id.btnAutoHiScoreCold,
+			R.id.btnAutoLoScoreCold,
+			R.id.btnAutoHiMiss,
+			R.id.btnAutoLoMiss,
+			R.id.btnAutoMove,
+			R.id.btnAutoCollect,
+			R.id.btnAutoDefend
+	};
+	
+	private Hashtable<Integer, Button> buttonHash;
+	
 	protected int autoScore;
 	protected TextView txtAutoScore;
+	protected Switch switchUndo;
+	
+	protected Boolean undo;
 	
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
     	
     	myTitle = "Auto Mode";
- 
+    	
     	this.teamMatchID = getArguments() != null ? getArguments().getInt("tmID") : -1;
     	
         View rootView = inflater.inflate(R.layout.fragment_team_match_automode, container, false);
+        
+        buttonHash = new Hashtable<Integer, Button>(); 
 
         txtAutoScore = (TextView) rootView.findViewById(R.id.txtAutoScore);
+
+        switchUndo = (Switch) rootView.findViewById(R.id.switchUndo);
+        switchUndo.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+
+			@Override
+			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+				undo = isChecked;
+				setButtonBackgrounds();
+			}
+        	
+        });
         
         this.updateAutoScore();
+        
+        this.undo = false;
 		
-		Button btnAutoHighScoreHot = (Button) rootView.findViewById(R.id.btnAutoHiScoreHot);
-		btnAutoHighScoreHot.setOnClickListener(this);
+        for(int ID : buttonIDs) {
+	        buttonHash.put(ID, (Button) rootView.findViewById(ID));
+	        buttonHash.get(ID).setOnClickListener(this);
+        }
 
-		Button btnAutoLowScoreHot = (Button) rootView.findViewById(R.id.btnAutoLoScoreHot);
-		btnAutoLowScoreHot.setOnClickListener(this);
-
-		Button btnAutoHighScoreCold = (Button) rootView.findViewById(R.id.btnAutoHiScoreCold);
-		btnAutoHighScoreCold.setOnClickListener(this);
-
-		Button btnAutoLowScoreCold = (Button) rootView.findViewById(R.id.btnAutoLoScoreCold);
-		btnAutoLowScoreCold.setOnClickListener(this);
-
-		Button btnAutoHiMiss = (Button) rootView.findViewById(R.id.btnAutoHiMiss);
-		btnAutoHiMiss.setOnClickListener(this);
-
-		Button btnAutoLoMiss = (Button) rootView.findViewById(R.id.btnAutoLoMiss);
-		btnAutoLoMiss.setOnClickListener(this);
-
-		Button btnAutoCollect = (Button) rootView.findViewById(R.id.btnAutoCollect);
-		btnAutoCollect.setOnClickListener(this);
-
-		Button btnAutoMove = (Button) rootView.findViewById(R.id.btnAutoMove);
-		btnAutoMove.setOnClickListener(this);
-
-		Button btnAutoDefend = (Button) rootView.findViewById(R.id.btnAutoDefend);
-		btnAutoDefend.setOnClickListener(this);
-		
         return rootView;
     }
     
@@ -118,44 +137,93 @@ public class TeamMatchAutoModeFragment extends Fragment implements OnClickListen
 	}
 
 	public void btnAutoHiScoreHotOnClick(View v) {
-		this.tmData.addAutoHiScore();
-		this.tmData.addHiHotBonus();
+		if(this.undo) {
+			this.tmData.lowerAutoHiScore();
+			this.tmData.lowerHiHotBonus();
+		} else {
+			this.tmData.addAutoHiScore();
+			this.tmData.addHiHotBonus();
+		}
 		updateAutoScore();
 	}
 	
 	public void btnAutoHiScoreColdOnClick(View v) {
-		this.tmData.addAutoHiScore();
+		if(this.undo) {
+			this.tmData.lowerAutoHiScore();
+		} else {
+			this.tmData.addAutoHiScore();
+		}
 		updateAutoScore();
 	}
 	
 	public void btnAutoLoScoreHotOnClick(View v) {
-		this.tmData.addAutoLoScore();
-		this.tmData.addLoHotBonus();
+		if(this.undo) {
+			this.tmData.lowerAutoLoScore();
+			this.tmData.lowerLoHotBonus();
+		} else {
+			this.tmData.addAutoLoScore();
+			this.tmData.addLoHotBonus();
+		}
 		updateAutoScore();
 	}
 	
 	public void btnAutoLoScoreColdOnClick(View v) {
-		this.tmData.addAutoLoScore();
+		if(this.undo) {
+			this.tmData.lowerAutoLoScore();
+		} else {
+			this.tmData.addAutoLoScore();
+		}
 		updateAutoScore();
 	}
 	
 	public void btnAutoHiMissOnClick(View v) {
-		this.tmData.addAutoHiMiss();
+		if(this.undo) {
+			this.tmData.lowerAutoHiMiss();
+		} else {
+			this.tmData.addAutoHiMiss();
+		}
 	}
 	
 	public void btnAutoLoMissOnClick(View v) {
-		this.tmData.addAutoLoMiss();
+		if(this.undo) {
+			this.tmData.lowerAutoLoMiss();
+		} else {
+			this.tmData.addAutoLoMiss();
+		}
 	}
 	
 	protected void btnAutoDefendOnClick(View v) {
-		this.tmData.addAutoDefend();
+		if(this.undo) {
+			this.tmData.lowerAutoDefend();	
+		} else {
+			this.tmData.addAutoDefend();
+		}
 	}
 
 	protected void btnAutoMoveOnClick(View v) {
-		this.tmData.movedInAuto();
+		if(this.undo) {
+			this.tmData.didNotMoveInAuto();
+		} else {
+			this.tmData.movedInAuto();
+		}
 	}
 
 	protected void btnAutoCollectOnClick(View v) {
-		this.tmData.addAutoCollect();
+		if(this.undo) {
+			this.tmData.lowerAutoCollect();
+		} else {
+			this.tmData.addAutoCollect();
+		}
+	}
+	
+	private void setButtonBackgrounds() {
+		int color = Color.LTGRAY;
+		if(this.undo) {
+			color = Color.DKGRAY;
+		}
+		
+		for(Integer bID : buttonHash.keySet()) {
+			this.buttonHash.get(bID).setBackgroundColor(color);
+		}
 	}
 }

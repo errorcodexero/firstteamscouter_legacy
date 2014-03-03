@@ -25,6 +25,11 @@
     <string name="text_button_white">White</string>
     <string name="text_button_blue">Blue</string>
     <string name="text_button_goal">Goal</string>
+    <string name="text_button_long_pass">Long Pass</string>
+    <string name="text_button_long_pass_miss">LPass Miss</string>
+    <string name="text_button_short_pass">Short Pass</string>
+    <string name="text_button_short_pass_miss">SPass Miss</string>
+    <string name="text_button_Undo">Undo</string>
     <string name="title_activity_enter_team_match_data">Enter Team Match Data</string>
     <string name="title_activity_team_informatrion">Team Information</string>
     <string name="title_activity_view_data">View Data</string>
@@ -35,11 +40,11 @@
     <string name="label_match_number">Match #: </string>
     <string name="label_auto_mode">Auto Mode: </string>
     <string name="label_auto_score">Auto Score: </string>
-    <string name="label_auto_hi">Auto Hi: </string>
-    <string name="label_auto_lo">Auto Lo: </string>
+    <string name="label_auto_hi">Auto Hi</string>
+    <string name="label_auto_lo">Auto Lo</string>
     <string name="label_tele_mode">Tele Mode: </string>
-    <string name="label_tele_hi">Tele Hi: </string>
-    <string name="label_tele_lo">Tele Lo: </string>
+    <string name="label_tele_hi">Tele Hi</string>
+    <string name="label_tele_lo">Tele Lo</string>
     <string name="label_tele_score">Tele Score: </string>
     <string name="label_final_score">Final Score: </string>
     <string name="label_offense">Offense</string>
