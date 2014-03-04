@@ -3,6 +3,7 @@
     <string name="action_settings">Settings</string>
     <string name="hello_world">Hello world!</string>
     <string name="text_button_view_team_data">View Team</string>
+    <string name="text_button_import_match_data">Import Match Data</string>
     <string name="text_button_enter_data">Enter Data</string>
     <string name="text_button_select_match">Select Match</string>
     <string name="text_button_submit_team_match">Submit</string>
@@ -57,6 +58,7 @@
 	<string name="text_default_team_select">Enter a new Team</string>
 	<string name="text_button_view_match_data">View Match Data</string>
 	<string name="title_activity_team_data_list">Team Data</string>
+	<string name="title_activity_import_match_data">Import Match Data</string>
 	<string name="title_activity_team_match_list">Select the Match &amp; Team</string>
 	<string name="text_button_delete_team">Delete Team</string>
 	<string name="text_button_start_left">Left</string>

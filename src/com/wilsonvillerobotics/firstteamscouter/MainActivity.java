@@ -12,10 +12,9 @@ import android.widget.Button;
 
 public class MainActivity extends Activity {
 
-	private Button EnterDataButton;
-	private Button ViewTeamDataButton;
-	private Button ViewMatchDataButton;
-	private Button SelectMatchTeamButton;
+	private Button btnViewTeamData;
+	private Button btnImportMatchData;
+	private Button btnSelectMatchTeam;
 	private DBAdapter mDBAdapter;
 	
     @Override
@@ -26,38 +25,27 @@ public class MainActivity extends Activity {
         
         this.mDBAdapter = new DBAdapter(this).open();
         
-        EnterDataButton = (Button) findViewById(R.id.btnEnterData);
-        ViewTeamDataButton = (Button) findViewById(R.id.btnViewTeamData);
-        ViewMatchDataButton = (Button) findViewById(R.id.btnViewMatchData);
-        SelectMatchTeamButton = (Button) findViewById(R.id.btnSelectMatchTeam);
+        btnViewTeamData = (Button) findViewById(R.id.btnViewTeamData);
+        btnImportMatchData = (Button) findViewById(R.id.btnViewMatchData);
+        btnSelectMatchTeam = (Button) findViewById(R.id.btnSelectMatchTeam);
         
-        EnterDataButton.setOnClickListener(new View.OnClickListener() {
+        btnViewTeamData.setOnClickListener(new View.OnClickListener() {
 			
 			@Override
 			public void onClick(View v) {
-				startActivity(new Intent(v.getContext(), EnterTeamMatchDataActivity.class));
-			}
-		});
-        
-        ViewTeamDataButton.setOnClickListener(new View.OnClickListener() {
-			
-			@Override
-			public void onClick(View v) {
-				//startActivity(new Intent(v.getContext(), ViewDataActivity.class));
 				startActivity(new Intent(v.getContext(), TeamDataListActivity.class));
 			}
 		});
         
-        ViewMatchDataButton.setOnClickListener(new View.OnClickListener() {
+        btnImportMatchData.setOnClickListener(new View.OnClickListener() {
 			
 			@Override
 			public void onClick(View v) {
-				//startActivity(new Intent(v.getContext(), ViewDataActivity.class));
-				startActivity(new Intent(v.getContext(), TeamInformationActivity.class));
+				startActivity(new Intent(v.getContext(), ImportMatchDataActivity.class));
 			}
 		});
 
-        SelectMatchTeamButton.setOnClickListener(new View.OnClickListener() {
+        btnSelectMatchTeam.setOnClickListener(new View.OnClickListener() {
 			
 			@Override
 			public void onClick(View v) {

@@ -3,6 +3,8 @@ package com.wilsonvillerobotics.firstteamscouter.utilities;
 import java.util.Hashtable;
 import java.util.Set;
 
+import android.os.Environment;
+
 public class FTSUtilities {
 
 	private static Boolean DEBUG = true;
@@ -43,5 +45,23 @@ public class FTSUtilities {
 	
 	public static String getTeamName(int tNum) {
 		return testTeamData.get(tNum);
+	}
+	
+	public static boolean isExternalStorageWritable() {
+	    String state = Environment.getExternalStorageState();
+	    if (Environment.MEDIA_MOUNTED.equals(state)) {
+	        return true;
+	    }
+	    return false;
+	}
+
+	/* Checks if external storage is available to at least read */
+	public static boolean isExternalStorageReadable() {
+	    String state = Environment.getExternalStorageState();
+	    if (Environment.MEDIA_MOUNTED.equals(state) ||
+	        Environment.MEDIA_MOUNTED_READ_ONLY.equals(state)) {
+	        return true;
+	    }
+	    return false;
 	}
 }
