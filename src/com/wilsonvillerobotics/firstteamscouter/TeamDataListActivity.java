@@ -28,7 +28,7 @@ public class TeamDataListActivity extends ListActivity {
 
           this.teamDataDBAdapter = new TeamDataDBAdapter(this).open();
           
-          //this.teamDataDBAdapter.populateTestData();
+          this.teamDataDBAdapter.populateTestData();
           
           Cursor cursor = this.teamDataDBAdapter.getAllTeamDataEntries();
           startManagingCursor(cursor);

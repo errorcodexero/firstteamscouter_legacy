@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStreamReader;
+import java.util.regex.Pattern;
 
 import com.wilsonvillerobotics.firstteamscouter.dbAdapters.MatchDataDBAdapter;
 import com.wilsonvillerobotics.firstteamscouter.dbAdapters.TeamMatchDBAdapter;
@@ -20,14 +21,19 @@ import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 public class ImportMatchDataActivity extends Activity {
 
+	protected static final int TIMER_RUNTIME = 10000; // in ms --> 10s
+	
 	private MatchDataDBAdapter mDataDBAdapter;
 	private TeamMatchDBAdapter tmDBAdapter;
 	private Button btnOK;
 	private TextView txtStatus;
+	protected ProgressBar mProgressBar;
+	protected boolean mbActive;
 	
 	//getExternalStorageState()
 
@@ -49,6 +55,7 @@ public class ImportMatchDataActivity extends Activity {
 		
 		txtStatus = (TextView) findViewById(R.id.txtStatus);
 	    txtStatus.setText("Press the 'Import' button to import matches from 'match_list_data.csv'\n");
+	    mProgressBar = (ProgressBar)findViewById(R.id.progressBar1);
 	    
 		btnOK = (Button) findViewById(R.id.btnImportMatchData);
 		btnOK.setOnClickListener(new View.OnClickListener() {
@@ -67,20 +74,75 @@ public class ImportMatchDataActivity extends Activity {
 				        	txtStatus.setText("File Found, Import Commencing\n");
 					        BufferedReader inputReader = new BufferedReader(
 					                new InputStreamReader(new FileInputStream(file)));
-					        String line = inputReader.readLine();
+					        String line = "";
+					        int lineCount = 0;
+					        inputReader.mark((int)file.length());
+//					        while((line = inputReader.readLine()) != null) {
+//					        	lineCount++;
+//					        }
+					        line = inputReader.readLine();
+					        if(!line.startsWith("Time")) {
+					        	inputReader.reset();
+					        }
+					        
+					        for(int i = 0; i < lineCount; i++) {
+					        	line = inputReader.readLine();
+					        	if(line == null) break;
+					        	
+					        	String lineArray[] = line.split(",");
+					        	if(lineArray.length > 7) {
+					        		
+					        	}
+					        }
 					        inputReader.close();
-					        FTSUtilities.printToConsole("ImportMatchDataActivity::btnOK.onClick :" + line + "\n"); 
+
+					        FTSUtilities.printToConsole("ImportMatchDataActivity::btnOK.onClick : numLines: " + lineCount + " : " + line + "\n"); 
 					        txtStatus.setText(txtStatus.getText() + "\n\n" + line);
 				        } else {
 				        	txtStatus.setText("ERROR: could not find file:\n" + file.toString());
 				        }
 				    }
 				} catch (Exception e) {
+					FTSUtilities.printToConsole("ImportMatchDataActivity::btnOK.onClick : ERROR");
 				    e.printStackTrace();
 				}
 			}
 		});
+		
+//		final Thread timerThread = new Thread() {
+//	          @Override
+//	          public void run() {
+//	              mbActive = true;
+//	              try {
+//	                  int waited = 0;
+//	                  while(mbActive && (waited < TIMER_RUNTIME)) {
+//	                      sleep(200);
+//	                      if(mbActive) {
+//	                          waited += 200;
+//	                          updateProgress(waited);
+//	                      }
+//	                  }
+//	          } catch(InterruptedException e) {
+//	              // do nothing
+//	          } finally {
+//	              onContinue();
+//	          }
+//	        }
+//	     };
+//	     timerThread.start();
 	}
+
+	public void updateProgress(final int timePassed) {
+       if(null != mProgressBar) {
+           // Ignore rounding error here
+           final int progress = mProgressBar.getMax() * timePassed / TIMER_RUNTIME;
+           mProgressBar.setProgress(progress);
+       }
+   }
+
+	public void onContinue() {
+	     // perform any final actions here
+   }
 
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
