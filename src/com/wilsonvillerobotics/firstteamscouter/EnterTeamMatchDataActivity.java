@@ -36,7 +36,7 @@ public class EnterTeamMatchDataActivity extends FragmentActivity implements Acti
 		viewState++;
 		
 		Intent intent = getIntent();
-		Integer teamMatchID = Integer.valueOf(intent.getStringExtra(TeamMatchDBAdapter.COLUMN_NAME_TEAM_MATCH_ID));
+		Integer teamMatchID = Integer.valueOf(intent.getStringExtra(TeamMatchDBAdapter._ID));
 		//String teamNumber = intent.getStringExtra(TeamMatchDBAdapter.COLUMN_NAME_TEAM_ID);
 		//String matchNumber = intent.getStringExtra(TeamMatchDBAdapter.COLUMN_NAME_MATCH_ID);
 		

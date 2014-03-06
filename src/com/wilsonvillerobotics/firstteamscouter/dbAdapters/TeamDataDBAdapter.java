@@ -113,6 +113,19 @@ public class TeamDataDBAdapter implements BaseColumns {
          */
     }
 
+    public long createTeamDataEntry(String team_number){
+        ContentValues args = new ContentValues();
+        args.put(COLUMN_NAME_TEAM_NUMBER, team_number);
+        return this.mDb.insert(TABLE_NAME, null, args);
+        /*
+        COLUMN_NAME_TEAM_ID, team_id
+		COLUMN_NAME_TEAM_NUMBER, team_number
+		COLUMN_NAME_TEAM_NAME, team_name
+		COLUMN_NAME_TEAM_LOCATION, team_location
+		COLUMN_NAME_TEAM_NUM_MEMBERS, num_team_members
+         */
+    }
+
     /**
      * Update the entry.
      * 

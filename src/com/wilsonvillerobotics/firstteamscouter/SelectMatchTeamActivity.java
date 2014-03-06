@@ -56,7 +56,7 @@ public class SelectMatchTeamActivity extends Activity {
 			}
 		});
 		
-		tmDBAdapter.populateTestData();
+		//tmDBAdapter.populateTestData();
 		populateMatchNumberSpinner();
 	}
 
@@ -167,14 +167,14 @@ public class SelectMatchTeamActivity extends Activity {
 		                public void onItemSelected(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
 		                	Cursor value = (Cursor)arg0.getItemAtPosition(arg2);
 		                    teamNumber = value.getString(value.getColumnIndex(TeamMatchDBAdapter.COLUMN_NAME_TEAM_ID));
-		                    String tmID = value.getString(value.getColumnIndex(TeamMatchDBAdapter.COLUMN_NAME_TEAM_MATCH_ID));
+		                    String tmID = value.getString(value.getColumnIndex(TeamMatchDBAdapter._ID));
 		                    // assuming string and if you want to get the value on click of list item
 		                    // do what you intend to do on click of listview row
 		                    teamMatchIntent = new Intent(arg1.getContext(), EnterTeamMatchDataActivity.class);
 		                    teamMatchIntent.putExtra("position", arg3);
 		                    teamMatchIntent.putExtra(TeamMatchDBAdapter.COLUMN_NAME_TEAM_ID, teamNumber);
 		                    teamMatchIntent.putExtra(TeamMatchDBAdapter.COLUMN_NAME_MATCH_ID, matchNumber);
-		                    teamMatchIntent.putExtra(TeamMatchDBAdapter.COLUMN_NAME_TEAM_MATCH_ID, tmID);
+		                    teamMatchIntent.putExtra(TeamMatchDBAdapter._ID, tmID);
 		                    //startActivityForResult(teamMatchIntent, 0);
 		                }
 

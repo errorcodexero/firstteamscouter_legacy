@@ -8,6 +8,7 @@ import java.io.InputStreamReader;
 import java.util.regex.Pattern;
 
 import com.wilsonvillerobotics.firstteamscouter.dbAdapters.MatchDataDBAdapter;
+import com.wilsonvillerobotics.firstteamscouter.dbAdapters.TeamDataDBAdapter;
 import com.wilsonvillerobotics.firstteamscouter.dbAdapters.TeamMatchDBAdapter;
 import com.wilsonvillerobotics.firstteamscouter.utilities.FTSUtilities;
 
@@ -30,6 +31,7 @@ public class ImportMatchDataActivity extends Activity {
 	
 	private MatchDataDBAdapter mDataDBAdapter;
 	private TeamMatchDBAdapter tmDBAdapter;
+	private TeamDataDBAdapter tDataDBAdapter;
 	private Button btnOK;
 	private TextView txtStatus;
 	protected ProgressBar mProgressBar;
@@ -47,10 +49,12 @@ public class ImportMatchDataActivity extends Activity {
 			FTSUtilities.printToConsole("ImportMatchDataActivity::onCreate : OPENING DB\n");
 			mDataDBAdapter = new MatchDataDBAdapter(this.getBaseContext()).open();
 			tmDBAdapter = new TeamMatchDBAdapter(this.getBaseContext()).open();
+			tDataDBAdapter = new TeamDataDBAdapter(this.getBaseContext()).open();
 		} catch(SQLException e) {
 			e.printStackTrace();
 			mDataDBAdapter = null;
 			tmDBAdapter = null;
+			tDataDBAdapter = null;
 		}
 		
 		txtStatus = (TextView) findViewById(R.id.txtStatus);
@@ -76,28 +80,48 @@ public class ImportMatchDataActivity extends Activity {
 					                new InputStreamReader(new FileInputStream(file)));
 					        String line = "";
 					        int lineCount = 0;
+					        int matchCount = 0;
+					        int teamCount = 0;
 					        inputReader.mark((int)file.length());
 //					        while((line = inputReader.readLine()) != null) {
 //					        	lineCount++;
 //					        }
 					        line = inputReader.readLine();
 					        if(!line.startsWith("Time")) {
+					        	FTSUtilities.printToConsole("ImportMatchDataActivity::btnOK.onClick : NO Heasder Row Detected");
 					        	inputReader.reset();
+					        } else {
+					        	FTSUtilities.printToConsole("ImportMatchDataActivity::btnOK.onClick : Heasder Row Detected");
 					        }
 					        
-					        for(int i = 0; i < lineCount; i++) {
-					        	line = inputReader.readLine();
+					        while((line = inputReader.readLine()) != null) {
 					        	if(line == null) break;
 					        	
+					        	lineCount += 1;
 					        	String lineArray[] = line.split(",");
+					        	
 					        	if(lineArray.length > 7) {
-					        		
+					        		//FTSUtilities.printToConsole("ImportMatchDataActivity::btnOK.onClick : " + lineArray[0] + ":" + lineArray[1] + ":" + lineArray[2] + ":" + lineArray[3] + ":" + lineArray[4] + ":" + lineArray[5] + ":" + lineArray[6] + ":" + lineArray[7]);
+					        		long matchID = mDataDBAdapter.createMatchData(lineArray[0], Integer.parseInt(lineArray[1]), lineArray[2], lineArray[3], lineArray[4], lineArray[5], lineArray[6], lineArray[7]);
+					        		if(matchID >= 0) {
+					        			matchCount += 1;
+					        		}
+					        		long teamMatchID = -1;
+					        		long teamID = -1;
+					        		for(int i = 2; i < 8; i++) {
+					        			teamID = tDataDBAdapter.createTeamDataEntry(lineArray[i]);
+					        			teamMatchID = tmDBAdapter.createTeamMatch(lineArray[i], matchID);
+					        			if(teamMatchID >= 0) {
+					        				teamCount += 1;
+					        			}
+					        		}
+					        	} else {
+					        		FTSUtilities.printToConsole("ImportMatchDataActivity::btnOK.onClick : line not in proper format: " + line);
 					        	}
 					        }
 					        inputReader.close();
 
-					        FTSUtilities.printToConsole("ImportMatchDataActivity::btnOK.onClick : numLines: " + lineCount + " : " + line + "\n"); 
-					        txtStatus.setText(txtStatus.getText() + "\n\n" + line);
+					        txtStatus.setText(txtStatus.getText() + "\nLines Parsed: " + lineCount + "\nMatches Created: " + matchCount + "\nTeamMatch Records Created: " + teamCount);
 				        } else {
 				        	txtStatus.setText("ERROR: could not find file:\n" + file.toString());
 				        }
@@ -161,6 +185,11 @@ public class ImportMatchDataActivity extends Activity {
         	tmDBAdapter = new TeamMatchDBAdapter(this.getBaseContext());
         }
         tmDBAdapter.open();
+
+        if(tDataDBAdapter == null) {
+        	tDataDBAdapter = new TeamDataDBAdapter(this.getBaseContext());
+        }
+        tDataDBAdapter.open();
     }
 
     @Override
@@ -190,6 +219,7 @@ public class ImportMatchDataActivity extends Activity {
         FTSUtilities.printToConsole("ImportMatchDataActivity::onStop : CLOSING DB\n");
         mDataDBAdapter.close();
         tmDBAdapter.close();
+        tDataDBAdapter.close();
     }
 
     @Override

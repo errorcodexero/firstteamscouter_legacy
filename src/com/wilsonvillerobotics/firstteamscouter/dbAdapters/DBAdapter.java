@@ -11,7 +11,7 @@ public class DBAdapter {
 
     public static final String DATABASE_NAME = "FIRSTTeamScouter"; //$NON-NLS-1$
 
-    public static final int DATABASE_VERSION = 3;
+    public static final int DATABASE_VERSION = 4;
     
     private static final int CREATE_TABLE_SQL = 0;
     private static final int DELETE_TABLE_SQL = 1;
@@ -84,16 +84,15 @@ public class DBAdapter {
 			"CREATE TABLE " + MatchDataDBAdapter.TABLE_NAME + " (" +
 			AUTO_INC_ID + 
 	        MatchDataDBAdapter.COLUMN_NAME_MATCH_DATA_ID + INT_TYPE + COMMA_SEP +
+	        MatchDataDBAdapter.COLUMN_NAME_MATCH_TIME + TEXT_TYPE + COMMA_SEP +
 	        MatchDataDBAdapter.COLUMN_NAME_MATCH_NUMBER + TEXT_TYPE + COMMA_SEP +
-	        MatchDataDBAdapter.COLUMN_NAME_MATCH_LOCATION + TEXT_TYPE + //COMMA_SEP +
-	        /*
+	        MatchDataDBAdapter.COLUMN_NAME_MATCH_LOCATION + TEXT_TYPE + COMMA_SEP +
 	        MatchDataDBAdapter.COLUMN_NAME_RED_TEAM_ONE_ID + TEXT_TYPE + COMMA_SEP +
 	        MatchDataDBAdapter.COLUMN_NAME_RED_TEAM_TWO_ID + TEXT_TYPE + COMMA_SEP +
 	        MatchDataDBAdapter.COLUMN_NAME_RED_TEAM_THREE_ID + TEXT_TYPE + COMMA_SEP +
 	        MatchDataDBAdapter.COLUMN_NAME_BLUE_TEAM_ONE_ID + TEXT_TYPE + COMMA_SEP +
 	        MatchDataDBAdapter.COLUMN_NAME_BLUE_TEAM_TWO_ID + TEXT_TYPE + COMMA_SEP +
 	        MatchDataDBAdapter.COLUMN_NAME_BLUE_TEAM_THREE_ID + TEXT_TYPE +
-			*/
 			");",
 			
 			"DROP TABLE IF EXISTS " + MatchDataDBAdapter.TABLE_NAME

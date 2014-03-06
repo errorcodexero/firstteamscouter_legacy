@@ -222,11 +222,11 @@ public class TeamMatchDBAdapter implements BaseColumns {
      * @param defensive_rating
      * @return rowId or -1 if failed
      */
-    public long createTeamMatch(int team_match_id, String team_id, String match_id) {
+    public long createTeamMatch(String team_id, long match_id) {
         ContentValues args = new ContentValues();
-        args.put(COLUMN_NAME_TEAM_MATCH_ID, team_match_id);
+        //args.put(COLUMN_NAME_TEAM_MATCH_ID, team_match_id);
         args.put(COLUMN_NAME_TEAM_ID, team_id);
-        args.put(COLUMN_NAME_MATCH_ID, match_id);
+        args.put(COLUMN_NAME_MATCH_ID, String.valueOf(match_id));
         args.put(COLUMN_NAME_MATCH_DATA_SAVED, Boolean.FALSE.toString());
         return this.mDb.insert(TABLE_NAME, null, args);
         /*
@@ -375,7 +375,7 @@ public class TeamMatchDBAdapter implements BaseColumns {
 	    	for(int i = 0; i < 6; i++) {
 	    		int id = (100 * teamOffset) + (matchNum * i) + matchNum;
 	    		int teamIndex = (i + teamOffset) % teamNums.size();
-	    		this.createTeamMatch(id, String.valueOf(teamNums.toArray()[teamIndex]), String.valueOf(matchNum));
+	    		this.createTeamMatch(String.valueOf(teamNums.toArray()[teamIndex]), matchNum);
 	    	}
 	    	if(++teamOffset >= teamNums.size()) {
 	    		teamOffset = 0;
