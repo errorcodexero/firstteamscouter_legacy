@@ -249,7 +249,7 @@ public class TeamMatchDBAdapter implements BaseColumns {
     		//int offensive_rating, int defensive_rating){
     	FTSUtilities.printToConsole("TeamMatchDBAdapter::updateTeamMatch\n");
         ContentValues args = new ContentValues();
-        args.put(COLUMN_NAME_TEAM_MATCH_ID, team_match_id);
+        args.put(_ID, team_match_id);
         args.put(COLUMN_NAME_TEAM_ID, team_id);
         args.put(COLUMN_NAME_MATCH_ID, match_id);
         args.put(COLUMN_NAME_TEAM_MATCH_NOTES, tmNotes);
@@ -271,7 +271,7 @@ public class TeamMatchDBAdapter implements BaseColumns {
         	args.put(key, intVals.get(key));
         }
         
-        String WHERE = TeamMatchDBAdapter.COLUMN_NAME_TEAM_MATCH_ID + "=" + team_match_id;
+        String WHERE = TeamMatchDBAdapter._ID + "=" + team_match_id;
         //WHERE += " AND " + TeamMatchDBAdapter.COLUMN_NAME_MATCH_ID + "=" + match_id;
         return this.mDb.update(TABLE_NAME, args, WHERE, null) >0; 
     }
@@ -284,7 +284,7 @@ public class TeamMatchDBAdapter implements BaseColumns {
     public Cursor getAllTeamMatches() {
 
         return this.mDb.query(TABLE_NAME, new String[] { _ID,
-        		COLUMN_NAME_TEAM_MATCH_ID, COLUMN_NAME_TEAM_ID, COLUMN_NAME_MATCH_ID,
+        		COLUMN_NAME_TEAM_ID, COLUMN_NAME_MATCH_ID,
         		COLUMN_NAME_AUTO_SCORE, COLUMN_NAME_TELE_SCORE,
         		}, null, null, null, null, null);
     }
@@ -296,8 +296,7 @@ public class TeamMatchDBAdapter implements BaseColumns {
      */
     public Cursor getAllMatchNumbers() {
         return this.mDb.query(TABLE_NAME, new String[] { _ID,
-        		COLUMN_NAME_TEAM_MATCH_ID, COLUMN_NAME_MATCH_ID},
-        		null, null, COLUMN_NAME_MATCH_ID, null, null);
+        		COLUMN_NAME_MATCH_ID}, null, null, COLUMN_NAME_MATCH_ID, null, null);
     }
 
     /**
@@ -307,8 +306,7 @@ public class TeamMatchDBAdapter implements BaseColumns {
      */
     public Cursor getTeamNumbersforMatch(String matchNum) {
         return this.mDb.query(TABLE_NAME, new String[] { _ID,
-        		COLUMN_NAME_TEAM_MATCH_ID, COLUMN_NAME_TEAM_ID},
-        		COLUMN_NAME_MATCH_ID + "=" + matchNum, null, null, null, null);
+        		COLUMN_NAME_TEAM_ID}, COLUMN_NAME_MATCH_ID + "=" + matchNum, null, null, null, null);
     }
     
     public Cursor getMatchesForTeam(String teamNum) {
@@ -342,7 +340,7 @@ public class TeamMatchDBAdapter implements BaseColumns {
     public Cursor getTeamMatch(int tmID) throws SQLException {
 
         Cursor mCursor = this.mDb.query(true, TABLE_NAME, this.allColumnNames,
-        		COLUMN_NAME_TEAM_MATCH_ID + "=" + tmID, null, null, null, null, null);
+        		_ID + "=" + tmID, null, null, null, null, null);
         if (mCursor != null) {
             mCursor.moveToFirst();
         }

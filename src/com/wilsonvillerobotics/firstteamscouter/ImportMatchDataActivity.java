@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStreamReader;
+import java.util.Arrays;
 import java.util.regex.Pattern;
 
 import com.wilsonvillerobotics.firstteamscouter.dbAdapters.MatchDataDBAdapter;
@@ -58,7 +59,7 @@ public class ImportMatchDataActivity extends Activity {
 		}
 		
 		txtStatus = (TextView) findViewById(R.id.txtStatus);
-	    txtStatus.setText("Press the 'Import' button to import matches from 'match_list_data.csv'\n");
+	    txtStatus.setText("Press the 'Import' button to import matches from 'match_list_data.csv'\nExpected format is:\nTime : Match Type : Match Number : Red1 : Red2 : Red3 : Blue1 : Blue2 : Blue3");
 	    mProgressBar = (ProgressBar)findViewById(R.id.progressBar1);
 	    
 		btnOK = (Button) findViewById(R.id.btnImportMatchData);
@@ -70,8 +71,7 @@ public class ImportMatchDataActivity extends Activity {
 				    String storageState = Environment.getExternalStorageState();
 				    if (storageState.equals(Environment.MEDIA_MOUNTED)) {
 				    	FTSUtilities.printToConsole("ImportMatchDataActivity::btnOK.onClick : getting file\n");
-				        File file = new File(getExternalFilesDir(null),
-				                "match_list_data.csv");
+				        File file = new File(getExternalFilesDir(null), "match_list_data.csv");
 				        FTSUtilities.printToConsole("ImportMatchDataActivity::btnOK.onClick : file " + ((file == null) ? "IS NULL" : "IS VALID") + "\n");
 				        
 				        if(file.exists() && file.isFile()) {
@@ -82,33 +82,38 @@ public class ImportMatchDataActivity extends Activity {
 					        int lineCount = 0;
 					        int matchCount = 0;
 					        int teamCount = 0;
+					        String lineArray[];
 					        inputReader.mark((int)file.length());
 //					        while((line = inputReader.readLine()) != null) {
 //					        	lineCount++;
 //					        }
 					        line = inputReader.readLine();
-					        if(!line.startsWith("Time")) {
+					        lineArray = line.split(",");
+					        String headerArray[] = {"Time", "Type", "#", "Red1", "Red2", "Red3", "Blue1", "Blue2", "Blue3"};
+					        
+					        if(lineArray[1].startsWith("Type")) {
+					        	FTSUtilities.printToConsole("ImportMatchDataActivity::btnOK.onClick : Header Row Detected");
+					        } else {
 					        	FTSUtilities.printToConsole("ImportMatchDataActivity::btnOK.onClick : NO Heasder Row Detected");
 					        	inputReader.reset();
-					        } else {
-					        	FTSUtilities.printToConsole("ImportMatchDataActivity::btnOK.onClick : Heasder Row Detected");
 					        }
 					        
 					        while((line = inputReader.readLine()) != null) {
 					        	if(line == null) break;
 					        	
 					        	lineCount += 1;
-					        	String lineArray[] = line.split(",");
+					        	lineArray = line.split(",");
 					        	
-					        	if(lineArray.length > 7) {
+					        	if(lineArray.length > 8) {
 					        		//FTSUtilities.printToConsole("ImportMatchDataActivity::btnOK.onClick : " + lineArray[0] + ":" + lineArray[1] + ":" + lineArray[2] + ":" + lineArray[3] + ":" + lineArray[4] + ":" + lineArray[5] + ":" + lineArray[6] + ":" + lineArray[7]);
-					        		long matchID = mDataDBAdapter.createMatchData(lineArray[0], Integer.parseInt(lineArray[1]), lineArray[2], lineArray[3], lineArray[4], lineArray[5], lineArray[6], lineArray[7]);
+					        		//Time : Type : MatchNum : Red1 : Red2 : Red3 : Blue1 : Blue2 : Blue3
+					        		long matchID = mDataDBAdapter.createMatchData(lineArray[0], lineArray[1], lineArray[2], lineArray[3], lineArray[4], lineArray[5], lineArray[6], lineArray[7], lineArray[8]);
 					        		if(matchID >= 0) {
 					        			matchCount += 1;
 					        		}
 					        		long teamMatchID = -1;
 					        		long teamID = -1;
-					        		for(int i = 2; i < 8; i++) {
+					        		for(int i = 2; i < 9; i++) {
 					        			teamID = tDataDBAdapter.createTeamDataEntry(lineArray[i]);
 					        			teamMatchID = tmDBAdapter.createTeamMatch(lineArray[i], matchID);
 					        			if(teamMatchID >= 0) {

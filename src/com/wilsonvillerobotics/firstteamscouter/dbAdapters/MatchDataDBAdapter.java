@@ -12,6 +12,7 @@ public class MatchDataDBAdapter implements BaseColumns {
 	public static final String TABLE_NAME = "match_data";
     public static final String COLUMN_NAME_MATCH_DATA_ID              = "match_id";
     public static final String COLUMN_NAME_MATCH_TIME 				  = "match_time";
+    public static final String COLUMN_NAME_MATCH_TYPE				  = "match_type";
     public static final String COLUMN_NAME_MATCH_NUMBER               = "match_number";
     public static final String COLUMN_NAME_MATCH_LOCATION             = "match_location";
 
@@ -90,11 +91,12 @@ public class MatchDataDBAdapter implements BaseColumns {
      * @return rowId or -1 if failed
      */
 
-    public long createMatchData(String match_time, int match_num, String red_one_id, String red_two_id, String red_three_id,
+    public long createMatchData(String match_time, String match_type, String match_num, String red_one_id, String red_two_id, String red_three_id,
     		String blue_one_id, String blue_two_id, String blue_three_id){
         ContentValues initialValues = new ContentValues();
         //initialValues.put(COLUMN_NAME_MATCH_DATA_ID, id);
         initialValues.put(COLUMN_NAME_MATCH_TIME, match_time);
+        initialValues.put(COLUMN_NAME_MATCH_TYPE, match_type);
         initialValues.put(COLUMN_NAME_MATCH_NUMBER, match_num);
         initialValues.put(COLUMN_NAME_RED_TEAM_ONE_ID, red_one_id);
         initialValues.put(COLUMN_NAME_RED_TEAM_TWO_ID, red_two_id);
@@ -125,7 +127,7 @@ public class MatchDataDBAdapter implements BaseColumns {
     public Cursor getAllMatchDataEntries() {
 
         return this.mDb.query(TABLE_NAME, new String[] { _ID,
-        		COLUMN_NAME_MATCH_TIME, COLUMN_NAME_MATCH_NUMBER, COLUMN_NAME_MATCH_LOCATION, 
+        		COLUMN_NAME_MATCH_TIME, COLUMN_NAME_MATCH_TYPE, COLUMN_NAME_MATCH_NUMBER, COLUMN_NAME_MATCH_LOCATION, 
         		COLUMN_NAME_RED_TEAM_ONE_ID, COLUMN_NAME_RED_TEAM_TWO_ID, COLUMN_NAME_RED_TEAM_THREE_ID,
         		COLUMN_NAME_BLUE_TEAM_ONE_ID, COLUMN_NAME_BLUE_TEAM_TWO_ID, COLUMN_NAME_BLUE_TEAM_THREE_ID
         		}, null, null, null, null, null);
@@ -142,7 +144,7 @@ public class MatchDataDBAdapter implements BaseColumns {
         Cursor mCursor =
 
         this.mDb.query(true, TABLE_NAME, new String[] { _ID, 
-        		COLUMN_NAME_MATCH_TIME, COLUMN_NAME_MATCH_NUMBER, COLUMN_NAME_MATCH_LOCATION, 
+        		COLUMN_NAME_MATCH_TIME, COLUMN_NAME_MATCH_TYPE, COLUMN_NAME_MATCH_NUMBER, COLUMN_NAME_MATCH_LOCATION, 
         		COLUMN_NAME_RED_TEAM_ONE_ID, COLUMN_NAME_RED_TEAM_TWO_ID, COLUMN_NAME_RED_TEAM_THREE_ID,
         		COLUMN_NAME_BLUE_TEAM_ONE_ID, COLUMN_NAME_BLUE_TEAM_TWO_ID, COLUMN_NAME_BLUE_TEAM_THREE_ID 
         		}, _ID + "=" + rowId, null, null, null, null, null);
@@ -161,11 +163,12 @@ public class MatchDataDBAdapter implements BaseColumns {
      * @param match_id
      * @return true if the entry was successfully updated, false otherwise
      */
-    public boolean updateMatchDataEntry(int id, String match_time, int match_num, int red_one_id, int red_two_id, int red_three_id,
+    public boolean updateMatchDataEntry(int id, String match_time, String match_type, int match_num, int red_one_id, int red_two_id, int red_three_id,
     		int blue_one_id, int blue_two_id, int blue_three_id){
         ContentValues args = new ContentValues();
     	args.put(_ID, id);
     	args.put(COLUMN_NAME_MATCH_TIME, match_time);
+    	args.put(COLUMN_NAME_MATCH_TYPE, match_type);
     	args.put(COLUMN_NAME_MATCH_NUMBER, match_num);
     	args.put(COLUMN_NAME_RED_TEAM_ONE_ID, red_one_id);
     	args.put(COLUMN_NAME_RED_TEAM_TWO_ID, red_two_id);

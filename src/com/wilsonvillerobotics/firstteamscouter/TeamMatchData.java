@@ -2,12 +2,17 @@ package com.wilsonvillerobotics.firstteamscouter;
 
 //import java.util.Hashtable;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.OutputStream;
 import java.util.Hashtable;
 
 import android.content.Context;
 import android.database.Cursor;
 import android.database.SQLException;
+import android.os.Environment;
 import android.widget.TextView;
+import android.content.ContextWrapper;
 
 import com.wilsonvillerobotics.firstteamscouter.dbAdapters.TeamMatchDBAdapter;
 import com.wilsonvillerobotics.firstteamscouter.utilities.FTSUtilities;
@@ -328,6 +333,78 @@ public class TeamMatchData {
 		return htIntValues;
 	}
 	
+	private String getIntCSVHeader() {
+		String retVal = "";
+		retVal += TeamMatchDBAdapter.COLUMN_NAME_START_LOCATION + ",";
+		retVal += TeamMatchDBAdapter.COLUMN_NAME_AUTO_SCORE + ","; 
+		retVal += TeamMatchDBAdapter.COLUMN_NAME_AUTO_HI_SCORE + ",";
+		retVal += TeamMatchDBAdapter.COLUMN_NAME_AUTO_HI_HOT + ",";
+		retVal += TeamMatchDBAdapter.COLUMN_NAME_AUTO_HI_MISS + ",";
+		retVal += TeamMatchDBAdapter.COLUMN_NAME_AUTO_LO_SCORE + ",";
+		retVal += TeamMatchDBAdapter.COLUMN_NAME_AUTO_LO_HOT + ",";
+		retVal += TeamMatchDBAdapter.COLUMN_NAME_AUTO_LO_MISS + ",";
+		retVal += TeamMatchDBAdapter.COLUMN_NAME_AUTO_COLLECT + ",";
+		retVal += TeamMatchDBAdapter.COLUMN_NAME_AUTO_COLLECT + ",";
+		retVal += TeamMatchDBAdapter.COLUMN_NAME_TELE_SCORE + ",";
+		retVal += TeamMatchDBAdapter.COLUMN_NAME_TELE_HI_SCORE + ",";
+		retVal += TeamMatchDBAdapter.COLUMN_NAME_TELE_HI_MISS + ",";
+		retVal += TeamMatchDBAdapter.COLUMN_NAME_TELE_LO_SCORE + ",";
+		retVal += TeamMatchDBAdapter.COLUMN_NAME_TELE_LO_MISS + ",";
+		retVal += TeamMatchDBAdapter.COLUMN_NAME_ASSIST_RED + ",";
+		retVal += TeamMatchDBAdapter.COLUMN_NAME_ASSIST_WHITE + ",";
+		retVal += TeamMatchDBAdapter.COLUMN_NAME_ASSIST_BLUE + ",";
+		retVal += TeamMatchDBAdapter.COLUMN_NAME_DEFEND_RED + ",";
+		retVal += TeamMatchDBAdapter.COLUMN_NAME_DEFEND_WHITE + ",";
+		retVal += TeamMatchDBAdapter.COLUMN_NAME_DEFEND_BLUE + ",";
+		retVal += TeamMatchDBAdapter.COLUMN_NAME_DEFEND_GOAL + ",";
+		retVal += TeamMatchDBAdapter.COLUMN_NAME_TRUSS_TOSS + ",";
+		retVal += TeamMatchDBAdapter.COLUMN_NAME_TRUSS_MISS + ",";
+		retVal += TeamMatchDBAdapter.COLUMN_NAME_TOSS_CATCH + ",";
+		retVal += TeamMatchDBAdapter.COLUMN_NAME_TOSS_MISS + ",";
+		retVal += TeamMatchDBAdapter.COLUMN_NAME_SHORT_PASS_SUCCESS + ",";
+		retVal += TeamMatchDBAdapter.COLUMN_NAME_SHORT_PASS_MISS + ",";
+		retVal += TeamMatchDBAdapter.COLUMN_NAME_LONG_PASS_SUCCESS + ",";
+		retVal += TeamMatchDBAdapter.COLUMN_NAME_LONG_PASS_MISS + ",";
+		
+		return retVal;
+	}
+	
+	private String getIntCSVString() {
+		String retVal = "";
+		retVal += this.startingLocation.id + ",";
+		retVal += this.getAutoScore() + ","; 
+		retVal += this.autoHiScore + ",";
+		retVal += this.autoHiHot + ",";
+		retVal += this.autoHiMiss + ",";
+		retVal += this.autoLoScore + ",";
+		retVal += this.autoLoHot + ",";
+		retVal += this.autoLoMiss + ",";
+		retVal += this.autoCollect + ",";
+		retVal += this.autoDefend + ",";
+		retVal += this.getTeleScore() + ",";
+		retVal += this.teleHiScore + ",";
+		retVal += this.teleHiMiss + ",";
+		retVal += this.teleLoScore + ",";
+		retVal += this.teleLoMiss + ",";
+		retVal += this.getZoneAssists(ZONE.RED_ZONE) + ",";
+		retVal += this.getZoneAssists(ZONE.WHITE_ZONE) + ",";
+		retVal += this.getZoneAssists(ZONE.BLUE_ZONE) + ",";
+		retVal += this.getZoneDefends(ZONE.RED_ZONE) + ",";
+		retVal += this.getZoneDefends(ZONE.WHITE_ZONE) + ",";
+		retVal += this.getZoneDefends(ZONE.BLUE_ZONE) + ",";
+		retVal += this.getZoneDefends(ZONE.GOAL_ZONE) + ",";
+		retVal += this.trussToss + ",";
+		retVal += this.trussMiss + ",";
+		retVal += this.tossCatch + ",";
+		retVal += this.tossMiss + ",";
+		retVal += this.shortPassSuccess + ",";
+		retVal += this.shortPassMiss + ",";
+		retVal += this.longPassSuccess + ",";
+		retVal += this.longPassMiss + ",";
+		
+		return retVal;
+	}
+	
 	private Hashtable<String, Boolean> getBoolValueHash() {
 		Hashtable<String, Boolean> htBoolValues = new Hashtable<String, Boolean>();
 		htBoolValues.put(TeamMatchDBAdapter.COLUMN_NAME_MATCH_DATA_SAVED, this.tmDataSaved);
@@ -348,6 +425,50 @@ public class TeamMatchData {
 		htBoolValues.put(TeamMatchDBAdapter.COLUMN_NAME_BALL_CONTROL_LO_TO_LO, this.ballControl[BALL_CONTROL.LO_TO_LO.id]);
 		
 		return htBoolValues;
+	}
+
+	private String getBoolCSVHeader() {
+		String retVal = "";
+		retVal += TeamMatchDBAdapter.COLUMN_NAME_MATCH_DATA_SAVED + ",";
+		retVal += TeamMatchDBAdapter.COLUMN_NAME_AUTO_MOVE + ",";
+		retVal += TeamMatchDBAdapter.COLUMN_NAME_BROKE_DOWN + ",";
+		retVal += TeamMatchDBAdapter.COLUMN_NAME_NO_MOVE + ",";
+		retVal += TeamMatchDBAdapter.COLUMN_NAME_LOST_CONNECTION + ",";
+		retVal += TeamMatchDBAdapter.COLUMN_NAME_ROLE_SHOOTER + ",";
+		retVal += TeamMatchDBAdapter.COLUMN_NAME_ROLE_DEFENDER + ",";
+		retVal += TeamMatchDBAdapter.COLUMN_NAME_ROLE_PASSER + ",";
+		retVal += TeamMatchDBAdapter.COLUMN_NAME_ROLE_CATCHER + ",";
+		retVal += TeamMatchDBAdapter.COLUMN_NAME_ROLE_GOALIE + ",";
+		retVal += TeamMatchDBAdapter.COLUMN_NAME_BALL_CONTROL_GROUND_PICKUP + ",";
+		retVal += TeamMatchDBAdapter.COLUMN_NAME_BALL_CONTROL_HUMAN_LOAD + ",";
+		retVal += TeamMatchDBAdapter.COLUMN_NAME_BALL_CONTROL_HI_TO_LO + ",";
+		retVal += TeamMatchDBAdapter.COLUMN_NAME_BALL_CONTROL_LO_TO_HI + ",";
+		retVal += TeamMatchDBAdapter.COLUMN_NAME_BALL_CONTROL_HI_TO_HI + ",";
+		retVal += TeamMatchDBAdapter.COLUMN_NAME_BALL_CONTROL_LO_TO_LO + ",";
+		
+		return retVal;
+	}
+
+	private String getBoolCSVString() {
+		String retVal = "";
+		retVal += this.tmDataSaved + ",";
+		retVal += this.autoMove + ",";
+		retVal += this.brokeDown + ",";
+		retVal += this.noMove + ",";
+		retVal += this.lostConnection + ",";
+		retVal += this.robotRole[ROBOT_ROLE.SHOOTER.id] + ",";
+		retVal += this.robotRole[ROBOT_ROLE.DEFENDER.id] + ",";
+		retVal += this.robotRole[ROBOT_ROLE.PASSER.id] + ",";
+		retVal += this.robotRole[ROBOT_ROLE.CATCHER.id] + ",";
+		retVal += this.robotRole[ROBOT_ROLE.GOALIE.id] + ",";
+		retVal += this.ballControl[BALL_CONTROL.GROUND_PICKUP.id] + ",";
+		retVal += this.ballControl[BALL_CONTROL.HUMAN_LOAD.id] + ",";
+		retVal += this.ballControl[BALL_CONTROL.HI_TO_LO.id] + ",";
+		retVal += this.ballControl[BALL_CONTROL.LO_TO_HI.id] + ",";
+		retVal += this.ballControl[BALL_CONTROL.HI_TO_HI.id] + ",";
+		retVal += this.ballControl[BALL_CONTROL.LO_TO_LO.id] + ",";
+		
+		return retVal;
 	}
 
 	public boolean save() {
@@ -374,6 +495,32 @@ public class TeamMatchData {
 				 */
 
 				Boolean retVal = this.tmDBAdapter.updateTeamMatch(this.teamMatchID, this.teamNumber, this.matchNumber, this.teamMatchNotes, htBoolValues, htIntValues);
+				
+				try {
+				    String storageState = Environment.getExternalStorageState();
+				    if (retVal && storageState.equals(Environment.MEDIA_MOUNTED)) {
+				    	String fileName =  "match_" + this.matchNumber + "_team_" + this.teamNumber +"_data.csv";
+				        File file = new File(context.getExternalFilesDir(null), fileName);
+				        FTSUtilities.printToConsole("TeamMatchData::save : file " + ((file == null) ? "IS NULL" : "IS VALID") + "\n");
+				        
+				        if(file.exists()) {
+				        	file.delete();
+				        }
+			        	FileOutputStream fo = new FileOutputStream(file);              
+		        	    String csvOut = TeamMatchDBAdapter._ID + "," + TeamMatchDBAdapter.COLUMN_NAME_TEAM_ID + ",";
+		        	    csvOut +=  TeamMatchDBAdapter.COLUMN_NAME_MATCH_ID + "," + TeamMatchDBAdapter.COLUMN_NAME_TEAM_MATCH_NOTES + ",";
+		        	    csvOut += getIntCSVHeader();
+		        	    csvOut += getBoolCSVHeader() + "\n";
+		        	    csvOut += this.teamMatchID + "," + this.teamNumber + "," + this.matchNumber + "," + this.teamMatchNotes + ",";
+		        	    csvOut += getIntCSVString();
+		        	    csvOut += getBoolCSVString();
+			        	fo.write(csvOut.getBytes());
+		        	    fo.close();
+				    }
+				}
+				catch(Exception e) {
+					FTSUtilities.printToConsole("TeamMatchData::save : Exception accessing file");
+				}
 				FTSUtilities.printToConsole("Update Successful? : " + retVal.toString());
 				return retVal;
 			} catch (NumberFormatException e) {

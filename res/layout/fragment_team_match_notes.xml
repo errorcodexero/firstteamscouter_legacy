@@ -5,7 +5,7 @@
 	android:orientation="horizontal" >
 	
 	<RelativeLayout
-	    android:layout_width="300dp"
+	    android:layout_width="400dp"
 	    android:layout_height="match_parent"
 	    android:orientation="vertical" >
 
@@ -40,7 +40,7 @@
 	        android:textOn="Didn&apos;t Move" />
 
 	    <LinearLayout
-	        android:layout_width="wrap_content"
+	        android:layout_width="175dp"
 	        android:layout_height="wrap_content"
 	        android:layout_alignParentLeft="true"
 	        android:layout_below="@+id/tbtnNoMove"
@@ -57,7 +57,7 @@
 
 	        <CheckBox
 	            android:id="@+id/chkRobotRolePasser"
-	            android:layout_width="100dp"
+	            android:layout_width="175dp"
 	            android:layout_height="25dp"
 	            android:text="Passer" />
 
@@ -88,8 +88,8 @@
 	    </LinearLayout>
 
 	    <LinearLayout
-	        android:layout_width="wrap_content"
-	        android:layout_height="match_parent"
+	        android:layout_width="175dp"
+	        android:layout_height="wrap_content"
 	        android:layout_alignParentRight="true"
 	        android:layout_below="@+id/tbtnNoMove"
 	        android:layout_marginRight="25dp"
@@ -105,45 +105,39 @@
 
 	        <CheckBox
 	            android:id="@+id/chkBallControlGroundPickup"
-	            android:layout_width="115dp"
+	            android:layout_width="175dp"
 	            android:layout_height="25dp"
-	            android:text="Ground Pickup"
-	            android:textSize="11dip" />
+	            android:text="Ground Pickup" />
 
 	        <CheckBox
 	            android:id="@+id/chkBallControlHumanLoad"
-	            android:layout_width="115dp"
+	            android:layout_width="175dp"
 	            android:layout_height="25dp"
-	            android:text="Human Load"
-	            android:textSize="11dip" />
+	            android:text="Human Load" />
 
 	        <CheckBox
 	            android:id="@+id/chkBallControlHiToLo"
-	            android:layout_width="115dp"
+	            android:layout_width="175dp"
 	            android:layout_height="25dp"
-	            android:text="Hi to Lo"
-	            android:textSize="11dip" />
+	            android:text="Hi to Lo" />
 
 	        <CheckBox
 	            android:id="@+id/chkBallControlLoToHi"
-	            android:layout_width="115dp"
+	            android:layout_width="175dp"
 	            android:layout_height="25dp"
-	            android:text="Lo to Hi"
-	            android:textSize="11dip" />
+	            android:text="Lo to Hi" />
 
 	        <CheckBox
 	            android:id="@+id/chkBallControlHiToHi"
-	            android:layout_width="115dp"
+	            android:layout_width="175dp"
 	            android:layout_height="25dp"
-	            android:text="Hi to Hi"
-	            android:textSize="11dip" />
+	            android:text="Hi to Hi" />
 
 	        <CheckBox
 	            android:id="@+id/chkBallControlLoToLo"
-	            android:layout_width="115dp"
+	            android:layout_width="175dp"
 	            android:layout_height="25dp"
-	            android:text="Lo to Lo"
-	            android:textSize="11dip" />
+	            android:text="Lo to Lo" />
 
 	    </LinearLayout>
 

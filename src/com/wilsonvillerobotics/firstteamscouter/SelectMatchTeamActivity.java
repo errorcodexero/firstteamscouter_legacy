@@ -151,7 +151,7 @@ public class SelectMatchTeamActivity extends Activity {
             		
 	            	Cursor teamNumbers = tmDBAdapter.getTeamNumbersforMatch(matchNumber);
 	            	
-	            	String[] teamFromColumns = new String[] {TeamMatchDBAdapter.COLUMN_NAME_TEAM_ID, TeamMatchDBAdapter.COLUMN_NAME_TEAM_MATCH_ID};
+	            	String[] teamFromColumns = new String[] {TeamMatchDBAdapter.COLUMN_NAME_TEAM_ID, TeamMatchDBAdapter._ID};
 	        		int[] teamToControlIDs = new int[] {android.R.id.text1, android.R.id.text2};
 	            	
 	        		SimpleCursorAdapter teamCA = new SimpleCursorAdapter(arg0.getContext(), android.R.layout.simple_spinner_item, teamNumbers,
