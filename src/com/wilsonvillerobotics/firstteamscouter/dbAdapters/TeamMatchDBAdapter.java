@@ -296,7 +296,7 @@ public class TeamMatchDBAdapter implements BaseColumns {
      */
     public Cursor getAllMatchNumbers() {
         return this.mDb.query(TABLE_NAME, new String[] { _ID,
-        		COLUMN_NAME_MATCH_ID}, null, null, COLUMN_NAME_MATCH_ID, null, null);
+        		COLUMN_NAME_MATCH_ID}, null, null, COLUMN_NAME_MATCH_ID, null, COLUMN_NAME_MATCH_ID + " ASC");
     }
 
     /**
@@ -306,7 +306,7 @@ public class TeamMatchDBAdapter implements BaseColumns {
      */
     public Cursor getTeamNumbersforMatch(String matchNum) {
         return this.mDb.query(TABLE_NAME, new String[] { _ID,
-        		COLUMN_NAME_TEAM_ID}, COLUMN_NAME_MATCH_ID + "=" + matchNum, null, null, null, null);
+        		COLUMN_NAME_TEAM_ID}, COLUMN_NAME_MATCH_ID + "=" + matchNum, null, null, null, COLUMN_NAME_TEAM_ID + " ASC");
     }
     
     public Cursor getMatchesForTeam(String teamNum) {

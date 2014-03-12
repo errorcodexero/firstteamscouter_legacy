@@ -169,7 +169,7 @@ public class TeamDataDBAdapter implements BaseColumns {
         Cursor mCursor = this.mDb.query(TABLE_NAME, new String[] { _ID,
         		COLUMN_NAME_TEAM_ID, COLUMN_NAME_TEAM_NUMBER, COLUMN_NAME_TEAM_NAME,
         		COLUMN_NAME_TEAM_LOCATION, COLUMN_NAME_TEAM_NUM_MEMBERS
-        		}, null, null, null, null, null);
+        		}, null, null, null, null, COLUMN_NAME_TEAM_ID + " ASC");
         FTSUtilities.printToConsole("TeamDataDBAdapter::getAllTeamDataEntries : Cursor Size : " + mCursor.getCount() + "\n");
         return mCursor;
     }
