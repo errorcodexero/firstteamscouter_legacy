@@ -1,9 +1,18 @@
 package com.wilsonvillerobotics.firstteamscouter.utilities;
 
+import java.io.File;
 import java.util.Hashtable;
 import java.util.Set;
 
+import android.app.Activity;
+import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
+import android.content.ContentValues;
+import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Environment;
+import android.view.View;
 
 public class FTSUtilities {
 
@@ -54,7 +63,7 @@ public class FTSUtilities {
 	    }
 	    return false;
 	}
-
+	
 	/* Checks if external storage is available to at least read */
 	public static boolean isExternalStorageReadable() {
 	    String state = Environment.getExternalStorageState();
@@ -63,5 +72,39 @@ public class FTSUtilities {
 	        return true;
 	    }
 	    return false;
+	}
+	
+	public static boolean initializeBluetooth(Activity activity) {
+		BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+		if (mBluetoothAdapter == null) {
+		    // Device does not support Bluetooth
+			return false;
+		}
+		
+		int REQUEST_ENABLE_BT = 1;
+		
+		if (!mBluetoothAdapter.isEnabled()) {
+		    Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+		    activity.startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
+		}
+		
+		
+		return false;
+	}
+	
+	public static Uri sendFileByBluetooth(Context context, String filePath, String btDeviceAddress) {
+		//BluetoothAdapter btAdapter = BluetoothAdapter.getDefaultAdapter();
+		
+		//BluetoothDevice device = btAdapter.getRemoteDevice(btDeviceAddress);
+		//String filePath = Environment.getExternalStorageDirectory().toString() + "/file.jpg";
+
+		ContentValues values = new ContentValues();
+		values.put(BluetoothShare.URI, Uri.fromFile(new File(filePath)).toString());
+		values.put(BluetoothShare.DESTINATION, btDeviceAddress); // device.getAddress());
+		values.put(BluetoothShare.DIRECTION, BluetoothShare.DIRECTION_OUTBOUND);
+		Long ts = System.currentTimeMillis();
+		values.put(BluetoothShare.TIMESTAMP, ts);
+		Uri contentUri = context.getContentResolver().insert(BluetoothShare.CONTENT_URI, values);
+		return contentUri;
 	}
 }

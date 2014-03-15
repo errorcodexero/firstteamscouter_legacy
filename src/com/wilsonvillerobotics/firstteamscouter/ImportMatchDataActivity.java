@@ -11,11 +11,13 @@ import java.util.regex.Pattern;
 import com.wilsonvillerobotics.firstteamscouter.dbAdapters.MatchDataDBAdapter;
 import com.wilsonvillerobotics.firstteamscouter.dbAdapters.TeamDataDBAdapter;
 import com.wilsonvillerobotics.firstteamscouter.dbAdapters.TeamMatchDBAdapter;
+//import com.wilsonvillerobotics.firstteamscouter.BluetoothSetupActivity;
 import com.wilsonvillerobotics.firstteamscouter.utilities.FTSUtilities;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.database.SQLException;
 import android.os.Bundle;
 import android.os.Environment;
@@ -37,6 +39,9 @@ public class ImportMatchDataActivity extends Activity {
 	private TextView txtStatus;
 	protected ProgressBar mProgressBar;
 	protected boolean mbActive;
+	
+	private Button btnConfigureBluetooth;
+	private Intent bluetoothIntent;
 	
 	//getExternalStorageState()
 
@@ -135,6 +140,16 @@ public class ImportMatchDataActivity extends Activity {
 					FTSUtilities.printToConsole("ImportMatchDataActivity::btnOK.onClick : ERROR");
 				    e.printStackTrace();
 				}
+			}
+		});
+		
+		btnConfigureBluetooth = (Button) findViewById(R.id.btnConfigureBluetooth);
+		btnConfigureBluetooth.setOnClickListener(new View.OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				bluetoothIntent = new Intent(getBaseContext(), BluetoothSetupActivity.class);
+				startActivity(bluetoothIntent);
 			}
 		});
 		

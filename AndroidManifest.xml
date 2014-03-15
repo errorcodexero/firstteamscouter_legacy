@@ -8,6 +8,10 @@
         android:minSdkVersion="14"
         android:targetSdkVersion="18" />
 	<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+	<uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
+    <uses-permission android:name="android.permission.BLUETOOTH" />
+    <uses-permission android:name="android.permission.ACCESS_BLUETOOTH_SHARE" />
+    
 	
     <application
         android:allowBackup="true"
@@ -49,6 +53,7 @@
         </activity>
         <activity android:name="TeamMatchDataListActivity"></activity>
         <activity android:name="TeamMatchInformationActivity"></activity>
-    </application>
+        <activity android:name="BluetoothSetupActivity"></activity>
+        </application>
 
 </manifest>

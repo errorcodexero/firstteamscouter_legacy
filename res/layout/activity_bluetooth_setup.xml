@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <Button
+        android:id="@+id/btnRemoteBluetoothConnection"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Set Remote Bluetooth Connection" />
+
+    <TextView
+        android:id="@+id/txtRemoteBluetoothConnection"
+        android:layout_width="450dp"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge" />
+
+    <Spinner
+        android:id="@+id/spinBluetoothDevices"
+        android:layout_width="450dp"
+        android:layout_height="wrap_content" />
+
+    <Button
+        android:id="@+id/btnConnectToBluetoothDevice"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Connect to Bluetooth Device" />
+
+    <TextView
+        android:id="@+id/txtBluetoothConnectionStatus"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Not Connected"
+        android:textAppearance="?android:attr/textAppearanceLarge" />
+
+</LinearLayout>
