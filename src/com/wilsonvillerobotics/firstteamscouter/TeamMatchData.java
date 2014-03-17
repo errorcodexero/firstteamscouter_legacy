@@ -4,6 +4,7 @@ package com.wilsonvillerobotics.firstteamscouter;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Hashtable;
 
@@ -24,6 +25,9 @@ public class TeamMatchData {
 	private int LO_POINTS = 1;
 	private int TRUSS_TOSS_POINTS = 10;
 	private int TRUSS_CATCH_POINTS = 10;
+	private String tabletID;
+	private String saveFileName;
+	protected String COMMA = ",";
 	
 	public enum ROBOT_ROLE {
 		SHOOTER (0, "Shooter"),
@@ -194,11 +198,14 @@ public class TeamMatchData {
     protected Boolean ballControl[];
 
 
-	public TeamMatchData(Context c, int tmID) { //, String tnum, String mnum) {
+	public TeamMatchData(Context c, String tID, int tmID) { //, String tnum, String mnum) {
 		this.context = c;
+		this.tabletID = tID;
 		this.teamMatchID = tmID;
 		this.teamNumber = ""; //tnum;
 		this.matchNumber = ""; //mnum;
+		
+		this.saveFileName = this.tabletID + "_match_data_export";
 		
 		//this.statHash = new Hashtable<String, Integer>();
 		//this.statHash.put("autoHiScore", 0);
@@ -335,72 +342,72 @@ public class TeamMatchData {
 	
 	private String getIntCSVHeader() {
 		String retVal = "";
-		retVal += TeamMatchDBAdapter.COLUMN_NAME_START_LOCATION + ",";
-		retVal += TeamMatchDBAdapter.COLUMN_NAME_AUTO_SCORE + ","; 
-		retVal += TeamMatchDBAdapter.COLUMN_NAME_AUTO_HI_SCORE + ",";
-		retVal += TeamMatchDBAdapter.COLUMN_NAME_AUTO_HI_HOT + ",";
-		retVal += TeamMatchDBAdapter.COLUMN_NAME_AUTO_HI_MISS + ",";
-		retVal += TeamMatchDBAdapter.COLUMN_NAME_AUTO_LO_SCORE + ",";
-		retVal += TeamMatchDBAdapter.COLUMN_NAME_AUTO_LO_HOT + ",";
-		retVal += TeamMatchDBAdapter.COLUMN_NAME_AUTO_LO_MISS + ",";
-		retVal += TeamMatchDBAdapter.COLUMN_NAME_AUTO_COLLECT + ",";
-		retVal += TeamMatchDBAdapter.COLUMN_NAME_AUTO_COLLECT + ",";
-		retVal += TeamMatchDBAdapter.COLUMN_NAME_TELE_SCORE + ",";
-		retVal += TeamMatchDBAdapter.COLUMN_NAME_TELE_HI_SCORE + ",";
-		retVal += TeamMatchDBAdapter.COLUMN_NAME_TELE_HI_MISS + ",";
-		retVal += TeamMatchDBAdapter.COLUMN_NAME_TELE_LO_SCORE + ",";
-		retVal += TeamMatchDBAdapter.COLUMN_NAME_TELE_LO_MISS + ",";
-		retVal += TeamMatchDBAdapter.COLUMN_NAME_ASSIST_RED + ",";
-		retVal += TeamMatchDBAdapter.COLUMN_NAME_ASSIST_WHITE + ",";
-		retVal += TeamMatchDBAdapter.COLUMN_NAME_ASSIST_BLUE + ",";
-		retVal += TeamMatchDBAdapter.COLUMN_NAME_DEFEND_RED + ",";
-		retVal += TeamMatchDBAdapter.COLUMN_NAME_DEFEND_WHITE + ",";
-		retVal += TeamMatchDBAdapter.COLUMN_NAME_DEFEND_BLUE + ",";
-		retVal += TeamMatchDBAdapter.COLUMN_NAME_DEFEND_GOAL + ",";
-		retVal += TeamMatchDBAdapter.COLUMN_NAME_TRUSS_TOSS + ",";
-		retVal += TeamMatchDBAdapter.COLUMN_NAME_TRUSS_MISS + ",";
-		retVal += TeamMatchDBAdapter.COLUMN_NAME_TOSS_CATCH + ",";
-		retVal += TeamMatchDBAdapter.COLUMN_NAME_TOSS_MISS + ",";
-		retVal += TeamMatchDBAdapter.COLUMN_NAME_SHORT_PASS_SUCCESS + ",";
-		retVal += TeamMatchDBAdapter.COLUMN_NAME_SHORT_PASS_MISS + ",";
-		retVal += TeamMatchDBAdapter.COLUMN_NAME_LONG_PASS_SUCCESS + ",";
-		retVal += TeamMatchDBAdapter.COLUMN_NAME_LONG_PASS_MISS + ",";
+		retVal += TeamMatchDBAdapter.COLUMN_NAME_START_LOCATION + COMMA;
+		retVal += TeamMatchDBAdapter.COLUMN_NAME_AUTO_SCORE + COMMA; 
+		retVal += TeamMatchDBAdapter.COLUMN_NAME_AUTO_HI_SCORE + COMMA;
+		retVal += TeamMatchDBAdapter.COLUMN_NAME_AUTO_HI_HOT + COMMA;
+		retVal += TeamMatchDBAdapter.COLUMN_NAME_AUTO_HI_MISS + COMMA;
+		retVal += TeamMatchDBAdapter.COLUMN_NAME_AUTO_LO_SCORE + COMMA;
+		retVal += TeamMatchDBAdapter.COLUMN_NAME_AUTO_LO_HOT + COMMA;
+		retVal += TeamMatchDBAdapter.COLUMN_NAME_AUTO_LO_MISS + COMMA;
+		retVal += TeamMatchDBAdapter.COLUMN_NAME_AUTO_COLLECT + COMMA;
+		retVal += TeamMatchDBAdapter.COLUMN_NAME_AUTO_COLLECT + COMMA;
+		retVal += TeamMatchDBAdapter.COLUMN_NAME_TELE_SCORE + COMMA;
+		retVal += TeamMatchDBAdapter.COLUMN_NAME_TELE_HI_SCORE + COMMA;
+		retVal += TeamMatchDBAdapter.COLUMN_NAME_TELE_HI_MISS + COMMA;
+		retVal += TeamMatchDBAdapter.COLUMN_NAME_TELE_LO_SCORE + COMMA;
+		retVal += TeamMatchDBAdapter.COLUMN_NAME_TELE_LO_MISS + COMMA;
+		retVal += TeamMatchDBAdapter.COLUMN_NAME_ASSIST_RED + COMMA;
+		retVal += TeamMatchDBAdapter.COLUMN_NAME_ASSIST_WHITE + COMMA;
+		retVal += TeamMatchDBAdapter.COLUMN_NAME_ASSIST_BLUE + COMMA;
+		retVal += TeamMatchDBAdapter.COLUMN_NAME_DEFEND_RED + COMMA;
+		retVal += TeamMatchDBAdapter.COLUMN_NAME_DEFEND_WHITE + COMMA;
+		retVal += TeamMatchDBAdapter.COLUMN_NAME_DEFEND_BLUE + COMMA;
+		retVal += TeamMatchDBAdapter.COLUMN_NAME_DEFEND_GOAL + COMMA;
+		retVal += TeamMatchDBAdapter.COLUMN_NAME_TRUSS_TOSS + COMMA;
+		retVal += TeamMatchDBAdapter.COLUMN_NAME_TRUSS_MISS + COMMA;
+		retVal += TeamMatchDBAdapter.COLUMN_NAME_TOSS_CATCH + COMMA;
+		retVal += TeamMatchDBAdapter.COLUMN_NAME_TOSS_MISS + COMMA;
+		retVal += TeamMatchDBAdapter.COLUMN_NAME_SHORT_PASS_SUCCESS + COMMA;
+		retVal += TeamMatchDBAdapter.COLUMN_NAME_SHORT_PASS_MISS + COMMA;
+		retVal += TeamMatchDBAdapter.COLUMN_NAME_LONG_PASS_SUCCESS + COMMA;
+		retVal += TeamMatchDBAdapter.COLUMN_NAME_LONG_PASS_MISS;
 		
 		return retVal;
 	}
 	
 	private String getIntCSVString() {
 		String retVal = "";
-		retVal += this.startingLocation.id + ",";
-		retVal += this.getAutoScore() + ","; 
-		retVal += this.autoHiScore + ",";
-		retVal += this.autoHiHot + ",";
-		retVal += this.autoHiMiss + ",";
-		retVal += this.autoLoScore + ",";
-		retVal += this.autoLoHot + ",";
-		retVal += this.autoLoMiss + ",";
-		retVal += this.autoCollect + ",";
-		retVal += this.autoDefend + ",";
-		retVal += this.getTeleScore() + ",";
-		retVal += this.teleHiScore + ",";
-		retVal += this.teleHiMiss + ",";
-		retVal += this.teleLoScore + ",";
-		retVal += this.teleLoMiss + ",";
-		retVal += this.getZoneAssists(ZONE.RED_ZONE) + ",";
-		retVal += this.getZoneAssists(ZONE.WHITE_ZONE) + ",";
-		retVal += this.getZoneAssists(ZONE.BLUE_ZONE) + ",";
-		retVal += this.getZoneDefends(ZONE.RED_ZONE) + ",";
-		retVal += this.getZoneDefends(ZONE.WHITE_ZONE) + ",";
-		retVal += this.getZoneDefends(ZONE.BLUE_ZONE) + ",";
-		retVal += this.getZoneDefends(ZONE.GOAL_ZONE) + ",";
-		retVal += this.trussToss + ",";
-		retVal += this.trussMiss + ",";
-		retVal += this.tossCatch + ",";
-		retVal += this.tossMiss + ",";
-		retVal += this.shortPassSuccess + ",";
-		retVal += this.shortPassMiss + ",";
-		retVal += this.longPassSuccess + ",";
-		retVal += this.longPassMiss + ",";
+		retVal += this.startingLocation.id + COMMA;
+		retVal += this.getAutoScore() + COMMA; 
+		retVal += this.autoHiScore + COMMA;
+		retVal += this.autoHiHot + COMMA;
+		retVal += this.autoHiMiss + COMMA;
+		retVal += this.autoLoScore + COMMA;
+		retVal += this.autoLoHot + COMMA;
+		retVal += this.autoLoMiss + COMMA;
+		retVal += this.autoCollect + COMMA;
+		retVal += this.autoDefend + COMMA;
+		retVal += this.getTeleScore() + COMMA;
+		retVal += this.teleHiScore + COMMA;
+		retVal += this.teleHiMiss + COMMA;
+		retVal += this.teleLoScore + COMMA;
+		retVal += this.teleLoMiss + COMMA;
+		retVal += this.getZoneAssists(ZONE.RED_ZONE) + COMMA;
+		retVal += this.getZoneAssists(ZONE.WHITE_ZONE) + COMMA;
+		retVal += this.getZoneAssists(ZONE.BLUE_ZONE) + COMMA;
+		retVal += this.getZoneDefends(ZONE.RED_ZONE) + COMMA;
+		retVal += this.getZoneDefends(ZONE.WHITE_ZONE) + COMMA;
+		retVal += this.getZoneDefends(ZONE.BLUE_ZONE) + COMMA;
+		retVal += this.getZoneDefends(ZONE.GOAL_ZONE) + COMMA;
+		retVal += this.trussToss + COMMA;
+		retVal += this.trussMiss + COMMA;
+		retVal += this.tossCatch + COMMA;
+		retVal += this.tossMiss + COMMA;
+		retVal += this.shortPassSuccess + COMMA;
+		retVal += this.shortPassMiss + COMMA;
+		retVal += this.longPassSuccess + COMMA;
+		retVal += this.longPassMiss;
 		
 		return retVal;
 	}
@@ -429,44 +436,44 @@ public class TeamMatchData {
 
 	private String getBoolCSVHeader() {
 		String retVal = "";
-		retVal += TeamMatchDBAdapter.COLUMN_NAME_MATCH_DATA_SAVED + ",";
-		retVal += TeamMatchDBAdapter.COLUMN_NAME_AUTO_MOVE + ",";
-		retVal += TeamMatchDBAdapter.COLUMN_NAME_BROKE_DOWN + ",";
-		retVal += TeamMatchDBAdapter.COLUMN_NAME_NO_MOVE + ",";
-		retVal += TeamMatchDBAdapter.COLUMN_NAME_LOST_CONNECTION + ",";
-		retVal += TeamMatchDBAdapter.COLUMN_NAME_ROLE_SHOOTER + ",";
-		retVal += TeamMatchDBAdapter.COLUMN_NAME_ROLE_DEFENDER + ",";
-		retVal += TeamMatchDBAdapter.COLUMN_NAME_ROLE_PASSER + ",";
-		retVal += TeamMatchDBAdapter.COLUMN_NAME_ROLE_CATCHER + ",";
-		retVal += TeamMatchDBAdapter.COLUMN_NAME_ROLE_GOALIE + ",";
-		retVal += TeamMatchDBAdapter.COLUMN_NAME_BALL_CONTROL_GROUND_PICKUP + ",";
-		retVal += TeamMatchDBAdapter.COLUMN_NAME_BALL_CONTROL_HUMAN_LOAD + ",";
-		retVal += TeamMatchDBAdapter.COLUMN_NAME_BALL_CONTROL_HI_TO_LO + ",";
-		retVal += TeamMatchDBAdapter.COLUMN_NAME_BALL_CONTROL_LO_TO_HI + ",";
-		retVal += TeamMatchDBAdapter.COLUMN_NAME_BALL_CONTROL_HI_TO_HI + ",";
-		retVal += TeamMatchDBAdapter.COLUMN_NAME_BALL_CONTROL_LO_TO_LO + ",";
+		retVal += TeamMatchDBAdapter.COLUMN_NAME_MATCH_DATA_SAVED + COMMA;
+		retVal += TeamMatchDBAdapter.COLUMN_NAME_AUTO_MOVE + COMMA;
+		retVal += TeamMatchDBAdapter.COLUMN_NAME_BROKE_DOWN + COMMA;
+		retVal += TeamMatchDBAdapter.COLUMN_NAME_NO_MOVE + COMMA;
+		retVal += TeamMatchDBAdapter.COLUMN_NAME_LOST_CONNECTION + COMMA;
+		retVal += TeamMatchDBAdapter.COLUMN_NAME_ROLE_SHOOTER + COMMA;
+		retVal += TeamMatchDBAdapter.COLUMN_NAME_ROLE_DEFENDER + COMMA;
+		retVal += TeamMatchDBAdapter.COLUMN_NAME_ROLE_PASSER + COMMA;
+		retVal += TeamMatchDBAdapter.COLUMN_NAME_ROLE_CATCHER + COMMA;
+		retVal += TeamMatchDBAdapter.COLUMN_NAME_ROLE_GOALIE + COMMA;
+		retVal += TeamMatchDBAdapter.COLUMN_NAME_BALL_CONTROL_GROUND_PICKUP + COMMA;
+		retVal += TeamMatchDBAdapter.COLUMN_NAME_BALL_CONTROL_HUMAN_LOAD + COMMA;
+		retVal += TeamMatchDBAdapter.COLUMN_NAME_BALL_CONTROL_HI_TO_LO + COMMA;
+		retVal += TeamMatchDBAdapter.COLUMN_NAME_BALL_CONTROL_LO_TO_HI + COMMA;
+		retVal += TeamMatchDBAdapter.COLUMN_NAME_BALL_CONTROL_HI_TO_HI + COMMA;
+		retVal += TeamMatchDBAdapter.COLUMN_NAME_BALL_CONTROL_LO_TO_LO;
 		
 		return retVal;
 	}
 
 	private String getBoolCSVString() {
 		String retVal = "";
-		retVal += this.tmDataSaved + ",";
-		retVal += this.autoMove + ",";
-		retVal += this.brokeDown + ",";
-		retVal += this.noMove + ",";
-		retVal += this.lostConnection + ",";
-		retVal += this.robotRole[ROBOT_ROLE.SHOOTER.id] + ",";
-		retVal += this.robotRole[ROBOT_ROLE.DEFENDER.id] + ",";
-		retVal += this.robotRole[ROBOT_ROLE.PASSER.id] + ",";
-		retVal += this.robotRole[ROBOT_ROLE.CATCHER.id] + ",";
-		retVal += this.robotRole[ROBOT_ROLE.GOALIE.id] + ",";
-		retVal += this.ballControl[BALL_CONTROL.GROUND_PICKUP.id] + ",";
-		retVal += this.ballControl[BALL_CONTROL.HUMAN_LOAD.id] + ",";
-		retVal += this.ballControl[BALL_CONTROL.HI_TO_LO.id] + ",";
-		retVal += this.ballControl[BALL_CONTROL.LO_TO_HI.id] + ",";
-		retVal += this.ballControl[BALL_CONTROL.HI_TO_HI.id] + ",";
-		retVal += this.ballControl[BALL_CONTROL.LO_TO_LO.id] + ",";
+		retVal += this.tmDataSaved + COMMA;
+		retVal += this.autoMove + COMMA;
+		retVal += this.brokeDown + COMMA;
+		retVal += this.noMove + COMMA;
+		retVal += this.lostConnection + COMMA;
+		retVal += this.robotRole[ROBOT_ROLE.SHOOTER.id] + COMMA;
+		retVal += this.robotRole[ROBOT_ROLE.DEFENDER.id] + COMMA;
+		retVal += this.robotRole[ROBOT_ROLE.PASSER.id] + COMMA;
+		retVal += this.robotRole[ROBOT_ROLE.CATCHER.id] + COMMA;
+		retVal += this.robotRole[ROBOT_ROLE.GOALIE.id] + COMMA;
+		retVal += this.ballControl[BALL_CONTROL.GROUND_PICKUP.id] + COMMA;
+		retVal += this.ballControl[BALL_CONTROL.HUMAN_LOAD.id] + COMMA;
+		retVal += this.ballControl[BALL_CONTROL.HI_TO_LO.id] + COMMA;
+		retVal += this.ballControl[BALL_CONTROL.LO_TO_HI.id] + COMMA;
+		retVal += this.ballControl[BALL_CONTROL.HI_TO_HI.id] + COMMA;
+		retVal += this.ballControl[BALL_CONTROL.LO_TO_LO.id];
 		
 		return retVal;
 	}
@@ -495,31 +502,55 @@ public class TeamMatchData {
 				 */
 
 				Boolean retVal = this.tmDBAdapter.updateTeamMatch(this.teamMatchID, this.teamNumber, this.matchNumber, this.teamMatchNotes, htBoolValues, htIntValues);
+				FileOutputStream fo = null;
+				boolean append = false;
 				
 				try {
 				    String storageState = Environment.getExternalStorageState();
 				    if (retVal && storageState.equals(Environment.MEDIA_MOUNTED)) {
-				    	String fileName =  "match_" + this.matchNumber + "_team_" + this.teamNumber +"_data.csv";
-				        File file = new File(context.getExternalFilesDir(null), fileName);
+				    	File filePath = context.getExternalFilesDir(null);
+				        File file = new File(filePath, saveFileName);
 				        FTSUtilities.printToConsole("TeamMatchData::save : file " + ((file == null) ? "IS NULL" : "IS VALID") + "\n");
 				        
-				        if(file.exists()) {
-				        	file.delete();
+				        if(!file.exists()) {
+				        	file.createNewFile();
+				        } else {
+				        	append = true;
 				        }
-			        	FileOutputStream fo = new FileOutputStream(file);              
-		        	    String csvOut = TeamMatchDBAdapter._ID + "," + TeamMatchDBAdapter.COLUMN_NAME_TEAM_ID + ",";
-		        	    csvOut +=  TeamMatchDBAdapter.COLUMN_NAME_MATCH_ID + "," + TeamMatchDBAdapter.COLUMN_NAME_TEAM_MATCH_NOTES + ",";
-		        	    csvOut += getIntCSVHeader();
-		        	    csvOut += getBoolCSVHeader() + "\n";
-		        	    csvOut += this.teamMatchID + "," + this.teamNumber + "," + this.matchNumber + "," + this.teamMatchNotes + ",";
-		        	    csvOut += getIntCSVString();
-		        	    csvOut += getBoolCSVString();
+			        	
+				        fo = new FileOutputStream(file, append);
+				        
+				        if(!append) {
+					        String headerOut = "tablet_id" + COMMA;
+					        headerOut += TeamMatchDBAdapter._ID + COMMA + TeamMatchDBAdapter.COLUMN_NAME_TEAM_ID + COMMA;
+					        headerOut += TeamMatchDBAdapter.COLUMN_NAME_MATCH_ID + COMMA;
+					        headerOut += getIntCSVHeader() + COMMA;
+					        headerOut += getBoolCSVHeader() + COMMA;
+					        headerOut += TeamMatchDBAdapter.COLUMN_NAME_TEAM_MATCH_NOTES + "\n";
+					        
+					        fo.write(headerOut.getBytes());
+				        }
+		        	    
+		        	    String csvOut = this.tabletID + COMMA;
+		        	    csvOut += this.teamMatchID + COMMA + this.teamNumber + COMMA + this.matchNumber + COMMA;
+		        	    csvOut += getIntCSVString() + COMMA;
+		        	    csvOut += getBoolCSVString() + COMMA;
+		        	    csvOut += this.teamMatchNotes.replaceAll(COMMA, ";").replaceAll("\n", " ");
+		        	    csvOut += "\n";
 			        	fo.write(csvOut.getBytes());
-		        	    fo.close();
 				    }
 				}
 				catch(Exception e) {
 					FTSUtilities.printToConsole("TeamMatchData::save : Exception accessing file");
+				}
+				finally {
+					try {
+						if(fo != null) {
+							fo.close();
+						}
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
 				}
 				FTSUtilities.printToConsole("Update Successful? : " + retVal.toString());
 				return retVal;

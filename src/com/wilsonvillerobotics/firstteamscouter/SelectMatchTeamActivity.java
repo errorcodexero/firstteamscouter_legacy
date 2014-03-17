@@ -24,11 +24,16 @@ public class SelectMatchTeamActivity extends Activity {
 	protected String matchNumber;
 	protected Button btnSubmit;
 	protected Intent teamMatchIntent;
+	private String tabletID;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_select_team_match);
+		
+		Intent intent = getIntent();
+		this.tabletID = intent.getStringExtra("tablet_id");
+		
 		teamNumber = null;
 		matchNumber = null;
 		
@@ -171,6 +176,7 @@ public class SelectMatchTeamActivity extends Activity {
 		                    // assuming string and if you want to get the value on click of list item
 		                    // do what you intend to do on click of listview row
 		                    teamMatchIntent = new Intent(arg1.getContext(), EnterTeamMatchDataActivity.class);
+		                    teamMatchIntent.putExtra("tablet_id", tabletID);
 		                    teamMatchIntent.putExtra("position", arg3);
 		                    teamMatchIntent.putExtra(TeamMatchDBAdapter.COLUMN_NAME_TEAM_ID, teamNumber);
 		                    teamMatchIntent.putExtra(TeamMatchDBAdapter.COLUMN_NAME_MATCH_ID, matchNumber);

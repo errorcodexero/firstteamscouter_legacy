@@ -13,6 +13,7 @@ public class TeamMatchInformationActivity extends Activity {
 
 	protected TeamMatchDBAdapter tmDBAdapter;
 	protected TeamMatchData tmData;
+	private String tabletID = "";
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -20,13 +21,13 @@ public class TeamMatchInformationActivity extends Activity {
 		setContentView(R.layout.activity_team_match_information);
 		
 		int prePosition = getIntent().getIntExtra("position", 0);
-		int tmID = getIntent().getIntExtra(TeamMatchDBAdapter.COLUMN_NAME_TEAM_MATCH_ID, -1);
+		int tmID = getIntent().getIntExtra(TeamMatchDBAdapter._ID, -1);
 		
 		FTSUtilities.printToConsole("Creating TeamMatchInformationActivity");
 		
 		//tDBAdapter = new TeamDataDBAdapter(this.getBaseContext()).open();
 		tmDBAdapter = new TeamMatchDBAdapter(this).open();
-		tmData = new TeamMatchData(this, prePosition);
+		tmData = new TeamMatchData(this, this.tabletID, prePosition);
 		
 		this.loadTeamMatchInfo(tmID);
 	}

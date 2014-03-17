@@ -5,10 +5,15 @@ import com.wilsonvillerobotics.firstteamscouter.utilities.FTSUtilities;
 
 import android.os.Bundle;
 import android.app.Activity;
+import android.preference.PreferenceFragment;
+import android.preference.PreferenceManager;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 
 public class MainActivity extends Activity {
 
@@ -16,12 +21,17 @@ public class MainActivity extends Activity {
 	private Button btnImportMatchData;
 	private Button btnSelectMatchTeam;
 	private DBAdapter mDBAdapter;
+	private TextView txtTabletID;
+	private String tabletID;
 	
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         FTSUtilities.printToConsole("Creating MainActivity");
+        
+        this.txtTabletID = (TextView) findViewById(R.id.txtTabletID);
+        this.loadPref();
         
         this.mDBAdapter = new DBAdapter(this).open();
         
@@ -33,7 +43,9 @@ public class MainActivity extends Activity {
 			
 			@Override
 			public void onClick(View v) {
-				startActivity(new Intent(v.getContext(), TeamDataListActivity.class));
+				Intent intent = new Intent(v.getContext(), TeamDataListActivity.class);
+				intent.putExtra("tablet_id", tabletID);
+				startActivity(intent);
 			}
 		});
         
@@ -41,7 +53,9 @@ public class MainActivity extends Activity {
 			
 			@Override
 			public void onClick(View v) {
-				startActivity(new Intent(v.getContext(), ImportMatchDataActivity.class));
+				Intent intent = new Intent(v.getContext(), ImportMatchDataActivity.class);
+				intent.putExtra("tablet_id", tabletID);
+				startActivity(intent);
 			}
 		});
 
@@ -49,7 +63,9 @@ public class MainActivity extends Activity {
 			
 			@Override
 			public void onClick(View v) {
-				startActivity(new Intent(v.getContext(), SelectMatchTeamActivity.class));
+				Intent intent = new Intent(v.getContext(), SelectMatchTeamActivity.class);
+				intent.putExtra("tablet_id", tabletID);
+				startActivity(intent);
 			}
 		});
     }
@@ -104,4 +120,48 @@ public class MainActivity extends Activity {
         return true;
     }
     
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+    	startActivityForResult(new Intent(this, SetPreferenceActivity.class), 0);
+        return true;
+//        switch (item.getItemId()) {
+//            case 0:
+//                startActivityForResult(new Intent(this, SetPreferenceActivity.class), 0);
+//                return true;
+//        }
+//        return false;
+    }
+    
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		// TODO Auto-generated method stub
+		//super.onActivityResult(requestCode, resultCode, data);
+		     
+		/*
+		* To make it simple, always re-load Preference setting.
+		*/
+		     
+		loadPref();
+    }
+    
+    private void loadPref() {
+		SharedPreferences mySharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+		  
+		String tID = mySharedPreferences.getString("tablet_id", "Undefined Tablet ID");
+		tabletID = tID;
+		this.txtTabletID.setText(tID);
+  	}
+
+    public static class PrefsFragment extends PreferenceFragment {
+    	 
+        @Override
+        public void onCreate(Bundle savedInstanceState) {
+	        super.onCreate(savedInstanceState);
+	
+	        // Load the preferences from an XML resource
+	        addPreferencesFromResource(R.xml.preferences);
+        }
+    }
 }
+
+

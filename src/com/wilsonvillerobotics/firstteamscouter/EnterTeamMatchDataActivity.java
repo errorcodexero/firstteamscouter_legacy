@@ -22,6 +22,7 @@ public class EnterTeamMatchDataActivity extends FragmentActivity implements Acti
 	private TabsPagerAdapter mAdapter;
 	private TextView txtTeamNumber;
 	private TextView txtMatchNumber;
+	private String tabletID;
 	
 	private int viewState = 0;
 	
@@ -37,12 +38,14 @@ public class EnterTeamMatchDataActivity extends FragmentActivity implements Acti
 		
 		Intent intent = getIntent();
 		Integer teamMatchID = Integer.valueOf(intent.getStringExtra(TeamMatchDBAdapter._ID));
+		this.tabletID = intent.getStringExtra("tablet_id");
+		this.tabletID = (this.tabletID != null) ? this.tabletID : "Unknown Tablet ID";
 		//String teamNumber = intent.getStringExtra(TeamMatchDBAdapter.COLUMN_NAME_TEAM_ID);
 		//String matchNumber = intent.getStringExtra(TeamMatchDBAdapter.COLUMN_NAME_MATCH_ID);
 		
 		
 		FTSUtilities.printToConsole("EnterTeamMatchDataActivity::OnCreate : Creating TeamMatchData\n");
-		this.tmData = new TeamMatchData(this.getBaseContext(), teamMatchID); //, teamNumber, matchNumber);
+		this.tmData = new TeamMatchData(this.getBaseContext(), this.tabletID, teamMatchID); //, teamNumber, matchNumber);
 		
 		// Initialization
         viewPager = (ViewPager) findViewById(R.id.pager);

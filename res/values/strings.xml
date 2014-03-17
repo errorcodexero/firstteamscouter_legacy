@@ -3,9 +3,11 @@
     <string name="action_settings">Settings</string>
     <string name="hello_world">Hello world!</string>
     <string name="text_button_view_team_data">View Team</string>
+    <string name="text_button_manage_data">Manage Data</string>
     <string name="text_button_import_match_data">Import Match Data</string>
     <string name="text_button_enter_data">Enter Data</string>
     <string name="text_button_select_match">Select Match</string>
+    <string name="text_button_scout_match">Scout A Match</string>
     <string name="text_button_submit_team_match">Submit</string>
     <string name="text_button_score">Score</string>
     <string name="text_button_hi_score">Hi Score</string>

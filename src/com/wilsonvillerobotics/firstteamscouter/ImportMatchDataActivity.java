@@ -4,9 +4,10 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.FilenameFilter;
+import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.Arrays;
-import java.util.regex.Pattern;
+import java.nio.channels.FileChannel;
 
 import com.wilsonvillerobotics.firstteamscouter.dbAdapters.MatchDataDBAdapter;
 import com.wilsonvillerobotics.firstteamscouter.dbAdapters.TeamDataDBAdapter;
@@ -16,17 +17,19 @@ import com.wilsonvillerobotics.firstteamscouter.utilities.FTSUtilities;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.content.Context;
+import android.content.ComponentName;
 import android.content.Intent;
 import android.database.SQLException;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
+import android.widget.Filter;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class ImportMatchDataActivity extends Activity {
 
@@ -39,9 +42,20 @@ public class ImportMatchDataActivity extends Activity {
 	private TextView txtStatus;
 	protected ProgressBar mProgressBar;
 	protected boolean mbActive;
+	protected String tabletID;
+	
+	private String exportFileName;
+	private String tempFileName;
+	
+	private int BLUETOOTH_SEND = 32665;
 	
 	private Button btnConfigureBluetooth;
 	private Intent bluetoothIntent;
+	
+	private File filePath;
+	private File myExportFile;
+	private File myTempFile;
+	private File saveDir;
 	
 	//getExternalStorageState()
 
@@ -50,6 +64,18 @@ public class ImportMatchDataActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_import_match_data);
+		
+		Intent intent = getIntent();
+		this.tabletID = intent.getStringExtra("tablet_id");
+		this.tabletID = (this.tabletID != null) ? this.tabletID : "Unknown Tablet ID";
+		
+		this.exportFileName = tabletID + "_match_data_export";
+		this.tempFileName = exportFileName + ".csv";
+		
+		this.filePath = getExternalFilesDir(null);
+		this.myExportFile = new File(filePath, exportFileName);
+		this.myTempFile = new File(filePath, tempFileName);
+		this.saveDir = new File(filePath.getAbsolutePath() + "/sent");
 		
 		try {
 			FTSUtilities.printToConsole("ImportMatchDataActivity::onCreate : OPENING DB\n");
@@ -89,9 +115,6 @@ public class ImportMatchDataActivity extends Activity {
 					        int teamCount = 0;
 					        String lineArray[];
 					        inputReader.mark((int)file.length());
-//					        while((line = inputReader.readLine()) != null) {
-//					        	lineCount++;
-//					        }
 					        line = inputReader.readLine();
 					        lineArray = line.split(",");
 					        String headerArray[] = {"Time", "Type", "#", "Red1", "Red2", "Red3", "Blue1", "Blue2", "Blue3"};
@@ -148,8 +171,43 @@ public class ImportMatchDataActivity extends Activity {
 			
 			@Override
 			public void onClick(View v) {
-				bluetoothIntent = new Intent(getBaseContext(), BluetoothSetupActivity.class);
-				startActivity(bluetoothIntent);
+				//File filePath = getExternalFilesDir(null);
+				//File myFile = new File(filePath, exportFileName);
+				//File myTempFile = new File(filePath, tempFileName);
+				
+				if(!myTempFile.exists())
+					try {
+						myTempFile.createNewFile();
+					} catch (IOException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+				
+				if(myExportFile.exists()) {
+					try {
+						copy(myExportFile, myTempFile);
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					if(saveDir.mkdir() || saveDir.isDirectory()) {
+						int numFiles = (saveDir.list(new CSVFilenameFilter(".csv")).length) + 1;
+						String saveFileName = exportFileName + "_" + numFiles + ".csv";
+						File saveFile = new File(saveDir, saveFileName);
+						myExportFile.renameTo(saveFile);
+						Toast.makeText(getBaseContext(), "File Saved", Toast.LENGTH_SHORT).show();
+
+						Intent sharingIntent = new Intent(android.content.Intent.ACTION_SEND);
+						sharingIntent.setType("text/plain");
+						sharingIntent.setComponent(new ComponentName("com.android.bluetooth", "com.android.bluetooth.opp.BluetoothOppLauncherActivity"));
+						sharingIntent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(saveFile));
+						startActivityForResult(sharingIntent, BLUETOOTH_SEND);
+						FTSUtilities.printToConsole("ImportMatchDataActivity::btnOK.onClick : Sharing Activity Started");
+					}
+				} else {
+					String message = "File not found: " + myExportFile.getName();
+					Toast.makeText(getBaseContext(), message , Toast.LENGTH_SHORT).show();
+				}
 			}
 		});
 		
@@ -174,6 +232,35 @@ public class ImportMatchDataActivity extends Activity {
 //	        }
 //	     };
 //	     timerThread.start();
+	}
+	
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		FTSUtilities.printToConsole("ImportMatchDataActivity::onActivityResult : requestCode: " + requestCode);
+	    // Check which request we're responding to
+	    if (requestCode == BLUETOOTH_SEND) {
+	    	FTSUtilities.printToConsole("ImportMatchDataActivity::onActivityResult : Sharing Activity Returned");
+	    	Toast.makeText(getBaseContext(), "File sent", Toast.LENGTH_SHORT).show();
+//			if(saveDir.mkdir() || saveDir.isDirectory()) {
+//				int numFiles = (saveDir.list(new CSVFilenameFilter(".csv")).length) + 1;
+//				String saveFileName = exportFileName + "_" + numFiles + ".csv";
+//				File saveFile = new File(saveDir, saveFileName);
+//				if(myExportFile.exists()) {
+//					myExportFile.renameTo(saveFile);
+//					Toast.makeText(this, "File Saved", 3).show();
+//				}
+//			}
+	    }
+	}
+	
+	public void copy(File src, File dst) throws IOException {
+	    FileInputStream inStream = new FileInputStream(src);
+	    FileOutputStream outStream = new FileOutputStream(dst);
+	    FileChannel inChannel = inStream.getChannel();
+	    FileChannel outChannel = outStream.getChannel();
+	    inChannel.transferTo(0, inChannel.size(), outChannel);
+	    inStream.close();
+	    outStream.close();
 	}
 
 	public void updateProgress(final int timePassed) {
@@ -236,6 +323,7 @@ public class ImportMatchDataActivity extends Activity {
     @Override
     protected void onStop() {
         super.onStop();
+        if(myTempFile.exists()) myTempFile.delete();
         FTSUtilities.printToConsole("ImportMatchDataActivity::onStop : CLOSING DB\n");
         mDataDBAdapter.close();
         tmDBAdapter.close();
@@ -252,5 +340,20 @@ public class ImportMatchDataActivity extends Activity {
 		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate(R.menu.enter_data, menu);
 		return true;
+	}
+	
+	public class CSVFilenameFilter implements FilenameFilter {
+		String ext;
+		
+		public CSVFilenameFilter(String ext) {
+		    this.ext = ext; 
+
+		}
+		
+		@Override
+		public boolean accept(File dir, String filename) {
+		   //If you want to perform a case-insensitive search
+		   return filename.toLowerCase().endsWith(ext.toLowerCase());
+		}
 	}
 }
