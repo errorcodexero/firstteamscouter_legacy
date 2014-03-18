@@ -1,6 +1,7 @@
 import os
 
-rootDir = "D:\\Profiles\\TomS\\Documents\\FIRST Robotics\\2014\\First Team Scouter\\tablet data files"
+#rootDir = "D:\\Profiles\\TomS\\Documents\\FIRST Robotics\\2014\\First Team Scouter\\tablet data files"
+rootDir = "C:\\Users\\Tom\\Documents\\FIRST Robotics\\2014\\First Team Scouter\\tablet data files"
 
 filesToParse = []
 fileExt = '.csv'
@@ -24,41 +25,43 @@ print "About to parse the following files: "
 lines = []
 filesParsed = 0
 for csvFile in filesToParse :
-    tempLines = []
     with open(csvFile) as f :
         lineCount = 0
         for line in f :
             if lineCount > 0 :
-                tempLines.append(line.strip())
+                lines.append(line.strip())
             lineCount += 1
-    tempLine = ""
-    if len(tempLines) > 1 :
-        #print tempLines
-        tempLine = ""
-        for l in tempLines:
-            tempLine += l
-        lines.append(tempLine)
-    elif len(tempLines) == 1 :
-        lines.append(tempLines[0])
     filesParsed += 1
+    pathArray = csvFile.split("\\")
+    path = "\\".join(pathArray[0:-1])
+    savePath = path + "\\saved"
+    saveFile = savePath + "\\" + pathArray[-1]
+    if not os.path.isdir(savePath) :
+       os.mkdir(savePath)
+    try :
+        os.rename(csvFile, saveFile)
+    except WindowsError as e :
+        print "Windows Error({0}): {1}".format(e.errno, e.strerror)
+        print csvFile
+        print saveFile
 
 outFilePath = rootDir + "\\OregonCityMasterData.csv"
-outFile = open(outFilePath, 'w')
+outFile = open(outFilePath, 'a')
 
 print "Parsed " + str(filesParsed) + " csv files\n"
 for line in lines:
     #print line
-    commas = line.count(',')
-    parts = line.split(",")
-    newLine = ','.join(parts[0:3])
+    #commas = line.count(',')
+    #parts = line.split(",")
+    #newLine = ','.join(parts[0:3])
     
-    if len(parts) > 50 :
-        newLine += ',' + ';'.join(parts[3:commas-46])
-        newLine += ',' + ','.join(parts[commas-46:])
-    else :
-        newLine += ',' + ','.join(parts[3:])
+    #if len(parts) > 50 :
+    #    newLine += ',' + ';'.join(parts[3:commas-46])
+    #    newLine += ',' + ','.join(parts[commas-46:])
+    #else :
+    #    newLine += ',' + ','.join(parts[3:])
 
-    outFile.write(newLine.strip() + "\n")
+    outFile.write(line.strip() + "\n")
 outFile.close()
 
 
