@@ -141,7 +141,7 @@ public class ImportMatchDataActivity extends Activity {
 					        		}
 					        		long teamMatchID = -1;
 					        		long teamID = -1;
-					        		for(int i = 2; i < 9; i++) {
+					        		for(int i = 3; i < 9; i++) {
 					        			teamID = tDataDBAdapter.createTeamDataEntry(lineArray[i]);
 					        			teamMatchID = tmDBAdapter.createTeamMatch(lineArray[i], matchID);
 					        			if(teamMatchID >= 0) {
