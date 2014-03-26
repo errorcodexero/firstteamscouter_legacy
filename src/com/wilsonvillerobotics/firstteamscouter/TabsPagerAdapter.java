@@ -11,6 +11,8 @@ public class TabsPagerAdapter extends FragmentPagerAdapter {
 	private String matchNumber;
 	private TeamMatchData tmData;
 	
+	public static String tabTitles[] = { "Team Number", "Starting Position", "Auto Mode", "Tele Mode", "Notes" };
+	
     public TabsPagerAdapter(FragmentManager fm, TeamMatchData tmD) {  //, Integer tmID, String tNum, String mNum) {
         super(fm);
         this.tmData = tmD;
@@ -34,18 +36,22 @@ public class TabsPagerAdapter extends FragmentPagerAdapter {
  
         switch (index) {
         case 0:
+        	TeamMatchTeamNumberDisplayFragment tmtndFrag = TeamMatchTeamNumberDisplayFragment.newInstance(this.teamMatchID);
+        	tmtndFrag.setTeamMatchData(tmData);
+        	return tmtndFrag;
+        case 1:
         	TeamMatchStartingPositionFragment tmspFrag = TeamMatchStartingPositionFragment.newInstance(this.teamMatchID);
         	tmspFrag.setTeamMatchData(tmData);
         	return tmspFrag;
-        case 1:
+        case 2:
             TeamMatchAutoModeFragment tmaFrag = TeamMatchAutoModeFragment.newInstance(this.teamMatchID);
             tmaFrag.setTeamMatchData(tmData);
             return tmaFrag;
-        case 2:
+        case 3:
         	TeamMatchTeleModeFragment tmtFrag =  TeamMatchTeleModeFragment.newInstance(this.teamMatchID);
         	tmtFrag.setTeamMatchData(tmData);
         	return tmtFrag;
-        case 3:
+        case 4:
         	TeamMatchNotesFragment tmnFrag = TeamMatchNotesFragment.newInstance(this.teamMatchID, this.teamNumber, this.matchNumber);
         	tmnFrag.setTeamMatchData(tmData);
         	return tmnFrag;
@@ -57,10 +63,14 @@ public class TabsPagerAdapter extends FragmentPagerAdapter {
     public String getTabText(int index) {
         switch (index) {
         case 0:
-            return TeamMatchAutoModeFragment.myTitle;
+        	return TeamMatchTeamNumberDisplayFragment.myTitle;
         case 1:
-            return TeamMatchTeleModeFragment.myTitle;
+        	return TeamMatchStartingPositionFragment.myTitle;
         case 2:
+            return TeamMatchAutoModeFragment.myTitle;
+        case 3:
+            return TeamMatchTeleModeFragment.myTitle;
+        case 4:
             return TeamMatchNotesFragment.myTitle;
         }
  
@@ -70,7 +80,7 @@ public class TabsPagerAdapter extends FragmentPagerAdapter {
     @Override
     public int getCount() {
         // get item count - equal to number of tabs
-        return 4;
+        return 5;
     }
  
 }

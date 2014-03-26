@@ -22,12 +22,14 @@ public class TeamMatchStartingPositionFragment extends Fragment implements OnCli
 
 	private TeamMatchData tmData;
 	private int teamMatchID;
+	public static String myTitle;
 	Hashtable<STARTING_LOC, ToggleButton> buttonHash;
 	
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
 
+    	this.myTitle = "Starting Position";
     	this.teamMatchID = getArguments() != null ? getArguments().getInt("tmID") : -1;
     	
         View rootView = inflater.inflate(R.layout.fragment_team_match_starting_position, container, false);

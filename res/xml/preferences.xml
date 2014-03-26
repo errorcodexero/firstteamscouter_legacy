@@ -3,12 +3,8 @@
     
     <PreferenceCategory
             android:title="Tablet Identity">
-            
-        <EditTextPreference
-                android:key="tablet_id"
-                android:title="Tablet ID"
-                android:summary="The tablet's ID" />
  
-    </PreferenceCategory>
+    <ListPreference android:entryValues="@array/TabletIDs" android:entries="@array/TabletIDs" android:key="tablet_id_from_list" android:title="Select Tablet ID" /></PreferenceCategory>
+    
 
 </PreferenceScreen>

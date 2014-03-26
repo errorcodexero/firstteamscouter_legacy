@@ -17,5 +17,13 @@
         <item name="60000">60000</item>
         <item name="300000">300000</item>
     </string-array>
+    <string-array name="TabletIDs">
+        <item name="Red1">Red1</item>
+        <item name="Red2">Red2</item>
+        <item name="Red3">Red3</item>
+        <item name="Blue1">Blue1</item>
+        <item name="Blue2">Bllue2</item>
+        <item name="Blue3">Blue3</item>
+    </string-array>
 
 </resources>

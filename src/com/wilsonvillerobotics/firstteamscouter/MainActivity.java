@@ -147,9 +147,8 @@ public class MainActivity extends Activity {
     private void loadPref() {
 		SharedPreferences mySharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
 		  
-		String tID = mySharedPreferences.getString("tablet_id", "Undefined Tablet ID");
-		tabletID = tID;
-		this.txtTabletID.setText(tID);
+		this.tabletID = mySharedPreferences.getString("tablet_id_from_list", "Undefined Tablet ID");
+		this.txtTabletID.setText(this.tabletID);
   	}
 
     public static class PrefsFragment extends PreferenceFragment {

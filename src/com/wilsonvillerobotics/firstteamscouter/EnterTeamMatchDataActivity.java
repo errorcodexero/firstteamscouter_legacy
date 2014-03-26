@@ -26,8 +26,6 @@ public class EnterTeamMatchDataActivity extends FragmentActivity implements Acti
 	
 	private int viewState = 0;
 	
-	private String[] tabs = { "Starting Position", "Auto Mode", "Tele Mode", "Notes" };
-	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -57,7 +55,7 @@ public class EnterTeamMatchDataActivity extends FragmentActivity implements Acti
         actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
         
         // Adding Tabs
-        for (String tab_name : tabs) {
+        for (String tab_name : TabsPagerAdapter.tabTitles) {
             actionBar.addTab(actionBar.newTab().setText(tab_name)
                     .setTabListener(this));
         }
