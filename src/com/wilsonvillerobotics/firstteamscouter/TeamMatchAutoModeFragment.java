@@ -87,7 +87,7 @@ public class TeamMatchAutoModeFragment extends Fragment implements OnClickListen
     static TeamMatchAutoModeFragment newInstance(Integer tmID) {
     	TeamMatchAutoModeFragment f = new TeamMatchAutoModeFragment();
 
-        // Supply num input as an argument.
+        // Supply num input as an argument
         Bundle args = new Bundle();
         args.putInt("tmID", tmID);
         f.setArguments(args);
