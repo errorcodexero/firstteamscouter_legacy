@@ -61,7 +61,7 @@ public class SelectMatchTeamActivity extends Activity {
 			}
 		});
 		
-		//tmDBAdapter.populateTestData();
+		tmDBAdapter.populateTestData();
 		populateMatchNumberSpinner();
 	}
 

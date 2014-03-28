@@ -80,6 +80,8 @@ public class TeamMatchAutoModeFragment extends Fragment implements OnClickListen
 	        buttonHash.put(ID, (Button) rootView.findViewById(ID));
 	        buttonHash.get(ID).setOnClickListener(this);
         }
+        
+        btnAutoHiMissSetText();
 
         return rootView;
     }
@@ -112,6 +114,7 @@ public class TeamMatchAutoModeFragment extends Fragment implements OnClickListen
     		break;
         case R.id.btnAutoHiMiss:
         	btnAutoHiMissOnClick(v);
+        	btnAutoHiMissSetText();
         	break;
         case R.id.btnAutoLoMiss:
         	btnAutoLoMissOnClick(v);
@@ -188,7 +191,11 @@ public class TeamMatchAutoModeFragment extends Fragment implements OnClickListen
 		} else {
 			this.tmData.addAutoHiMiss();
 		}
-		buttonHash.get(buttonIDs[4]).setText("Miss\n" + tmData.autoHiMiss);
+		//buttonHash.get(buttonIDs[4]).setText(getString(R.string.text_button_miss_score) + "\n" + tmData.autoHiMiss);
+	}
+	
+	public void btnAutoHiMissSetText() {
+		buttonHash.get(R.id.btnAutoHiMiss).setText(getString(R.string.text_button_miss_score) + "\n" + tmData.autoHiMiss);
 	}
 	
 	public void btnAutoLoMissOnClick(View v) {
