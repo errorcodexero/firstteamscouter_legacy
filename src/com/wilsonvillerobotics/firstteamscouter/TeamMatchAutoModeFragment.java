@@ -25,6 +25,7 @@ public class TeamMatchAutoModeFragment extends Fragment implements OnClickListen
 	private Integer teamMatchID;
 	private TeamMatchData tmData;
 	
+	
 	private Integer buttonIDs[] = {
 			R.id.btnAutoHiScoreHot,
 			R.id.btnAutoLoScoreHot,
@@ -36,6 +37,7 @@ public class TeamMatchAutoModeFragment extends Fragment implements OnClickListen
 			R.id.btnAutoCollect,
 			R.id.btnAutoDefend
 	};
+
 	
 	private Hashtable<Integer, Button> buttonHash;
 	
@@ -145,7 +147,8 @@ public class TeamMatchAutoModeFragment extends Fragment implements OnClickListen
 			this.tmData.addHiHotBonus();
 		}
 		updateAutoScore();
-	}
+		buttonHash.get(buttonIDs[0]).setText("Hot\n" + tmData.autoHiHot);
+		}
 	
 	public void btnAutoHiScoreColdOnClick(View v) {
 		if(this.undo) {
@@ -154,6 +157,7 @@ public class TeamMatchAutoModeFragment extends Fragment implements OnClickListen
 			this.tmData.addAutoHiScore();
 		}
 		updateAutoScore();
+		buttonHash.get(buttonIDs[2]).setText("Cold\n" + (tmData.autoHiScore - tmData.autoHiHot));
 	}
 	
 	public void btnAutoLoScoreHotOnClick(View v) {
@@ -165,6 +169,7 @@ public class TeamMatchAutoModeFragment extends Fragment implements OnClickListen
 			this.tmData.addLoHotBonus();
 		}
 		updateAutoScore();
+		buttonHash.get(buttonIDs[1]).setText("Hot\n" + tmData.autoLoHot);
 	}
 	
 	public void btnAutoLoScoreColdOnClick(View v) {
@@ -174,6 +179,7 @@ public class TeamMatchAutoModeFragment extends Fragment implements OnClickListen
 			this.tmData.addAutoLoScore();
 		}
 		updateAutoScore();
+		buttonHash.get(buttonIDs[3]).setText("Cold\n" + (tmData.autoLoScore - tmData.autoLoHot));
 	}
 	
 	public void btnAutoHiMissOnClick(View v) {
@@ -182,6 +188,7 @@ public class TeamMatchAutoModeFragment extends Fragment implements OnClickListen
 		} else {
 			this.tmData.addAutoHiMiss();
 		}
+		buttonHash.get(buttonIDs[4]).setText("Miss\n" + tmData.autoHiMiss);
 	}
 	
 	public void btnAutoLoMissOnClick(View v) {
@@ -190,6 +197,7 @@ public class TeamMatchAutoModeFragment extends Fragment implements OnClickListen
 		} else {
 			this.tmData.addAutoLoMiss();
 		}
+		buttonHash.get(buttonIDs[5]).setText("Miss\n" + tmData.autoLoMiss);
 	}
 	
 	protected void btnAutoDefendOnClick(View v) {
@@ -198,6 +206,7 @@ public class TeamMatchAutoModeFragment extends Fragment implements OnClickListen
 		} else {
 			this.tmData.addAutoDefend();
 		}
+		buttonHash.get(buttonIDs[8]).setText("Defend\n" + tmData.autoDefend);
 	}
 
 	protected void btnAutoMoveOnClick(View v) {
@@ -206,6 +215,7 @@ public class TeamMatchAutoModeFragment extends Fragment implements OnClickListen
 		} else {
 			this.tmData.movedInAuto();
 		}
+		buttonHash.get(buttonIDs[6]).setText("Move\n" + tmData.autoMove);
 	}
 
 	protected void btnAutoCollectOnClick(View v) {
@@ -214,6 +224,7 @@ public class TeamMatchAutoModeFragment extends Fragment implements OnClickListen
 		} else {
 			this.tmData.addAutoCollect();
 		}
+		buttonHash.get(buttonIDs[7]).setText("Collect\n" + tmData.autoCollect);
 	}
 	
 	private void setButtonBackgrounds() {
@@ -226,4 +237,5 @@ public class TeamMatchAutoModeFragment extends Fragment implements OnClickListen
 			this.buttonHash.get(bID).setBackgroundColor(color);
 		}
 	}
+	
 }
