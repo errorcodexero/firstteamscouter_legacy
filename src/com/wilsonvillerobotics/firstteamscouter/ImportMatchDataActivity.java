@@ -127,8 +127,6 @@ public class ImportMatchDataActivity extends Activity {
 					        }
 					        
 					        while((line = inputReader.readLine()) != null) {
-					        	if(line == null) break;
-					        	
 					        	lineCount += 1;
 					        	lineArray = line.split(",");
 					        	
