@@ -80,9 +80,24 @@ public class TeamMatchAutoModeFragment extends Fragment implements OnClickListen
 	        buttonHash.put(ID, (Button) rootView.findViewById(ID));
 	        buttonHash.get(ID).setOnClickListener(this);
         }
-        
-        btnAutoHiMissSetText();
-
+        updateText(R.id.btnAutoHiScoreHot, R.string.text_button_hot_score, 
+        		tmData.autoHiHot);
+		updateText(R.id.btnAutoHiScoreCold, R.string.text_button_cold_score, 
+				tmData.autoHiScore - tmData.autoHiHot);
+		updateText(R.id.btnAutoLoScoreHot, R.string.text_button_hot_score, 
+				tmData.autoLoHot);
+		updateText(R.id.btnAutoLoScoreCold, R.string.text_button_cold_score,
+				tmData.autoLoScore - tmData.autoLoHot);
+		updateText(R.id.btnAutoHiMiss, R.string.text_button_miss_score, 
+				tmData.autoHiMiss);
+		updateText(R.id.btnAutoLoMiss, R.string.text_button_miss_score, 
+				tmData.autoLoMiss);
+		updateText(R.id.btnAutoDefend, R.string.text_button_auto_defend,
+				tmData.autoDefend);
+		updateText(R.id.btnAutoCollect, R.string.text_button_auto_collect, 
+				tmData.autoCollect);
+		buttonHash.get(R.id.btnAutoMove).setText(getString(R.string.text_button_auto_move) + 
+				"\n" + tmData.autoMove); //true or false..
         return rootView;
     }
     
@@ -114,7 +129,6 @@ public class TeamMatchAutoModeFragment extends Fragment implements OnClickListen
     		break;
         case R.id.btnAutoHiMiss:
         	btnAutoHiMissOnClick(v);
-        	btnAutoHiMissSetText();
         	break;
         case R.id.btnAutoLoMiss:
         	btnAutoLoMissOnClick(v);
@@ -150,8 +164,8 @@ public class TeamMatchAutoModeFragment extends Fragment implements OnClickListen
 			this.tmData.addHiHotBonus();
 		}
 		updateAutoScore();
-		buttonHash.get(buttonIDs[0]).setText("Hot\n" + tmData.autoHiHot);
-		}
+		updateText(R.id.btnAutoHiScoreHot, R.string.text_button_hot_score, tmData.autoHiHot);
+	}
 	
 	public void btnAutoHiScoreColdOnClick(View v) {
 		if(this.undo) {
@@ -160,7 +174,8 @@ public class TeamMatchAutoModeFragment extends Fragment implements OnClickListen
 			this.tmData.addAutoHiScore();
 		}
 		updateAutoScore();
-		buttonHash.get(buttonIDs[2]).setText("Cold\n" + (tmData.autoHiScore - tmData.autoHiHot));
+		updateText(R.id.btnAutoHiScoreCold, R.string.text_button_cold_score, tmData.autoHiScore - tmData.autoHiHot);
+		//buttonHash.get(buttonIDs[2]).setText("Cold\n" + (tmData.autoHiScore - tmData.autoHiHot));
 	}
 	
 	public void btnAutoLoScoreHotOnClick(View v) {
@@ -172,7 +187,8 @@ public class TeamMatchAutoModeFragment extends Fragment implements OnClickListen
 			this.tmData.addLoHotBonus();
 		}
 		updateAutoScore();
-		buttonHash.get(buttonIDs[1]).setText("Hot\n" + tmData.autoLoHot);
+		updateText(R.id.btnAutoLoScoreHot, R.string.text_button_hot_score, tmData.autoLoHot);
+		//buttonHash.get(buttonIDs[1]).setText("Hot\n" + tmData.autoLoHot);
 	}
 	
 	public void btnAutoLoScoreColdOnClick(View v) {
@@ -182,7 +198,8 @@ public class TeamMatchAutoModeFragment extends Fragment implements OnClickListen
 			this.tmData.addAutoLoScore();
 		}
 		updateAutoScore();
-		buttonHash.get(buttonIDs[3]).setText("Cold\n" + (tmData.autoLoScore - tmData.autoLoHot));
+		updateText(R.id.btnAutoLoScoreCold, R.string.text_button_cold_score, tmData.autoLoScore - tmData.autoLoHot);
+		//buttonHash.get(buttonIDs[3]).setText("Cold\n" + (tmData.autoLoScore - tmData.autoLoHot));
 	}
 	
 	public void btnAutoHiMissOnClick(View v) {
@@ -191,11 +208,8 @@ public class TeamMatchAutoModeFragment extends Fragment implements OnClickListen
 		} else {
 			this.tmData.addAutoHiMiss();
 		}
-		//buttonHash.get(buttonIDs[4]).setText(getString(R.string.text_button_miss_score) + "\n" + tmData.autoHiMiss);
-	}
-	
-	public void btnAutoHiMissSetText() {
-		buttonHash.get(R.id.btnAutoHiMiss).setText(getString(R.string.text_button_miss_score) + "\n" + tmData.autoHiMiss);
+		updateText(R.id.btnAutoHiMiss, R.string.text_button_miss_score, tmData.autoHiMiss);
+		//buttonHash.get(buttonIDs[4]).setText("Miss\n" + tmData.autoHiMiss);
 	}
 	
 	public void btnAutoLoMissOnClick(View v) {
@@ -204,7 +218,8 @@ public class TeamMatchAutoModeFragment extends Fragment implements OnClickListen
 		} else {
 			this.tmData.addAutoLoMiss();
 		}
-		buttonHash.get(buttonIDs[5]).setText("Miss\n" + tmData.autoLoMiss);
+		updateText(R.id.btnAutoLoMiss, R.string.text_button_miss_score, tmData.autoLoMiss);
+		//buttonHash.get(buttonIDs[5]).setText("Miss\n" + tmData.autoLoMiss);
 	}
 	
 	protected void btnAutoDefendOnClick(View v) {
@@ -213,16 +228,17 @@ public class TeamMatchAutoModeFragment extends Fragment implements OnClickListen
 		} else {
 			this.tmData.addAutoDefend();
 		}
-		buttonHash.get(buttonIDs[8]).setText("Defend\n" + tmData.autoDefend);
+		updateText(R.id.btnAutoDefend, R.string.text_button_auto_defend, tmData.autoDefend);
+		//buttonHash.get(buttonIDs[8]).setText("Defend\n" + tmData.autoDefend);
 	}
-
+	
 	protected void btnAutoMoveOnClick(View v) {
 		if(this.undo) {
 			this.tmData.didNotMoveInAuto();
 		} else {
 			this.tmData.movedInAuto();
 		}
-		buttonHash.get(buttonIDs[6]).setText("Move\n" + tmData.autoMove);
+		buttonHash.get(R.id.btnAutoMove).setText(getString(R.string.text_button_auto_move) + "\n" + tmData.autoMove);
 	}
 
 	protected void btnAutoCollectOnClick(View v) {
@@ -231,7 +247,7 @@ public class TeamMatchAutoModeFragment extends Fragment implements OnClickListen
 		} else {
 			this.tmData.addAutoCollect();
 		}
-		buttonHash.get(buttonIDs[7]).setText("Collect\n" + tmData.autoCollect);
+		updateText(R.id.btnAutoCollect, R.string.text_button_auto_collect, tmData.autoCollect);
 	}
 	
 	private void setButtonBackgrounds() {
@@ -243,6 +259,10 @@ public class TeamMatchAutoModeFragment extends Fragment implements OnClickListen
 		for(Integer bID : buttonHash.keySet()) {
 			this.buttonHash.get(bID).setBackgroundColor(color);
 		}
+	}
+	
+	public void updateText(int buttonID, int stringResource, int counter) {
+		buttonHash.get(buttonID).setText(getString(stringResource) + "\n" + counter);
 	}
 	
 }
