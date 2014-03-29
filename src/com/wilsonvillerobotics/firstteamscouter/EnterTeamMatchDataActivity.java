@@ -11,6 +11,7 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.ViewPager;
 import android.view.Menu;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.content.Intent;
 
 public class EnterTeamMatchDataActivity extends FragmentActivity implements ActionBar.TabListener {
@@ -35,7 +36,11 @@ public class EnterTeamMatchDataActivity extends FragmentActivity implements Acti
 		viewState++;
 		
 		Intent intent = getIntent();
-		Integer teamMatchID = Integer.valueOf(intent.getStringExtra(TeamMatchDBAdapter._ID));
+		
+		FTSUtilities.printToConsole("EnterTeamMatchDataActivity::OnCreate : Num Intent Extras: " + intent.getExtras().size());
+		
+		Long teamMatchID = Long.valueOf(intent.getStringExtra(TeamMatchDBAdapter._ID));
+		FTSUtilities.printToConsole("EnterTeamMatchDataActivity::OnCreate : teamMatchID: " + String.valueOf(teamMatchID));
 		this.tabletID = intent.getStringExtra("tablet_id");
 		this.tabletID = (this.tabletID != null) ? this.tabletID : "Unknown Tablet ID";
 		//String teamNumber = intent.getStringExtra(TeamMatchDBAdapter.COLUMN_NAME_TEAM_ID);
@@ -62,12 +67,12 @@ public class EnterTeamMatchDataActivity extends FragmentActivity implements Acti
         
         txtTeamNumber = (TextView) findViewById(R.id.txtTeamNumber);
         if(txtTeamNumber != null && this.tmData != null) {
-			txtTeamNumber.setText(this.tmData.teamNumber);
+			txtTeamNumber.setText(this.tmData.getTeamNumber());
 		}
         
         txtMatchNumber = (TextView) findViewById(R.id.txtMatchNumber);
         if(txtMatchNumber != null && this.tmData != null) {
-        	txtMatchNumber.setText(this.tmData.matchNumber);
+        	txtMatchNumber.setText(this.tmData.getMatchNumber());
 		}
         
         
@@ -134,6 +139,8 @@ public class EnterTeamMatchDataActivity extends FragmentActivity implements Acti
 		viewState++;
         FTSUtilities.printToConsole("EnterTeamMatchDataActivity::onPause : SAVING DATA TO DB\n");
 		this.tmData.save();
+		String message = "Data Saved";
+		Toast.makeText(getBaseContext(), message , Toast.LENGTH_SHORT).show();
 		this.tmData.closeDB();
     }
 

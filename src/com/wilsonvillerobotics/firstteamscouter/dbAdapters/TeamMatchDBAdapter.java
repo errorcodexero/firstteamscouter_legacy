@@ -237,7 +237,7 @@ public class TeamMatchDBAdapter implements BaseColumns {
      * @param num_team_members
      * @return true if the entry was successfully updated, false otherwise
      */
-    public boolean updateTeamMatch(int team_match_id, String team_id, String match_id, String tmNotes, Hashtable<String, Boolean> boolVals, Hashtable<String, Integer> intVals) {
+    public boolean updateTeamMatch(long team_match_id, long team_id, long match_id, String tmNotes, Hashtable<String, Boolean> boolVals, Hashtable<String, Integer> intVals) {
     		//int auto_score, int tele_score, int other_score, 
     		//int offensive_rating, int defensive_rating){
     	FTSUtilities.printToConsole("TeamMatchDBAdapter::updateTeamMatch\n");
@@ -283,7 +283,7 @@ public class TeamMatchDBAdapter implements BaseColumns {
      * @return Cursor over all unique Match numbers
      */
     public Cursor getAllMatchNumbers() {
-    	String SELECT_QUERY = "SELECT DISTINCT t1." + TeamMatchDBAdapter.COLUMN_NAME_MATCH_ID + ", t2." + MatchDataDBAdapter.COLUMN_NAME_MATCH_NUMBER;
+    	String SELECT_QUERY = "SELECT DISTINCT t2." + MatchDataDBAdapter.COLUMN_NAME_MATCH_NUMBER + ", t2." + MatchDataDBAdapter._ID;
     	SELECT_QUERY += " FROM " + TeamMatchDBAdapter.TABLE_NAME + " AS t1";
     	SELECT_QUERY += " INNER JOIN " + MatchDataDBAdapter.TABLE_NAME + " AS t2";
     	SELECT_QUERY += " ON t1." + TeamMatchDBAdapter.COLUMN_NAME_MATCH_ID + " = t2." + MatchDataDBAdapter._ID;
@@ -310,11 +310,12 @@ public class TeamMatchDBAdapter implements BaseColumns {
     }
     
     public Cursor getTeamNumberForMatchAndAlliancePosition(long matchID, String AlliancePos) {
-    	String SELECT_QUERY = "SELECT * FROM " + TeamMatchDBAdapter.TABLE_NAME + " AS t1";
+    	String SELECT_QUERY = "SELECT t1." + TeamMatchDBAdapter._ID + ", t1." + TeamMatchDBAdapter.COLUMN_NAME_TEAM_ID + ", t2." + TeamDataDBAdapter.COLUMN_NAME_TEAM_NUMBER;
+    	SELECT_QUERY += " FROM " + TeamMatchDBAdapter.TABLE_NAME + " AS t1";
     	SELECT_QUERY += " INNER JOIN " + TeamDataDBAdapter.TABLE_NAME + " AS t2";
     	SELECT_QUERY += " ON t1." + TeamMatchDBAdapter.COLUMN_NAME_TEAM_ID + " = t2." + TeamDataDBAdapter._ID;
     	SELECT_QUERY += " WHERE t1." + TeamMatchDBAdapter.COLUMN_NAME_MATCH_ID + "=" + matchID;
-    	SELECT_QUERY += " AND t1." + TeamMatchDBAdapter.COLUMN_NAME_TEAM_MATCH_ALLIANCE_POSITION + "=" + AlliancePos;
+    	SELECT_QUERY += " AND t1." + TeamMatchDBAdapter.COLUMN_NAME_TEAM_MATCH_ALLIANCE_POSITION + "=\"" + AlliancePos + "\"";
     	SELECT_QUERY += " ORDER BY t2." + TeamDataDBAdapter.COLUMN_NAME_TEAM_NUMBER + " ASC";
     	return this.mDb.rawQuery(SELECT_QUERY, null);
     }
@@ -389,4 +390,44 @@ public class TeamMatchDBAdapter implements BaseColumns {
 	    	}
     	}
     }
+
+	public Hashtable<String, Integer> getTeamAndMatchNumbersForTeamMatchID(long teamMatchID) {
+		Hashtable<String, Integer> nums = new Hashtable<String, Integer>();
+
+		nums.put(TeamDataDBAdapter.COLUMN_NAME_TEAM_NUMBER, -1);
+		nums.put(MatchDataDBAdapter.COLUMN_NAME_MATCH_NUMBER, -1);
+
+		String SELECT_QUERY = "SELECT t2." + TeamDataDBAdapter.COLUMN_NAME_TEAM_NUMBER + ", t3." + MatchDataDBAdapter.COLUMN_NAME_MATCH_NUMBER;
+		SELECT_QUERY += " FROM " + TeamMatchDBAdapter.TABLE_NAME + " AS t1";
+    	SELECT_QUERY += " INNER JOIN " + TeamDataDBAdapter.TABLE_NAME + " AS t2";
+    	SELECT_QUERY += " ON t1." + TeamMatchDBAdapter.COLUMN_NAME_TEAM_ID + " = t2." + TeamDataDBAdapter._ID;
+    	SELECT_QUERY += " INNER JOIN " + MatchDataDBAdapter.TABLE_NAME + " AS t3";
+    	SELECT_QUERY += " ON t1." + TeamMatchDBAdapter.COLUMN_NAME_MATCH_ID + " = t3." + MatchDataDBAdapter._ID;
+    	SELECT_QUERY += " WHERE t1." + TeamMatchDBAdapter._ID + "=" + teamMatchID;
+    	Cursor c = this.mDb.rawQuery(SELECT_QUERY, null);
+		
+    	if(c != null) {
+    		String names = "";
+    		for(String name : c.getColumnNames()) {
+    			names += "*" + name + "*-";
+    		}
+    		
+    		FTSUtilities.printToConsole("TeamMatchDBAdapter::getTeamAndMatchNumbersForTeamMatchID : Cursor Size: " + c.getCount() + " Column Names: " + names);
+    		
+    		c.moveToFirst();
+    		
+    		try {
+    			int teamID = c.getInt(c.getColumnIndexOrThrow(TeamDataDBAdapter.COLUMN_NAME_TEAM_NUMBER));
+    			int matchID = c.getInt(c.getColumnIndexOrThrow(MatchDataDBAdapter.COLUMN_NAME_MATCH_NUMBER));
+    		
+    			nums.put(TeamDataDBAdapter.COLUMN_NAME_TEAM_NUMBER, teamID);
+    			nums.put(MatchDataDBAdapter.COLUMN_NAME_MATCH_NUMBER, matchID);
+    		}
+    		catch (Exception e) {
+    			e.printStackTrace();
+    		}
+    	}
+    	
+		return nums;
+	}
 }

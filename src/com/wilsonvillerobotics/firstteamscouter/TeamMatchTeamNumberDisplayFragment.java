@@ -10,7 +10,7 @@ import android.support.v4.app.Fragment;
 public class TeamMatchTeamNumberDisplayFragment extends Fragment {
 
 	private TeamMatchData tmData;
-	private int teamMatchID;
+	private long teamMatchID;
 	public static String myTitle;
 	
     @Override
@@ -18,12 +18,12 @@ public class TeamMatchTeamNumberDisplayFragment extends Fragment {
             Bundle savedInstanceState) {
 
     	this.myTitle = "Team Number Display";
-    	this.teamMatchID = getArguments() != null ? getArguments().getInt("tmID") : -1;
+    	this.teamMatchID = getArguments() != null ? getArguments().getLong("tmID") : -1;
     	
         View rootView = inflater.inflate(R.layout.fragment_team_match_teamnumber_display, container, false);
 		
         TextView txtTeamNumberDisplay = (TextView) rootView.findViewById(R.id.txtTeamNumberDisplay);
-        txtTeamNumberDisplay.setText(this.tmData.teamNumber);
+        txtTeamNumberDisplay.setText(this.tmData.getTeamNumber());
         
 		return rootView;
 	}
@@ -33,12 +33,12 @@ public class TeamMatchTeamNumberDisplayFragment extends Fragment {
     	super.onActivityCreated(savedInstanceState);
     }
     
-    static TeamMatchTeamNumberDisplayFragment newInstance(Integer tmID) {
+    static TeamMatchTeamNumberDisplayFragment newInstance(Long teamMatchID2) {
     	TeamMatchTeamNumberDisplayFragment f = new TeamMatchTeamNumberDisplayFragment();
 
         // Supply num input as an argument.
         Bundle args = new Bundle();
-        args.putInt("tmID", tmID);
+        args.putLong("tmID", teamMatchID2);
         f.setArguments(args);
 
         return f;

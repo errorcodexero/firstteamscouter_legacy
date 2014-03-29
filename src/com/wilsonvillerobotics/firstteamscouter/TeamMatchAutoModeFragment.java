@@ -82,12 +82,12 @@ public class TeamMatchAutoModeFragment extends Fragment implements OnClickListen
         return rootView;
     }
     
-    static TeamMatchAutoModeFragment newInstance(Integer tmID) {
+    static TeamMatchAutoModeFragment newInstance(Long teamMatchID) {
     	TeamMatchAutoModeFragment f = new TeamMatchAutoModeFragment();
 
         // Supply num input as an argument.
         Bundle args = new Bundle();
-        args.putInt("tmID", tmID);
+        args.putLong("tmID", teamMatchID);
         f.setArguments(args);
 
         return f;

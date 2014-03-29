@@ -6,9 +6,9 @@ import android.support.v4.app.FragmentManager;
  
 public class TabsPagerAdapter extends FragmentPagerAdapter {
  
-	private Integer teamMatchID;
-	private String teamNumber;
-	private String matchNumber;
+	private Long teamMatchID;
+	private Integer teamNumber;
+	private Integer matchNumber;
 	private TeamMatchData tmData;
 	
 	public static String tabTitles[] = { "Team Number", "Starting Position", "Auto Mode", "Tele Mode", "Notes" };
@@ -22,9 +22,9 @@ public class TabsPagerAdapter extends FragmentPagerAdapter {
             this.teamNumber = tmData.teamNumber;
             this.matchNumber = tmData.matchNumber;
         } else {
-	        this.teamMatchID = -1;
-	        this.teamNumber = "";
-	        this.matchNumber = "";
+	        this.teamMatchID = Long.MIN_VALUE;
+	        this.teamNumber = -1;
+	        this.matchNumber = -1;
         	//this.teamMatchID = tmID;
 	        //this.teamNumber = tNum;
 	        //this.matchNumber = mNum;

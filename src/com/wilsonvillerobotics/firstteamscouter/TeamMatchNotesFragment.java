@@ -138,14 +138,14 @@ public class TeamMatchNotesFragment extends Fragment implements OnClickListener{
    		this.htBallControl.get(R.id.chkBallControlLoToLo).setChecked(this.tmData.isBallControlChecked(BALL_CONTROL.LO_TO_LO));
     }
 
-    static TeamMatchNotesFragment newInstance(Integer tmID, String tNum, String mNum) {
+    static TeamMatchNotesFragment newInstance(Long teamMatchID, Integer teamNumber, Integer matchNumber) {
     	TeamMatchNotesFragment f = new TeamMatchNotesFragment();
 
         // Supply num input as an argument.
         Bundle args = new Bundle();
-        args.putInt("tmID", tmID);
-        args.putString("tNum", tNum);
-        args.putString("mNum", mNum);
+        args.putLong("tmID", teamMatchID);
+        args.putInt("tNum", teamNumber);
+        args.putInt("mNum", matchNumber);
         f.setArguments(args);
 
         return f;

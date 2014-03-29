@@ -15,6 +15,8 @@ import android.os.Environment;
 import android.widget.TextView;
 import android.content.ContextWrapper;
 
+import com.wilsonvillerobotics.firstteamscouter.dbAdapters.MatchDataDBAdapter;
+import com.wilsonvillerobotics.firstteamscouter.dbAdapters.TeamDataDBAdapter;
 import com.wilsonvillerobotics.firstteamscouter.dbAdapters.TeamMatchDBAdapter;
 import com.wilsonvillerobotics.firstteamscouter.utilities.FTSUtilities;
 
@@ -128,10 +130,12 @@ public class TeamMatchData {
 	protected TeamMatchDBAdapter tmDBAdapter;
 	protected Context context;
 	
-	protected int teamMatchID;
+	protected long teamMatchID;
+	protected long teamID;
+	protected long matchID;
 	
-	protected String teamNumber;
-	protected String matchNumber;
+	protected Integer teamNumber;
+	protected Integer matchNumber;
 
 	//protected Hashtable<String, Integer> statHash;
 
@@ -198,12 +202,14 @@ public class TeamMatchData {
     protected Boolean ballControl[];
 
 
-	public TeamMatchData(Context c, String tID, int tmID) { //, String tnum, String mnum) {
+	public TeamMatchData(Context c, String tID, Long teamMatchID) { //, String tnum, String mnum) {
 		this.context = c;
 		this.tabletID = tID;
-		this.teamMatchID = tmID;
-		this.teamNumber = ""; //tnum;
-		this.matchNumber = ""; //mnum;
+		this.teamMatchID = teamMatchID;
+		this.teamID = -1;
+		this.matchID = -1;
+		this.teamNumber = -1; //tnum;
+		this.matchNumber = -1; //mnum;
 		
 		this.saveFileName = this.tabletID + "_match_data_export";
 		
@@ -501,7 +507,7 @@ public class TeamMatchData {
 				 * Create a Boolean hash like the int hash above to hold all of the Boolean values
 				 */
 
-				Boolean retVal = this.tmDBAdapter.updateTeamMatch(this.teamMatchID, this.teamNumber, this.matchNumber, this.teamMatchNotes, htBoolValues, htIntValues);
+				Boolean retVal = this.tmDBAdapter.updateTeamMatch(this.teamMatchID, this.teamID, this.matchID, this.teamMatchNotes, htBoolValues, htIntValues);
 				FileOutputStream fo = null;
 				boolean append = false;
 				
@@ -555,7 +561,7 @@ public class TeamMatchData {
 				FTSUtilities.printToConsole("Update Successful? : " + retVal.toString());
 				return retVal;
 			} catch (NumberFormatException e) {
-				this.teamNumber = "";
+				this.teamNumber = -1;
 				this.dataSaveFailed();
 			}
 		}
@@ -575,7 +581,7 @@ public class TeamMatchData {
 	}
 
 	public void loadTeamMatchData() {
-		FTSUtilities.printToConsole("TeamMatchData::loadTeamMatchData : Loading Data\n");
+		FTSUtilities.printToConsole("TeamMatchData::loadTeamMatchData : Loading Data for teamMatchID: " + String.valueOf(this.teamMatchID) + "\n");
 		Cursor tmCursor = null;
 		/*
 		//this.statHash = new Hashtable<String, Integer>();
@@ -583,10 +589,16 @@ public class TeamMatchData {
 		 */
 		try {
 			tmCursor = this.tmDBAdapter.getTeamMatch(this.teamMatchID);
+			FTSUtilities.printToConsole("TeamMatchData::loadTeamMatchData : tmCursor Count: " + tmCursor.getCount());
 			
-			this.matchNumber = tmCursor.getString(tmCursor.getColumnIndexOrThrow(TeamMatchDBAdapter.COLUMN_NAME_MATCH_ID));
-			this.teamNumber = tmCursor.getString(tmCursor.getColumnIndexOrThrow(TeamMatchDBAdapter.COLUMN_NAME_TEAM_ID));
+			this.matchID = tmCursor.getLong(tmCursor.getColumnIndexOrThrow(TeamMatchDBAdapter.COLUMN_NAME_MATCH_ID));
+			this.teamID = tmCursor.getLong(tmCursor.getColumnIndexOrThrow(TeamMatchDBAdapter.COLUMN_NAME_TEAM_ID));
 			this.tmDataSaved = Boolean.parseBoolean(tmCursor.getString(tmCursor.getColumnIndexOrThrow(TeamMatchDBAdapter.COLUMN_NAME_TEAM_MATCH_DATA_UPDATED)));
+			
+			Hashtable<String, Integer> nums = this.tmDBAdapter.getTeamAndMatchNumbersForTeamMatchID(teamMatchID);
+			
+			this.teamNumber = nums.get(TeamDataDBAdapter.COLUMN_NAME_TEAM_NUMBER);
+			this.matchNumber = nums.get(MatchDataDBAdapter.COLUMN_NAME_MATCH_NUMBER);
 			
 			if(this.tmDataSaved) {
 				FTSUtilities.printToConsole("TeamMatchData::loadTeamMatchData : Loading Saved Data\n");
@@ -666,12 +678,12 @@ public class TeamMatchData {
 	 *             GETTERS				 *
 	 * 									 *
 	 *************************************/
-	public String getteamNumber() {
-		return this.teamNumber;
+	public String getTeamNumber() {
+		return String.valueOf(this.teamNumber);
 	}
 	
 	public String getMatchNumber() {
-		return this.matchNumber;
+		return String.valueOf(this.matchNumber);
 	}
 	
 	public int getAutoHiScore() {
@@ -766,11 +778,11 @@ public class TeamMatchData {
 		this.startingLocation = sl;
 	}
 	
-	public void setMatchhNumber(String mnum) {
+	public void setMatchhNumber(int mnum) {
 		this.matchNumber = mnum;
 	}
 	
-	public void setTeamNumber(String tnum) {
+	public void setTeamNumber(int tnum) {
 		this.teamNumber = tnum;
 	}
 	

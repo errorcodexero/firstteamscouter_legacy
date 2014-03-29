@@ -223,4 +223,9 @@ public class MatchDataDBAdapter implements BaseColumns {
     	}
     	return matchIDs;
     }
+
+	public Cursor getTeamNumbersforMatch(long matchID) {
+		
+		return null;
+	}
 }

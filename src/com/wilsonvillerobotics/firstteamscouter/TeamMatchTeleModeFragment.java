@@ -93,12 +93,12 @@ public class TeamMatchTeleModeFragment extends Fragment implements OnClickListen
 		return rootView;
     }
     
-    static TeamMatchTeleModeFragment newInstance(Integer tmID) {
+    static TeamMatchTeleModeFragment newInstance(Long teamMatchID) {
     	TeamMatchTeleModeFragment f = new TeamMatchTeleModeFragment();
 
         // Supply num input as an argument.
         Bundle args = new Bundle();
-        args.putInt("tmID", tmID);
+        args.putLong("tmID", teamMatchID);
         f.setArguments(args);
 
         return f;

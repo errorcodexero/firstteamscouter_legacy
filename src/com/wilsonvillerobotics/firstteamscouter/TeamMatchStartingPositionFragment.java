@@ -21,7 +21,7 @@ import android.support.v4.app.Fragment;
 public class TeamMatchStartingPositionFragment extends Fragment implements OnClickListener {
 
 	private TeamMatchData tmData;
-	private int teamMatchID;
+	private Long teamMatchID;
 	public static String myTitle;
 	Hashtable<STARTING_LOC, ToggleButton> buttonHash;
 	
@@ -30,7 +30,7 @@ public class TeamMatchStartingPositionFragment extends Fragment implements OnCli
             Bundle savedInstanceState) {
 
     	this.myTitle = "Starting Position";
-    	this.teamMatchID = getArguments() != null ? getArguments().getInt("tmID") : -1;
+    	this.teamMatchID = getArguments() != null ? getArguments().getLong("tmID") : -1;
     	
         View rootView = inflater.inflate(R.layout.fragment_team_match_starting_position, container, false);
         
@@ -103,12 +103,12 @@ public class TeamMatchStartingPositionFragment extends Fragment implements OnCli
           });*/
     }
     
-    static TeamMatchStartingPositionFragment newInstance(Integer tmID) {
+    static TeamMatchStartingPositionFragment newInstance(Long teamMatchID) {
     	TeamMatchStartingPositionFragment f = new TeamMatchStartingPositionFragment();
 
         // Supply num input as an argument.
         Bundle args = new Bundle();
-        args.putInt("tmID", tmID);
+        args.putLong("tmID", teamMatchID);
         f.setArguments(args);
 
         return f;

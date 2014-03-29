@@ -21,13 +21,13 @@ public class TeamMatchInformationActivity extends Activity {
 		setContentView(R.layout.activity_team_match_information);
 		
 		int prePosition = getIntent().getIntExtra("position", 0);
-		int tmID = getIntent().getIntExtra(TeamMatchDBAdapter._ID, -1);
+		Long tmID = getIntent().getLongExtra(TeamMatchDBAdapter._ID, -1);
 		
 		FTSUtilities.printToConsole("Creating TeamMatchInformationActivity");
 		
 		//tDBAdapter = new TeamDataDBAdapter(this.getBaseContext()).open();
 		tmDBAdapter = new TeamMatchDBAdapter(this).open();
-		tmData = new TeamMatchData(this, this.tabletID, prePosition);
+		tmData = new TeamMatchData(this, this.tabletID, tmID);
 		
 		this.loadTeamMatchInfo(tmID);
 	}
@@ -80,7 +80,7 @@ public class TeamMatchInformationActivity extends Activity {
 		return true;
 	}
 	
-	public void loadTeamMatchInfo(int tmID) {
+	public void loadTeamMatchInfo(Long tmID) {
 		FTSUtilities.printToConsole("TeamMatchInformationActivity::loadTeamMatchInfo : loading data");
 		if(tmID >= 0) {
 			Cursor cursor = tmDBAdapter.getTeamMatch(tmID);
