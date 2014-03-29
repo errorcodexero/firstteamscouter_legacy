@@ -28,7 +28,11 @@ public class TeamDataListActivity extends ListActivity {
 
           this.teamDataDBAdapter = new TeamDataDBAdapter(this).open();
           
-          //this.teamDataDBAdapter.populateTestData();
+          
+//          if(FTSUtilities.DEBUG) {
+//        	  FTSUtilities.printToConsole("TeamDataListActivity::onCreate : Populating Test Data\n");
+//        	  this.teamDataDBAdapter.populateTestData();
+//          }          
           
           Cursor cursor = this.teamDataDBAdapter.getAllTeamDataEntries();
           startManagingCursor(cursor);
@@ -52,12 +56,10 @@ public class TeamDataListActivity extends ListActivity {
                    long arg3) 
              {
                    Cursor value = (Cursor)adapter.getItemAtPosition(position);
-                   String teamNum = value.getString(value.getColumnIndex(TeamDataDBAdapter.COLUMN_NAME_TEAM_NUMBER));
-                   // assuming string and if you want to get the value on click of list item
-                   // do what you intend to do on click of listview row
+                   long teamID = value.getLong(value.getColumnIndex(TeamDataDBAdapter._ID));
                    Intent myIntent = new Intent(v.getContext(), TeamMatchDataListActivity.class); // TeamInformationActivity.class);
                    myIntent.putExtra("position", position);
-                   myIntent.putExtra(TeamDataDBAdapter.COLUMN_NAME_TEAM_NUMBER, teamNum);
+                   myIntent.putExtra(TeamDataDBAdapter._ID, teamID);
                    startActivityForResult(myIntent, 0);
              }
           });

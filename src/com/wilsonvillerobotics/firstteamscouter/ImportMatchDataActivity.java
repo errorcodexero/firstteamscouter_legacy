@@ -26,7 +26,6 @@ import android.os.Environment;
 import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
-import android.widget.Filter;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -50,7 +49,7 @@ public class ImportMatchDataActivity extends Activity {
 	private int BLUETOOTH_SEND = 32665;
 	
 	private Button btnConfigureBluetooth;
-	private Intent bluetoothIntent;
+	//private Intent bluetoothIntent;
 	
 	private File filePath;
 	private File myExportFile;
@@ -99,64 +98,74 @@ public class ImportMatchDataActivity extends Activity {
 			@Override
 			public void onClick(View v) {
 				try {
-				    String storageState = Environment.getExternalStorageState();
-				    if (storageState.equals(Environment.MEDIA_MOUNTED)) {
-				    	FTSUtilities.printToConsole("ImportMatchDataActivity::btnOK.onClick : getting file\n");
-				        File file = new File(getExternalFilesDir(null), "match_list_data.csv");
-				        FTSUtilities.printToConsole("ImportMatchDataActivity::btnOK.onClick : file " + ((file == null) ? "IS NULL" : "IS VALID") + "\n");
-				        
-				        if(file.exists() && file.isFile()) {
-				        	txtStatus.setText("File Found, Import Commencing\n");
-					        BufferedReader inputReader = new BufferedReader(
-					                new InputStreamReader(new FileInputStream(file)));
-					        String line = "";
-					        int lineCount = 0;
-					        int matchCount = 0;
-					        int teamCount = 0;
-					        String lineArray[];
-					        inputReader.mark((int)file.length());
-					        line = inputReader.readLine();
-					        lineArray = line.split(",");
-					        String headerArray[] = {"Time", "Type", "#", "Red1", "Red2", "Red3", "Blue1", "Blue2", "Blue3"};
+					if(FTSUtilities.DEBUG) {
+						int numMatches = 10;
+						tmDBAdapter.populateTestData(mDataDBAdapter.populateTestData(numMatches), tDataDBAdapter.populateTestData());
+					} else {
+					    String storageState = Environment.getExternalStorageState();
+					    if (storageState.equals(Environment.MEDIA_MOUNTED)) {
+					    	FTSUtilities.printToConsole("ImportMatchDataActivity::btnOK.onClick : getting file\n");
+					        File file = new File(getExternalFilesDir(null), "match_list_data.csv");
+					        FTSUtilities.printToConsole("ImportMatchDataActivity::btnOK.onClick : file " + ((file == null) ? "IS NULL" : "IS VALID") + "\n");
 					        
-					        if(lineArray[1].startsWith("Type")) {
-					        	FTSUtilities.printToConsole("ImportMatchDataActivity::btnOK.onClick : Header Row Detected");
+					        if(file.exists() && file.isFile()) {
+					        	txtStatus.setText("File Found, Import Commencing\n");
+						        BufferedReader inputReader = new BufferedReader(
+						                new InputStreamReader(new FileInputStream(file)));
+						        String line = "";
+						        int lineCount = 0;
+						        int matchCount = 0;
+						        int teamCount = 0;
+						        String lineArray[];
+						        inputReader.mark((int)file.length());
+						        line = inputReader.readLine();
+						        lineArray = line.split(",");
+						        //String headerArray[] = {"Time", "Type", "#", FTSUtilities.alliancePositions[0], FTSUtilities.alliancePositions[1], FTSUtilities.alliancePositions[2],
+						        //		FTSUtilities.alliancePositions[3], FTSUtilities.alliancePositions[4], FTSUtilities.alliancePositions[5]};
+						        
+						        if(lineArray[1].startsWith("Type")) {
+						        	FTSUtilities.printToConsole("ImportMatchDataActivity::btnOK.onClick : Header Row Detected");
+						        } else {
+						        	FTSUtilities.printToConsole("ImportMatchDataActivity::btnOK.onClick : NO Heasder Row Detected");
+						        	inputReader.reset();
+						        }
+						        
+						        while((line = inputReader.readLine()) != null) {
+						        	lineCount += 1;
+						        	lineArray = line.split(",");
+						        	
+						        	if(lineArray.length > 8) {
+						        		//FTSUtilities.printToConsole("ImportMatchDataActivity::btnOK.onClick : " + lineArray[0] + ":" + lineArray[1] + ":" + lineArray[2] + ":" + lineArray[3] + ":" + lineArray[4] + ":" + lineArray[5] + ":" + lineArray[6] + ":" + lineArray[7]);
+						        		//Time : Type : MatchNum : Red1 : Red2 : Red3 : Blue1 : Blue2 : Blue3
+						        		long teamIDs[] = {-1, -1, -1, -1, -1, -1};
+						        		for(int i = 0; i < 6; i++) {
+						        			teamIDs[i] = tDataDBAdapter.createTeamDataEntry(Integer.parseInt(lineArray[i+3]));
+						        		}
+	
+						        		long matchID = mDataDBAdapter.createMatchData(lineArray[0], lineArray[1], lineArray[2], teamIDs[0], teamIDs[1], teamIDs[2], teamIDs[3], teamIDs[4], teamIDs[5]);
+						        		if(matchID >= 0) {
+						        			matchCount += 1;
+						        		}
+						        		
+						        		long teamMatchID = -1;
+						        		for(int i = 0; i < 6; i++) {
+						        			teamMatchID = tmDBAdapter.createTeamMatch(FTSUtilities.alliancePositions[i], teamIDs[i], matchID);
+						        			if(teamMatchID >= 0) {
+						        				teamCount += 1;
+						        			}
+						        		}
+						        	} else {
+						        		FTSUtilities.printToConsole("ImportMatchDataActivity::btnOK.onClick : line not in proper format: " + line);
+						        	}
+						        }
+						        inputReader.close();
+	
+						        txtStatus.setText(txtStatus.getText() + "\nLines Parsed: " + lineCount + "\nMatches Created: " + matchCount + "\nTeamMatch Records Created: " + teamCount);
 					        } else {
-					        	FTSUtilities.printToConsole("ImportMatchDataActivity::btnOK.onClick : NO Heasder Row Detected");
-					        	inputReader.reset();
+					        	txtStatus.setText("ERROR: could not find file:\n" + file.toString());
 					        }
-					        
-					        while((line = inputReader.readLine()) != null) {
-					        	lineCount += 1;
-					        	lineArray = line.split(",");
-					        	
-					        	if(lineArray.length > 8) {
-					        		//FTSUtilities.printToConsole("ImportMatchDataActivity::btnOK.onClick : " + lineArray[0] + ":" + lineArray[1] + ":" + lineArray[2] + ":" + lineArray[3] + ":" + lineArray[4] + ":" + lineArray[5] + ":" + lineArray[6] + ":" + lineArray[7]);
-					        		//Time : Type : MatchNum : Red1 : Red2 : Red3 : Blue1 : Blue2 : Blue3
-					        		long matchID = mDataDBAdapter.createMatchData(lineArray[0], lineArray[1], lineArray[2], lineArray[3], lineArray[4], lineArray[5], lineArray[6], lineArray[7], lineArray[8]);
-					        		if(matchID >= 0) {
-					        			matchCount += 1;
-					        		}
-					        		long teamMatchID = -1;
-					        		long teamID = -1;
-					        		for(int i = 3; i < 9; i++) {
-					        			teamID = tDataDBAdapter.createTeamDataEntry(lineArray[i]);
-					        			teamMatchID = tmDBAdapter.createTeamMatch(lineArray[i], matchID);
-					        			if(teamMatchID >= 0) {
-					        				teamCount += 1;
-					        			}
-					        		}
-					        	} else {
-					        		FTSUtilities.printToConsole("ImportMatchDataActivity::btnOK.onClick : line not in proper format: " + line);
-					        	}
-					        }
-					        inputReader.close();
-
-					        txtStatus.setText(txtStatus.getText() + "\nLines Parsed: " + lineCount + "\nMatches Created: " + matchCount + "\nTeamMatch Records Created: " + teamCount);
-				        } else {
-				        	txtStatus.setText("ERROR: could not find file:\n" + file.toString());
-				        }
-				    }
+					    }
+					}
 				} catch (Exception e) {
 					FTSUtilities.printToConsole("ImportMatchDataActivity::btnOK.onClick : ERROR");
 				    e.printStackTrace();
@@ -177,7 +186,6 @@ public class ImportMatchDataActivity extends Activity {
 					try {
 						myTempFile.createNewFile();
 					} catch (IOException e1) {
-						// TODO Auto-generated catch block
 						e1.printStackTrace();
 					}
 				
@@ -185,7 +193,6 @@ public class ImportMatchDataActivity extends Activity {
 					try {
 						copy(myExportFile, myTempFile);
 					} catch (IOException e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 					if(saveDir.mkdir() || saveDir.isDirectory()) {

@@ -19,7 +19,8 @@ public class TeamMatchDBAdapter implements BaseColumns {
     public static final String COLUMN_NAME_TEAM_MATCH_ID = "team_match_id";
     public static final String COLUMN_NAME_TEAM_ID = "team_id";
     public static final String COLUMN_NAME_MATCH_ID = "match_id";
-    public static final String COLUMN_NAME_MATCH_DATA_SAVED = "match_data_entered";
+    public static final String COLUMN_NAME_TEAM_MATCH_ALLIANCE_POSITION = "alliance_position";
+    public static final String COLUMN_NAME_TEAM_MATCH_DATA_UPDATED = "team_match_data_updated";
     public static final String COLUMN_NAME_AUTO_SCORE = "auto_score";
     public static final String COLUMN_NAME_AUTO_HI_SCORE = "auto_hi_score";
     public static final String COLUMN_NAME_AUTO_LO_SCORE = "auto_lo_score";
@@ -76,7 +77,8 @@ public class TeamMatchDBAdapter implements BaseColumns {
     		COLUMN_NAME_TEAM_MATCH_ID,
     	    COLUMN_NAME_TEAM_ID,
     	    COLUMN_NAME_MATCH_ID,
-    	    COLUMN_NAME_MATCH_DATA_SAVED,
+    	    COLUMN_NAME_TEAM_MATCH_ALLIANCE_POSITION,
+    	    COLUMN_NAME_TEAM_MATCH_DATA_UPDATED,
     	    COLUMN_NAME_AUTO_SCORE,
     	    COLUMN_NAME_AUTO_HI_SCORE,
     	    COLUMN_NAME_AUTO_LO_SCORE,
@@ -211,27 +213,18 @@ public class TeamMatchDBAdapter implements BaseColumns {
     /**
      * Create a new entry. If the entry is successfully created return the new
      * rowId for that entry, otherwise return a -1 to indicate failure.
-     * 
-     * @param team_match_id
+     * @param alliancePosition 
      * @param team_id
      * @param match_id
-     * @param auto_score
-     * @param tele_score
-     * @param other_score
-     * @param offensive_rating
-     * @param defensive_rating
      * @return rowId or -1 if failed
      */
-    public long createTeamMatch(String team_id, long match_id) {
+    public long createTeamMatch(String alliancePosition, long team_id, long match_id) {
         ContentValues args = new ContentValues();
-        //args.put(COLUMN_NAME_TEAM_MATCH_ID, team_match_id);
+        args.put(COLUMN_NAME_TEAM_MATCH_ALLIANCE_POSITION, alliancePosition);
         args.put(COLUMN_NAME_TEAM_ID, team_id);
         args.put(COLUMN_NAME_MATCH_ID, String.valueOf(match_id));
-        args.put(COLUMN_NAME_MATCH_DATA_SAVED, Boolean.FALSE.toString());
+        args.put(COLUMN_NAME_TEAM_MATCH_DATA_UPDATED, Boolean.TRUE.toString());
         return this.mDb.insert(TABLE_NAME, null, args);
-        /*
-
-         */
     }
 
     /**
@@ -253,11 +246,6 @@ public class TeamMatchDBAdapter implements BaseColumns {
         args.put(COLUMN_NAME_TEAM_ID, team_id);
         args.put(COLUMN_NAME_MATCH_ID, match_id);
         args.put(COLUMN_NAME_TEAM_MATCH_NOTES, tmNotes);
-//        args.put(COLUMN_NAME_MATCH_DATA_SAVED, Boolean.toString(tmSaved));
-//        args.put(COLUMN_NAME_AUTO_MOVE, Boolean.toString(move));
-//        args.put(COLUMN_NAME_BROKE_DOWN, Boolean.toString(move));
-//        args.put(COLUMN_NAME_NO_MOVE, Boolean.toString(move));
-//        args.put(COLUMN_NAME_LOST_CONNECTION, Boolean.toString(move));
         
         Enumeration<String> boolKeys = boolVals.keys();
         while(boolKeys.hasMoreElements()) {
@@ -272,7 +260,7 @@ public class TeamMatchDBAdapter implements BaseColumns {
         }
         
         String WHERE = TeamMatchDBAdapter._ID + "=" + team_match_id;
-        //WHERE += " AND " + TeamMatchDBAdapter.COLUMN_NAME_MATCH_ID + "=" + match_id;
+        
         return this.mDb.update(TABLE_NAME, args, WHERE, null) >0; 
     }
 
@@ -284,8 +272,8 @@ public class TeamMatchDBAdapter implements BaseColumns {
     public Cursor getAllTeamMatches() {
 
         return this.mDb.query(TABLE_NAME, new String[] { _ID,
-        		COLUMN_NAME_TEAM_ID, COLUMN_NAME_MATCH_ID,
-        		COLUMN_NAME_AUTO_SCORE, COLUMN_NAME_TELE_SCORE,
+        		COLUMN_NAME_TEAM_ID, COLUMN_NAME_MATCH_ID, COLUMN_NAME_TEAM_MATCH_ALLIANCE_POSITION,
+        		COLUMN_NAME_AUTO_SCORE, COLUMN_NAME_TELE_SCORE, COLUMN_NAME_TEAM_MATCH_DATA_UPDATED
         		}, null, null, null, null, null);
     }
 
@@ -295,8 +283,14 @@ public class TeamMatchDBAdapter implements BaseColumns {
      * @return Cursor over all unique Match numbers
      */
     public Cursor getAllMatchNumbers() {
-        return this.mDb.query(TABLE_NAME, new String[] { _ID,
-        		COLUMN_NAME_MATCH_ID}, null, null, COLUMN_NAME_MATCH_ID, null, COLUMN_NAME_MATCH_ID + " ASC");
+    	String SELECT_QUERY = "SELECT DISTINCT t1." + TeamMatchDBAdapter.COLUMN_NAME_MATCH_ID + ", t2." + MatchDataDBAdapter.COLUMN_NAME_MATCH_NUMBER;
+    	SELECT_QUERY += " FROM " + TeamMatchDBAdapter.TABLE_NAME + " AS t1";
+    	SELECT_QUERY += " INNER JOIN " + MatchDataDBAdapter.TABLE_NAME + " AS t2";
+    	SELECT_QUERY += " ON t1." + TeamMatchDBAdapter.COLUMN_NAME_MATCH_ID + " = t2." + MatchDataDBAdapter._ID;
+    	SELECT_QUERY += " ORDER BY " + MatchDataDBAdapter.COLUMN_NAME_MATCH_NUMBER + " ASC";
+    	return this.mDb.rawQuery(SELECT_QUERY, null);
+        //return this.mDb.query(TABLE_NAME, new String[] { _ID, COLUMN_NAME_TEAM_MATCH_ALLIANCE_POSITION,
+        //		COLUMN_NAME_MATCH_ID, COLUMN_NAME_TEAM_MATCH_DATA_UPDATED}, null, null, COLUMN_NAME_MATCH_ID, null, COLUMN_NAME_MATCH_ID + " ASC");
     }
 
     /**
@@ -304,13 +298,29 @@ public class TeamMatchDBAdapter implements BaseColumns {
      * 
      * @return Cursor over all Team IDs for a given match number
      */
-    public Cursor getTeamNumbersforMatch(String matchNum) {
-        return this.mDb.query(TABLE_NAME, new String[] { _ID,
-        		COLUMN_NAME_TEAM_ID}, COLUMN_NAME_MATCH_ID + "=" + matchNum, null, null, null, COLUMN_NAME_TEAM_ID + " ASC");
+    public Cursor getTeamNumbersforMatch(long matchID) {
+    	String SELECT_QUERY = "SELECT * FROM " + TeamMatchDBAdapter.TABLE_NAME + " AS t1";
+    	SELECT_QUERY += " INNER JOIN " + TeamDataDBAdapter.TABLE_NAME + " AS t2";
+    	SELECT_QUERY += " ON t1." + TeamMatchDBAdapter.COLUMN_NAME_TEAM_ID + " = t2." + TeamDataDBAdapter._ID;
+    	SELECT_QUERY += " WHERE t1." + TeamMatchDBAdapter.COLUMN_NAME_MATCH_ID + "=" + String.valueOf(matchID);
+    	SELECT_QUERY += " ORDER BY t2." + TeamDataDBAdapter.COLUMN_NAME_TEAM_NUMBER + " ASC";
+    	return this.mDb.rawQuery(SELECT_QUERY, null);
+        //return this.mDb.query(TABLE_NAME, new String[] { _ID,
+        //		COLUMN_NAME_TEAM_ID}, COLUMN_NAME_MATCH_ID + "=" + String.valueOf(matchID), null, null, null, COLUMN_NAME_TEAM_ID + " ASC");
     }
     
-    public Cursor getMatchesForTeam(String teamNum) {
-    	String selection = COLUMN_NAME_TEAM_ID + "=" + teamNum;
+    public Cursor getTeamNumberForMatchAndAlliancePosition(long matchID, String AlliancePos) {
+    	String SELECT_QUERY = "SELECT * FROM " + TeamMatchDBAdapter.TABLE_NAME + " AS t1";
+    	SELECT_QUERY += " INNER JOIN " + TeamDataDBAdapter.TABLE_NAME + " AS t2";
+    	SELECT_QUERY += " ON t1." + TeamMatchDBAdapter.COLUMN_NAME_TEAM_ID + " = t2." + TeamDataDBAdapter._ID;
+    	SELECT_QUERY += " WHERE t1." + TeamMatchDBAdapter.COLUMN_NAME_MATCH_ID + "=" + matchID;
+    	SELECT_QUERY += " AND t1." + TeamMatchDBAdapter.COLUMN_NAME_TEAM_MATCH_ALLIANCE_POSITION + "=" + AlliancePos;
+    	SELECT_QUERY += " ORDER BY t2." + TeamDataDBAdapter.COLUMN_NAME_TEAM_NUMBER + " ASC";
+    	return this.mDb.rawQuery(SELECT_QUERY, null);
+    }
+    
+    public Cursor getMatchesForTeam(long teamID) {
+    	String selection = COLUMN_NAME_TEAM_ID + "=" + String.valueOf(teamID);
     	Cursor mCursor = this.mDb.query(TABLE_NAME, this.allColumnNames, selection, null, null, null, COLUMN_NAME_MATCH_ID);
     	return mCursor;
     }
@@ -363,19 +373,18 @@ public class TeamMatchDBAdapter implements BaseColumns {
         mDb.delete(TABLE_NAME, null, null);
     }
     
-    public void populateTestData() {
+    public void populateTestData(long[] matchIDs, long[] teamIDs) {
     	FTSUtilities.printToConsole("TeamMatchDBAdapter::populateTestData\n");
     	deleteAllData();
     	
-    	Set<Integer> teamNums = FTSUtilities.getTestTeamNumbers(); // {1425, 1520, 2929, 1114, 500, 600, 700, 800, 900, 1000};
+    	//Set<Integer> teamNums = FTSUtilities.getTestTeamNumbers(); // {1425, 1520, 2929, 1114, 500, 600, 700, 800, 900, 1000};
     	int teamOffset = 0;
-    	for(int matchNum = 1; matchNum <= 10; matchNum++) {
+    	for(long matchID : matchIDs) {
 	    	for(int i = 0; i < 6; i++) {
-	    		int id = (100 * teamOffset) + (matchNum * i) + matchNum;
-	    		int teamIndex = (i + teamOffset) % teamNums.size();
-	    		this.createTeamMatch(String.valueOf(teamNums.toArray()[teamIndex]), matchNum);
+	    		int teamIndex = (i + teamOffset) % teamIDs.length;
+	    		this.createTeamMatch(FTSUtilities.alliancePositions[i], teamIDs[teamIndex], matchID);
 	    	}
-	    	if(++teamOffset >= teamNums.size()) {
+	    	if(++teamOffset >= teamIDs.length) {
 	    		teamOffset = 0;
 	    	}
     	}

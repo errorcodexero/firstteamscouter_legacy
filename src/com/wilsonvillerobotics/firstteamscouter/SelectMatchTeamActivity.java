@@ -1,5 +1,7 @@
 package com.wilsonvillerobotics.firstteamscouter;
 
+import com.wilsonvillerobotics.firstteamscouter.dbAdapters.MatchDataDBAdapter;
+import com.wilsonvillerobotics.firstteamscouter.dbAdapters.TeamDataDBAdapter;
 import com.wilsonvillerobotics.firstteamscouter.dbAdapters.TeamMatchDBAdapter;
 import com.wilsonvillerobotics.firstteamscouter.utilities.FTSUtilities;
 
@@ -20,8 +22,8 @@ public class SelectMatchTeamActivity extends Activity {
 
 	protected TeamMatchDBAdapter tmDBAdapter;
 	protected String[] teamNumberArray;
-	protected String teamNumber;
-	protected String matchNumber;
+	protected long teamID;
+	protected long matchID;
 	protected Button btnSubmit;
 	protected Intent teamMatchIntent;
 	private String tabletID;
@@ -34,8 +36,8 @@ public class SelectMatchTeamActivity extends Activity {
 		Intent intent = getIntent();
 		this.tabletID = intent.getStringExtra("tablet_id");
 		
-		teamNumber = null;
-		matchNumber = null;
+		teamID = -1;
+		matchID = -1;
 		
 		try {
 			FTSUtilities.printToConsole("SelectTeamMatchActivity::onCreate : OPENING DB\n");
@@ -61,7 +63,11 @@ public class SelectMatchTeamActivity extends Activity {
 			}
 		});
 		
-		//tmDBAdapter.populateTestData();
+//		if(FTSUtilities.DEBUG) {
+//      	  FTSUtilities.printToConsole("SelectMatchTeamActivity::onCreate : Populating Test Data\n");
+//      	  tmDBAdapter.populateTestData();
+//        }
+		
 		populateMatchNumberSpinner();
 	}
 
@@ -123,12 +129,13 @@ public class SelectMatchTeamActivity extends Activity {
 		if(tmDBAdapter == null) return;
 		
 		Cursor matchNumbers = tmDBAdapter.getAllMatchNumbers();
+		FTSUtilities.printToConsole("SelectMatchTeamActivity::populateMatchNumberSpinner : Number of Matches Returned: " + String.valueOf(matchNumbers.getCount()));
 		
 		Spinner spinMatchNum = (Spinner)findViewById(R.id.spinMatchNumber);
 		
 		// which columns map to which layout controls
-		String[] matchFromColumns = new String[] {TeamMatchDBAdapter.COLUMN_NAME_MATCH_ID};
-		int[] matchToControlIDs = new int[] {android.R.id.text1};
+		String[] matchFromColumns = new String[] {MatchDataDBAdapter.COLUMN_NAME_MATCH_NUMBER, TeamMatchDBAdapter.COLUMN_NAME_MATCH_ID};
+		int[] matchToControlIDs = new int[] {android.R.id.text1, android.R.id.text2};
 
 		// use a SimpleCursorAdapter
 		SimpleCursorAdapter matchCA = new SimpleCursorAdapter(this, android.R.layout.simple_spinner_item, matchNumbers,
@@ -147,16 +154,16 @@ public class SelectMatchTeamActivity extends Activity {
             	Spinner spinTeamNum = (Spinner)findViewById(R.id.spinTeamNumber);
             	
             	if(spinTeamNum != null) {
-            		matchNumber = "0";
+            		matchID = -1;
             		if(arg0.getItemAtPosition(arg2) != null) {
             			//FTSUtilities.printToConsole("Index: " + arg2 + " is match number: " + arg0.getItemAtPosition(arg2));
             			Cursor c = (Cursor)arg0.getItemAtPosition(arg2);
-            			matchNumber = c.getString(c.getColumnIndexOrThrow(TeamMatchDBAdapter.COLUMN_NAME_MATCH_ID));
+            			matchID = c.getLong(c.getColumnIndex(TeamMatchDBAdapter.COLUMN_NAME_MATCH_ID));
             		}
             		
-	            	Cursor teamNumbers = tmDBAdapter.getTeamNumbersforMatch(matchNumber);
+	            	Cursor teamNumbers = tmDBAdapter.getTeamNumbersforMatch(matchID);
 	            	
-	            	String[] teamFromColumns = new String[] {TeamMatchDBAdapter.COLUMN_NAME_TEAM_ID, TeamMatchDBAdapter._ID};
+	            	String[] teamFromColumns = new String[] {TeamDataDBAdapter.COLUMN_NAME_TEAM_NUMBER, TeamMatchDBAdapter._ID};
 	        		int[] teamToControlIDs = new int[] {android.R.id.text1, android.R.id.text2};
 	            	
 	        		SimpleCursorAdapter teamCA = new SimpleCursorAdapter(arg0.getContext(), android.R.layout.simple_spinner_item, teamNumbers,
@@ -171,15 +178,15 @@ public class SelectMatchTeamActivity extends Activity {
 
 		                public void onItemSelected(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
 		                	Cursor value = (Cursor)arg0.getItemAtPosition(arg2);
-		                    teamNumber = value.getString(value.getColumnIndex(TeamMatchDBAdapter.COLUMN_NAME_TEAM_ID));
+		                    teamID = value.getInt(value.getColumnIndex(TeamMatchDBAdapter.COLUMN_NAME_TEAM_ID));
 		                    String tmID = value.getString(value.getColumnIndex(TeamMatchDBAdapter._ID));
 		                    // assuming string and if you want to get the value on click of list item
 		                    // do what you intend to do on click of listview row
 		                    teamMatchIntent = new Intent(arg1.getContext(), EnterTeamMatchDataActivity.class);
 		                    teamMatchIntent.putExtra("tablet_id", tabletID);
 		                    teamMatchIntent.putExtra("position", arg3);
-		                    teamMatchIntent.putExtra(TeamMatchDBAdapter.COLUMN_NAME_TEAM_ID, teamNumber);
-		                    teamMatchIntent.putExtra(TeamMatchDBAdapter.COLUMN_NAME_MATCH_ID, matchNumber);
+		                    teamMatchIntent.putExtra(TeamMatchDBAdapter.COLUMN_NAME_TEAM_ID, teamID);
+		                    teamMatchIntent.putExtra(TeamMatchDBAdapter.COLUMN_NAME_MATCH_ID, matchID);
 		                    teamMatchIntent.putExtra(TeamMatchDBAdapter._ID, tmID);
 		                    //startActivityForResult(teamMatchIntent, 0);
 		                }

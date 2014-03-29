@@ -18,7 +18,7 @@ public class TeamInformationActivity extends Activity {
 
 	protected TeamDataDBAdapter tDBAdapter;
 	protected TeamInformation tInfo;
-	protected String teamNumber;
+	protected Integer teamNumber;
 	private Button btnSave;
 	private Button btnDeleteTeam;
 	
@@ -28,7 +28,7 @@ public class TeamInformationActivity extends Activity {
 		setContentView(R.layout.activity_team_information);
 		
 		int prePosition = getIntent().getIntExtra("position", 0);
-		teamNumber = getIntent().getStringExtra(TeamDataDBAdapter.COLUMN_NAME_TEAM_NUMBER);
+		teamNumber = getIntent().getIntExtra(TeamDataDBAdapter.COLUMN_NAME_TEAM_NUMBER, -1);
 		
 		FTSUtilities.printToConsole("Creating TeamInformationActivity");
 		
@@ -107,7 +107,7 @@ public class TeamInformationActivity extends Activity {
 		return true;
 	}
 	
-	public void loadTeamInfo(String teamNum) {
+	public void loadTeamInfo(int teamNum) {
 		Cursor cursor = tDBAdapter.getTeamDataEntry(teamNum);
 		EditText teamName, teamLocation, teamNumber, teamNumMembers;
 		
@@ -132,16 +132,16 @@ public class TeamInformationActivity extends Activity {
 		// Gets the data repository in write mode
 		//SQLiteDatabase db = tDbHelper.getWritableDatabase();
 		int teamID = 0; /// UPDATE THIS TO WORK!!!
-		String teamNumber = "";
+		int teamNumber = -1;
 		int numTeamMembers = 0;
 		String teamName = "", teamLocation = "";
 		
 		try{
 			teamName = ((EditText) findViewById(R.id.txtTeamName)).getText().toString();
 			teamLocation = ((EditText) findViewById(R.id.txtTeamLocation)).getText().toString();
-			teamNumber = ((EditText) findViewById(R.id.txtTeamNum)).getText().toString();
+			teamNumber = Integer.parseInt(((EditText) findViewById(R.id.txtTeamNum)).getText().toString());
 		} catch (NumberFormatException e) {
-			teamNumber = "";
+			teamNumber = -1;
 		}
 		
 		try{
@@ -151,17 +151,17 @@ public class TeamInformationActivity extends Activity {
 		}
 		
 		if(!tDBAdapter.updateTeamDataEntry(teamID, teamNumber, teamName, teamLocation, numTeamMembers)) {
-			tDBAdapter.createTeamDataEntry(teamID, teamNumber, teamName, teamLocation, numTeamMembers);
+			tDBAdapter.createTeamDataEntry(teamNumber, teamName, teamLocation, numTeamMembers);
 		}
 	}
 	
 	public void btnDeleteTeamOnClick() {
-		String teamNumber = "";
+		int teamNumber = -1;
 		
 		try{
-			teamNumber = ((EditText) findViewById(R.id.txtTeamNum)).getText().toString();
+			teamNumber = Integer.parseInt(((EditText) findViewById(R.id.txtTeamNum)).getText().toString());
 		} catch (NumberFormatException e) {
-			teamNumber = "";
+			teamNumber = -1;
 		}
 		
 		tDBAdapter.deleteTeamDataEntry(teamNumber);

@@ -414,7 +414,7 @@ public class TeamMatchData {
 	
 	private Hashtable<String, Boolean> getBoolValueHash() {
 		Hashtable<String, Boolean> htBoolValues = new Hashtable<String, Boolean>();
-		htBoolValues.put(TeamMatchDBAdapter.COLUMN_NAME_MATCH_DATA_SAVED, this.tmDataSaved);
+		htBoolValues.put(TeamMatchDBAdapter.COLUMN_NAME_TEAM_MATCH_DATA_UPDATED, this.tmDataSaved);
 		htBoolValues.put(TeamMatchDBAdapter.COLUMN_NAME_AUTO_MOVE, this.autoMove);
 		htBoolValues.put(TeamMatchDBAdapter.COLUMN_NAME_BROKE_DOWN, this.brokeDown);
 		htBoolValues.put(TeamMatchDBAdapter.COLUMN_NAME_NO_MOVE, this.noMove);
@@ -436,7 +436,7 @@ public class TeamMatchData {
 
 	private String getBoolCSVHeader() {
 		String retVal = "";
-		retVal += TeamMatchDBAdapter.COLUMN_NAME_MATCH_DATA_SAVED + COMMA;
+		retVal += TeamMatchDBAdapter.COLUMN_NAME_TEAM_MATCH_DATA_UPDATED + COMMA;
 		retVal += TeamMatchDBAdapter.COLUMN_NAME_AUTO_MOVE + COMMA;
 		retVal += TeamMatchDBAdapter.COLUMN_NAME_BROKE_DOWN + COMMA;
 		retVal += TeamMatchDBAdapter.COLUMN_NAME_NO_MOVE + COMMA;
@@ -586,7 +586,7 @@ public class TeamMatchData {
 			
 			this.matchNumber = tmCursor.getString(tmCursor.getColumnIndexOrThrow(TeamMatchDBAdapter.COLUMN_NAME_MATCH_ID));
 			this.teamNumber = tmCursor.getString(tmCursor.getColumnIndexOrThrow(TeamMatchDBAdapter.COLUMN_NAME_TEAM_ID));
-			this.tmDataSaved = Boolean.parseBoolean(tmCursor.getString(tmCursor.getColumnIndexOrThrow(TeamMatchDBAdapter.COLUMN_NAME_MATCH_DATA_SAVED)));
+			this.tmDataSaved = Boolean.parseBoolean(tmCursor.getString(tmCursor.getColumnIndexOrThrow(TeamMatchDBAdapter.COLUMN_NAME_TEAM_MATCH_DATA_UPDATED)));
 			
 			if(this.tmDataSaved) {
 				FTSUtilities.printToConsole("TeamMatchData::loadTeamMatchData : Loading Saved Data\n");

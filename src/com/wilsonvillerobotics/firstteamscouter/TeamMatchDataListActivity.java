@@ -32,7 +32,7 @@ public class TeamMatchDataListActivity extends ListActivity {
           this.tmDataDBAdapter = new TeamMatchDBAdapter(this).open();
           
           Intent intent = getIntent();
-          String teamID = intent.getStringExtra(TeamDataDBAdapter.COLUMN_NAME_TEAM_NUMBER);
+          long teamID = intent.getLongExtra(TeamDataDBAdapter._ID, -1);
   		
           //Cursor cursor = this.teamDataDBAdapter.getAllTeamDataEntries();
           Cursor cursor = this.tmDataDBAdapter.getMatchesForTeam(teamID);
@@ -41,7 +41,7 @@ public class TeamMatchDataListActivity extends ListActivity {
           FTSUtilities.printToConsole("TeamDataListActivity::onCreate : Cursor Size: " + cursor.getCount() + "\n");
 
           // THE DESIRED COLUMNS TO BE BOUND
-          String[] columns = new String[] { TeamMatchDBAdapter.COLUMN_NAME_MATCH_ID, TeamMatchDBAdapter.COLUMN_NAME_MATCH_DATA_SAVED };
+          String[] columns = new String[] { TeamMatchDBAdapter.COLUMN_NAME_MATCH_ID, TeamMatchDBAdapter.COLUMN_NAME_TEAM_MATCH_DATA_UPDATED };
           // THE XML DEFINED VIEWS WHICH THE DATA WILL BE BOUND TO
           int[] to = new int[] { R.id.match_number_entry, R.id.match_data_saved_entry };
 

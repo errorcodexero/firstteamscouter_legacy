@@ -1,5 +1,7 @@
 package com.wilsonvillerobotics.firstteamscouter.dbAdapters;
 
+import com.wilsonvillerobotics.firstteamscouter.utilities.FTSUtilities;
+
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -22,6 +24,8 @@ public class MatchDataDBAdapter implements BaseColumns {
     public static final String COLUMN_NAME_BLUE_TEAM_ONE_ID           = "blue_team_one_id";
     public static final String COLUMN_NAME_BLUE_TEAM_TWO_ID           = "blue_team_two_id";
     public static final String COLUMN_NAME_BLUE_TEAM_THREE_ID         = "blue_team_three_id";
+    
+    public static final String COLUMN_NAME_MATCH_DATA_UPDATED		  = "match_data_updated";
     
     private DatabaseHelper mDbHelper;
     private SQLiteDatabase mDb;
@@ -90,11 +94,9 @@ public class MatchDataDBAdapter implements BaseColumns {
      * @param location
      * @return rowId or -1 if failed
      */
-
-    public long createMatchData(String match_time, String match_type, String match_num, String red_one_id, String red_two_id, String red_three_id,
-    		String blue_one_id, String blue_two_id, String blue_three_id){
+    public long createMatchData(String match_time, String match_type, String match_num, long red_one_id, long red_two_id, long red_three_id,
+    		long blue_one_id, long blue_two_id, long blue_three_id){
         ContentValues initialValues = new ContentValues();
-        //initialValues.put(COLUMN_NAME_MATCH_DATA_ID, id);
         initialValues.put(COLUMN_NAME_MATCH_TIME, match_time);
         initialValues.put(COLUMN_NAME_MATCH_TYPE, match_type);
         initialValues.put(COLUMN_NAME_MATCH_NUMBER, match_num);
@@ -104,6 +106,15 @@ public class MatchDataDBAdapter implements BaseColumns {
         initialValues.put(COLUMN_NAME_BLUE_TEAM_ONE_ID, blue_one_id);
         initialValues.put(COLUMN_NAME_BLUE_TEAM_TWO_ID, blue_two_id);
         initialValues.put(COLUMN_NAME_BLUE_TEAM_THREE_ID, blue_three_id);
+        initialValues.put(COLUMN_NAME_MATCH_DATA_UPDATED, Boolean.TRUE.toString());
+
+        return this.mDb.insert(TABLE_NAME, null, initialValues);
+    }
+
+    public long createMatchData(int match_num){
+        ContentValues initialValues = new ContentValues();
+        initialValues.put(COLUMN_NAME_MATCH_NUMBER, match_num);
+        initialValues.put(COLUMN_NAME_MATCH_DATA_UPDATED, Boolean.TRUE.toString());
 
         return this.mDb.insert(TABLE_NAME, null, initialValues);
     }
@@ -119,6 +130,10 @@ public class MatchDataDBAdapter implements BaseColumns {
         return this.mDb.delete(TABLE_NAME, _ID + "=" + rowId, null) > 0;
     }
 
+    public boolean deleteAllData() {
+        return this.mDb.delete(TABLE_NAME, null, null) > 0;
+    }
+
     /**
      * Return a Cursor over the list of all entries in the database
      * 
@@ -129,7 +144,7 @@ public class MatchDataDBAdapter implements BaseColumns {
         return this.mDb.query(TABLE_NAME, new String[] { _ID,
         		COLUMN_NAME_MATCH_TIME, COLUMN_NAME_MATCH_TYPE, COLUMN_NAME_MATCH_NUMBER, COLUMN_NAME_MATCH_LOCATION, 
         		COLUMN_NAME_RED_TEAM_ONE_ID, COLUMN_NAME_RED_TEAM_TWO_ID, COLUMN_NAME_RED_TEAM_THREE_ID,
-        		COLUMN_NAME_BLUE_TEAM_ONE_ID, COLUMN_NAME_BLUE_TEAM_TWO_ID, COLUMN_NAME_BLUE_TEAM_THREE_ID
+        		COLUMN_NAME_BLUE_TEAM_ONE_ID, COLUMN_NAME_BLUE_TEAM_TWO_ID, COLUMN_NAME_BLUE_TEAM_THREE_ID, COLUMN_NAME_MATCH_DATA_UPDATED
         		}, null, null, null, null, null);
     }
 
@@ -146,8 +161,26 @@ public class MatchDataDBAdapter implements BaseColumns {
         this.mDb.query(true, TABLE_NAME, new String[] { _ID, 
         		COLUMN_NAME_MATCH_TIME, COLUMN_NAME_MATCH_TYPE, COLUMN_NAME_MATCH_NUMBER, COLUMN_NAME_MATCH_LOCATION, 
         		COLUMN_NAME_RED_TEAM_ONE_ID, COLUMN_NAME_RED_TEAM_TWO_ID, COLUMN_NAME_RED_TEAM_THREE_ID,
-        		COLUMN_NAME_BLUE_TEAM_ONE_ID, COLUMN_NAME_BLUE_TEAM_TWO_ID, COLUMN_NAME_BLUE_TEAM_THREE_ID 
+        		COLUMN_NAME_BLUE_TEAM_ONE_ID, COLUMN_NAME_BLUE_TEAM_TWO_ID, COLUMN_NAME_BLUE_TEAM_THREE_ID, COLUMN_NAME_MATCH_DATA_UPDATED
         		}, _ID + "=" + rowId, null, null, null, null, null);
+        if (mCursor != null) {
+            mCursor.moveToFirst();
+        }
+        return mCursor;
+    }
+
+    /**
+     * Return a Cursor containing all entries with updated data
+     * @return Cursor of all updated entries
+     * @throws SQLException if entry could not be found/retrieved
+     */
+    public Cursor getUpdatedMatchDataEntries() throws SQLException {
+
+        Cursor mCursor = this.mDb.query(true, TABLE_NAME, new String[] { _ID, 
+        		COLUMN_NAME_MATCH_TIME, COLUMN_NAME_MATCH_TYPE, COLUMN_NAME_MATCH_NUMBER, COLUMN_NAME_MATCH_LOCATION, 
+        		COLUMN_NAME_RED_TEAM_ONE_ID, COLUMN_NAME_RED_TEAM_TWO_ID, COLUMN_NAME_RED_TEAM_THREE_ID,
+        		COLUMN_NAME_BLUE_TEAM_ONE_ID, COLUMN_NAME_BLUE_TEAM_TWO_ID, COLUMN_NAME_BLUE_TEAM_THREE_ID, COLUMN_NAME_MATCH_DATA_UPDATED
+        		}, COLUMN_NAME_MATCH_DATA_UPDATED + "=" + Boolean.TRUE.toString(), null, null, null, null, null);
         if (mCursor != null) {
             mCursor.moveToFirst();
         }
@@ -176,7 +209,18 @@ public class MatchDataDBAdapter implements BaseColumns {
     	args.put(COLUMN_NAME_BLUE_TEAM_ONE_ID, blue_one_id);
     	args.put(COLUMN_NAME_BLUE_TEAM_TWO_ID, blue_two_id);
     	args.put(COLUMN_NAME_BLUE_TEAM_THREE_ID, blue_three_id);
+    	args.put(COLUMN_NAME_MATCH_DATA_UPDATED, true);
         return this.mDb.update(TABLE_NAME, args, _ID + "=" + id, null) >0; 
     }
-
+    
+    public long[] populateTestData(int numMatches) {
+    	FTSUtilities.printToConsole("MatchDataDBAdapter::populateTestData\n");
+    	long matchIDs[] = new long[numMatches];
+    	this.deleteAllData();
+    	
+    	for(int i = 0; i < numMatches; i++) {
+    		matchIDs[i] = this.createMatchData(i);
+    	}
+    	return matchIDs;
+    }
 }

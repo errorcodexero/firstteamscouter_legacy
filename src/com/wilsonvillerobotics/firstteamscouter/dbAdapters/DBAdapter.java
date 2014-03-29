@@ -11,7 +11,7 @@ public class DBAdapter {
 
     public static final String DATABASE_NAME = "FIRSTTeamScouter"; //$NON-NLS-1$
 
-    public static final int DATABASE_VERSION = 1;
+    public static final int DATABASE_VERSION = 2;
     
     private static final int CREATE_TABLE_SQL = 0;
     private static final int DELETE_TABLE_SQL = 1;
@@ -88,12 +88,13 @@ public class DBAdapter {
 	        MatchDataDBAdapter.COLUMN_NAME_MATCH_TYPE + TEXT_TYPE + COMMA_SEP +
 	        MatchDataDBAdapter.COLUMN_NAME_MATCH_NUMBER + TEXT_TYPE + COMMA_SEP +
 	        MatchDataDBAdapter.COLUMN_NAME_MATCH_LOCATION + TEXT_TYPE + COMMA_SEP +
-	        MatchDataDBAdapter.COLUMN_NAME_RED_TEAM_ONE_ID + TEXT_TYPE + COMMA_SEP +
-	        MatchDataDBAdapter.COLUMN_NAME_RED_TEAM_TWO_ID + TEXT_TYPE + COMMA_SEP +
-	        MatchDataDBAdapter.COLUMN_NAME_RED_TEAM_THREE_ID + TEXT_TYPE + COMMA_SEP +
-	        MatchDataDBAdapter.COLUMN_NAME_BLUE_TEAM_ONE_ID + TEXT_TYPE + COMMA_SEP +
-	        MatchDataDBAdapter.COLUMN_NAME_BLUE_TEAM_TWO_ID + TEXT_TYPE + COMMA_SEP +
-	        MatchDataDBAdapter.COLUMN_NAME_BLUE_TEAM_THREE_ID + TEXT_TYPE +
+	        MatchDataDBAdapter.COLUMN_NAME_RED_TEAM_ONE_ID + INT_TYPE + COMMA_SEP +
+	        MatchDataDBAdapter.COLUMN_NAME_RED_TEAM_TWO_ID + INT_TYPE + COMMA_SEP +
+	        MatchDataDBAdapter.COLUMN_NAME_RED_TEAM_THREE_ID + INT_TYPE + COMMA_SEP +
+	        MatchDataDBAdapter.COLUMN_NAME_BLUE_TEAM_ONE_ID + INT_TYPE + COMMA_SEP +
+	        MatchDataDBAdapter.COLUMN_NAME_BLUE_TEAM_TWO_ID + INT_TYPE + COMMA_SEP +
+	        MatchDataDBAdapter.COLUMN_NAME_BLUE_TEAM_THREE_ID + INT_TYPE + COMMA_SEP +
+	        MatchDataDBAdapter.COLUMN_NAME_MATCH_DATA_UPDATED + BOOL_TYPE +
 			");",
 			
 			"DROP TABLE IF EXISTS " + MatchDataDBAdapter.TABLE_NAME
@@ -219,11 +220,12 @@ public class DBAdapter {
     		//TEAM_DATA
     		"CREATE TABLE " + TeamDataDBAdapter.TABLE_NAME + " (" +
     		AUTO_INC_ID + 
-    		TeamDataDBAdapter.COLUMN_NAME_TEAM_ID + INT_TYPE + COMMA_SEP +
-	        TeamDataDBAdapter.COLUMN_NAME_TEAM_NUMBER + TEXT_TYPE + COMMA_SEP +
+    		//TeamDataDBAdapter.COLUMN_NAME_TEAM_ID + INT_TYPE + COMMA_SEP +
+	        TeamDataDBAdapter.COLUMN_NAME_TEAM_NUMBER + INT_TYPE + COMMA_SEP +
 	        TeamDataDBAdapter.COLUMN_NAME_TEAM_NAME + TEXT_TYPE + COMMA_SEP +
 	        TeamDataDBAdapter.COLUMN_NAME_TEAM_LOCATION + TEXT_TYPE + COMMA_SEP +
-	        TeamDataDBAdapter.COLUMN_NAME_TEAM_NUM_MEMBERS + TEXT_TYPE +
+	        TeamDataDBAdapter.COLUMN_NAME_TEAM_NUM_MEMBERS + TEXT_TYPE + COMMA_SEP +
+	        TeamDataDBAdapter.COLUMN_NAME_TEAM_DATA_UPDATED + BOOL_TYPE +
     		");",
     		
     		"DROP TABLE IF EXISTS " + TeamDataDBAdapter.TABLE_NAME
@@ -235,9 +237,10 @@ public class DBAdapter {
     		"CREATE TABLE " + TeamMatchDBAdapter.TABLE_NAME + " (" +
     		AUTO_INC_ID + 
     		TeamMatchDBAdapter.COLUMN_NAME_TEAM_MATCH_ID + INT_TYPE + COMMA_SEP +
-    		TeamMatchDBAdapter.COLUMN_NAME_TEAM_ID + TEXT_TYPE + COMMA_SEP +
+    		TeamMatchDBAdapter.COLUMN_NAME_TEAM_ID + INT_TYPE + COMMA_SEP +
     		TeamMatchDBAdapter.COLUMN_NAME_MATCH_ID + TEXT_TYPE + COMMA_SEP +
-    		TeamMatchDBAdapter.COLUMN_NAME_MATCH_DATA_SAVED + BOOL_TYPE + COMMA_SEP +
+    		TeamMatchDBAdapter.COLUMN_NAME_TEAM_MATCH_ALLIANCE_POSITION + TEXT_TYPE + COMMA_SEP +
+    		TeamMatchDBAdapter.COLUMN_NAME_TEAM_MATCH_DATA_UPDATED + BOOL_TYPE + COMMA_SEP +
     		TeamMatchDBAdapter.COLUMN_NAME_AUTO_SCORE + INT_TYPE + COMMA_SEP +
     		TeamMatchDBAdapter.COLUMN_NAME_AUTO_HI_SCORE + INT_TYPE + COMMA_SEP +
     		TeamMatchDBAdapter.COLUMN_NAME_AUTO_LO_SCORE + INT_TYPE + COMMA_SEP +

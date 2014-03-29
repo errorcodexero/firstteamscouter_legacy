@@ -14,12 +14,13 @@ import android.provider.BaseColumns;
 
 public class TeamDataDBAdapter implements BaseColumns {
 	public static final String TABLE_NAME = "team_data";
-    public static final String COLUMN_NAME_TEAM_ID = "team_id";
+    //public static final String COLUMN_NAME_TEAM_ID = "team_id";
     public static final String COLUMN_NAME_TEAM_NUMBER = "team_number";
     public static final String COLUMN_NAME_TEAM_NAME = "team_name";
     public static final String COLUMN_NAME_TEAM_LOCATION = "team_location";
     public static final String COLUMN_NAME_TEAM_NUM_MEMBERS = "num_team_members";
-
+    public static final String COLUMN_NAME_TEAM_DATA_UPDATED = "team_data_updated";
+    
     private DatabaseHelper mDbHelper;
     private SQLiteDatabase mDb;
 
@@ -88,42 +89,37 @@ public class TeamDataDBAdapter implements BaseColumns {
      * Create a new entry. If the entry is successfully created return the new
      * rowId for that entry, otherwise return a -1 to indicate failure.
      * 
-     * @param team_id
      * @param team_number
      * @param team_name
      * @param team_location
      * @param num_team_members
      * @return rowId or -1 if failed
      */
-    public long createTeamDataEntry(int team_id, String team_number, String team_name, 
-    		String team_location, int num_team_members){
+    public long createTeamDataEntry(int team_number, String team_name, String team_location, int num_team_members){
         ContentValues args = new ContentValues();
-        args.put(COLUMN_NAME_TEAM_ID, team_id);
+        //args.put(COLUMN_NAME_TEAM_ID, team_id);
         args.put(COLUMN_NAME_TEAM_NUMBER, team_number);
         args.put(COLUMN_NAME_TEAM_NAME, team_name);
         args.put(COLUMN_NAME_TEAM_LOCATION, team_location);
         args.put(COLUMN_NAME_TEAM_NUM_MEMBERS, num_team_members);
+        args.put(COLUMN_NAME_TEAM_DATA_UPDATED, Boolean.TRUE.toString());
         return this.mDb.insert(TABLE_NAME, null, args);
-        /*
-        COLUMN_NAME_TEAM_ID, team_id
-		COLUMN_NAME_TEAM_NUMBER, team_number
-		COLUMN_NAME_TEAM_NAME, team_name
-		COLUMN_NAME_TEAM_LOCATION, team_location
-		COLUMN_NAME_TEAM_NUM_MEMBERS, num_team_members
-         */
     }
 
-    public long createTeamDataEntry(String team_number){
-        ContentValues args = new ContentValues();
-        args.put(COLUMN_NAME_TEAM_NUMBER, team_number);
-        return this.mDb.insert(TABLE_NAME, null, args);
-        /*
-        COLUMN_NAME_TEAM_ID, team_id
-		COLUMN_NAME_TEAM_NUMBER, team_number
-		COLUMN_NAME_TEAM_NAME, team_name
-		COLUMN_NAME_TEAM_LOCATION, team_location
-		COLUMN_NAME_TEAM_NUM_MEMBERS, num_team_members
-         */
+    public long createTeamDataEntry(int team_number){
+    	Cursor c;
+    	long retVal;
+    	try {
+    		c = this.getTeamDataEntry(team_number);
+    		retVal = c.getLong(c.getColumnIndex(_ID));
+    	}
+    	catch(Exception e) {
+    		ContentValues args = new ContentValues();
+            args.put(COLUMN_NAME_TEAM_NUMBER, team_number);
+            args.put(COLUMN_NAME_TEAM_DATA_UPDATED, Boolean.TRUE.toString());
+            retVal = this.mDb.insert(TABLE_NAME, null, args);
+    	}
+        return retVal; 
     }
 
     /**
@@ -136,14 +132,15 @@ public class TeamDataDBAdapter implements BaseColumns {
      * @param num_team_members
      * @return true if the entry was successfully updated, false otherwise
      */
-    public boolean updateTeamDataEntry(int team_id, String team_number, String team_name, 
+    public boolean updateTeamDataEntry(int team_id, int team_number, String team_name, 
     		String team_location, int num_team_members){
         ContentValues args = new ContentValues();
-        args.put(COLUMN_NAME_TEAM_ID, team_id);
+        //args.put(COLUMN_NAME_TEAM_ID, team_id);
         args.put(COLUMN_NAME_TEAM_NUMBER, team_number);
         args.put(COLUMN_NAME_TEAM_NAME, team_name);
         args.put(COLUMN_NAME_TEAM_LOCATION, team_location);
         args.put(COLUMN_NAME_TEAM_NUM_MEMBERS, num_team_members);
+        args.put(COLUMN_NAME_TEAM_DATA_UPDATED, Boolean.TRUE.toString());
         return this.mDb.update(TABLE_NAME, args,COLUMN_NAME_TEAM_NUMBER + "=" + team_number, null) > 0; 
     }
 
@@ -153,7 +150,7 @@ public class TeamDataDBAdapter implements BaseColumns {
      * @param rowId
      * @return true if deleted, false otherwise
      */
-    public boolean deleteTeamDataEntry(String teamNumber) {
+    public boolean deleteTeamDataEntry(int teamNumber) {
 
         //return this.mDb.delete(TABLE_NAME, _ID + "=" + rowId, null) > 0;
     	return this.mDb.delete(TABLE_NAME, COLUMN_NAME_TEAM_NUMBER + "=" + teamNumber, null) > 0;
@@ -167,9 +164,24 @@ public class TeamDataDBAdapter implements BaseColumns {
     public Cursor getAllTeamDataEntries() {
 
         Cursor mCursor = this.mDb.query(TABLE_NAME, new String[] { _ID,
-        		COLUMN_NAME_TEAM_ID, COLUMN_NAME_TEAM_NUMBER, COLUMN_NAME_TEAM_NAME,
-        		COLUMN_NAME_TEAM_LOCATION, COLUMN_NAME_TEAM_NUM_MEMBERS
-        		}, null, null, null, null, COLUMN_NAME_TEAM_ID + " ASC");
+        		/*COLUMN_NAME_TEAM_ID,*/ COLUMN_NAME_TEAM_NUMBER, COLUMN_NAME_TEAM_NAME,
+        		COLUMN_NAME_TEAM_LOCATION, COLUMN_NAME_TEAM_NUM_MEMBERS, COLUMN_NAME_TEAM_DATA_UPDATED
+        		}, null, null, null, null, COLUMN_NAME_TEAM_NUMBER + " ASC");
+        FTSUtilities.printToConsole("TeamDataDBAdapter::getAllTeamDataEntries : Cursor Size : " + mCursor.getCount() + "\n");
+        return mCursor;
+    }
+
+    /**
+     * Return a Cursor over the list of all entries in the database
+     * 
+     * @return Cursor over all Match Data entries
+     */
+    public Cursor getUpdatedTeamDataEntries() {
+
+        Cursor mCursor = this.mDb.query(TABLE_NAME, new String[] { _ID,
+        		COLUMN_NAME_TEAM_NUMBER, COLUMN_NAME_TEAM_NAME,
+        		COLUMN_NAME_TEAM_LOCATION, COLUMN_NAME_TEAM_NUM_MEMBERS, COLUMN_NAME_TEAM_DATA_UPDATED
+        		}, COLUMN_NAME_TEAM_DATA_UPDATED + "=" + Boolean.TRUE.toString(), null, null, null, COLUMN_NAME_TEAM_NUMBER + " ASC");
         FTSUtilities.printToConsole("TeamDataDBAdapter::getAllTeamDataEntries : Cursor Size : " + mCursor.getCount() + "\n");
         return mCursor;
     }
@@ -180,11 +192,11 @@ public class TeamDataDBAdapter implements BaseColumns {
      * @return Cursor positioned to matching entry, if found
      * @throws SQLException if entry could not be found/retrieved
      */
-    public Cursor getTeamDataEntry(String teamNumber) throws SQLException {
+    public Cursor getTeamDataEntry(int teamNumber) throws SQLException {
 
         Cursor mCursor = this.mDb.query(true, TABLE_NAME, new String[] { _ID, 
-        		COLUMN_NAME_TEAM_ID, COLUMN_NAME_TEAM_NUMBER, COLUMN_NAME_TEAM_NAME,
-        		COLUMN_NAME_TEAM_LOCATION, COLUMN_NAME_TEAM_NUM_MEMBERS
+        		/*COLUMN_NAME_TEAM_ID,*/ COLUMN_NAME_TEAM_NUMBER, COLUMN_NAME_TEAM_NAME,
+        		COLUMN_NAME_TEAM_LOCATION, COLUMN_NAME_TEAM_NUM_MEMBERS, COLUMN_NAME_TEAM_DATA_UPDATED
         		}, COLUMN_NAME_TEAM_NUMBER + "=" + teamNumber, null, null, null, null, null);
         if (mCursor != null) {
             mCursor.moveToFirst();
@@ -197,14 +209,17 @@ public class TeamDataDBAdapter implements BaseColumns {
         mDb.delete(TABLE_NAME, null, null);
     }
     
-    public void populateTestData() {
-    	FTSUtilities.printToConsole("TeamMatchDBAdapter::populateTestData\n");
+    public long[] populateTestData() {
+    	FTSUtilities.printToConsole("TeamDataDBAdapter::populateTestData\n");
     	deleteAllData();
     	
     	Set<Integer> teamNums = FTSUtilities.getTestTeamNumbers();
+    	long teamIDs[] = new long[teamNums.size()];
+    	int i = 0;
     	
     	for(int teamNum : teamNums) {
-    		this.createTeamDataEntry(teamNum, String.valueOf(teamNum), FTSUtilities.getTeamName(teamNum), "Location", 42);
+    		teamIDs[i++] = this.createTeamDataEntry(teamNum, FTSUtilities.getTeamName(teamNum), "Location", 42);
     	}
+    	return teamIDs;
     }
 }
