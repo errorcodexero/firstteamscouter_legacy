@@ -3,6 +3,7 @@ package com.wilsonvillerobotics.firstteamscouter;
 import java.util.Hashtable;
 
 import com.wilsonvillerobotics.firstteamscouter.TeamMatchData.ZONE;
+import com.wilsonvillerobotics.firstteamscouter.utilities.FTSUtilities;
 
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
@@ -80,7 +81,8 @@ public class TeamMatchTeleModeFragment extends Fragment implements OnClickListen
 			@Override
 			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 				undo = isChecked;
-				setButtonBackgrounds();
+				//setButtonBackgrounds();
+				FTSUtilities.setButtonStyles(buttonHash, undo);
 			}
         	
         });
