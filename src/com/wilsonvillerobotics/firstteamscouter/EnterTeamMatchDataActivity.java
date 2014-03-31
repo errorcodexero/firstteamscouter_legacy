@@ -138,10 +138,13 @@ public class EnterTeamMatchDataActivity extends FragmentActivity implements Acti
         FTSUtilities.printToConsole("EnterTeamMatchDataActivity::onPause : viewState: " + viewState + "\n");
 		viewState++;
         FTSUtilities.printToConsole("EnterTeamMatchDataActivity::onPause : SAVING DATA TO DB\n");
+        String message = "";
 		if(this.tmData.save()) {
-			String message = "Data Saved";
-			Toast.makeText(getBaseContext(), message , Toast.LENGTH_SHORT).show();
+			message = "Data Saved";
+		} else {
+			message = "No Updates Detected";
 		}
+		Toast.makeText(getBaseContext(), message , Toast.LENGTH_SHORT).show();
 		this.tmData.closeDB();
     }
 
