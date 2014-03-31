@@ -16,11 +16,10 @@ import com.wilsonvillerobotics.firstteamscouter.utilities.FTSUtilities;
 
 public class TeamMatchDataListActivity extends ListActivity {
 
-	private TeamDataDBAdapter teamDataDBAdapter;
 	private TeamMatchDBAdapter tmDataDBAdapter;
 	
 	public TeamMatchDataListActivity() {
-		// TODO Auto-generated constructor stub
+		// Nothing to do here
 	}
 	
 	@Override
@@ -41,7 +40,7 @@ public class TeamMatchDataListActivity extends ListActivity {
           FTSUtilities.printToConsole("TeamDataListActivity::onCreate : Cursor Size: " + cursor.getCount() + "\n");
 
           // THE DESIRED COLUMNS TO BE BOUND
-          String[] columns = new String[] { TeamMatchDBAdapter.COLUMN_NAME_MATCH_ID, TeamMatchDBAdapter.COLUMN_NAME_TEAM_MATCH_DATA_UPDATED };
+          String[] columns = new String[] { TeamMatchDBAdapter.COLUMN_NAME_MATCH_ID, TeamMatchDBAdapter.COLUMN_NAME_TEAM_MATCH_HAS_SAVED_DATA };
           // THE XML DEFINED VIEWS WHICH THE DATA WILL BE BOUND TO
           int[] to = new int[] { R.id.match_number_entry, R.id.match_data_saved_entry };
 

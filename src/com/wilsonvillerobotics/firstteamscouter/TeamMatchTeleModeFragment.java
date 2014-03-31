@@ -6,7 +6,6 @@ import com.wilsonvillerobotics.firstteamscouter.TeamMatchData.ZONE;
 
 import com.wilsonvillerobotics.firstteamscouter.utilities.FTSUtilities;
 
-import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,7 +20,7 @@ import android.support.v4.app.Fragment;
 
 public class TeamMatchTeleModeFragment extends Fragment implements OnClickListener{
 	public static String myTitle;
-	private Integer teamMatchID;
+	protected Long teamMatchID;
 	private TeamMatchData tmData;
 	
 	protected int teleScore;
@@ -62,7 +61,7 @@ public class TeamMatchTeleModeFragment extends Fragment implements OnClickListen
     	
     	myTitle = "Tele Mode";
 
-    	this.teamMatchID = getArguments() != null ? getArguments().getInt("tmID") : -1;
+    	this.teamMatchID = getArguments() != null ? getArguments().getLong("tmID") : -1;
 
         View rootView = inflater.inflate(R.layout.fragment_team_match_telemode, container, false);
 
@@ -108,11 +107,6 @@ public class TeamMatchTeleModeFragment extends Fragment implements OnClickListen
     
     public void setTeamMatchData(TeamMatchData tmD) {
     	this.tmData = tmD;
-    	
-//    	if(this.tmData.hasSavedData()) {
-//    		this.updateTeleScore();
-//    		this.updateTeleStat();
-//    	}
     }
 
 	@Override
@@ -167,159 +161,216 @@ public class TeamMatchTeleModeFragment extends Fragment implements OnClickListen
 	}
 	
 	protected void btnTeleHighScoreOnClick(View v) {
+		boolean savedData = false;
 		if(this.undo) {
-			this.tmData.lowerTeleHiScore();
+			savedData = this.tmData.lowerTeleHiScore();
 		} else {
 			this.tmData.addTeleHiScore();
+			savedData = true;
 		}
+		this.tmData.setSavedDataState(savedData, "btnTeleHighScoreOnClick");
 		this.updateTeleScore();
 	}
 
 	public void btnTeleHiMissOnClick(View v) {
+		boolean savedData = false;
 		if(this.undo) {
-			this.tmData.lowerTeleHiMiss();
+			savedData = this.tmData.lowerTeleHiMiss();
 		} else {
 			this.tmData.addTeleHiMiss();
+			savedData = true;
 		}
+		this.tmData.setSavedDataState(savedData, "btnTeleHiMissOnClick");
 		this.updateTeleStat();
 	}
 	
 	protected void btnTeleLowScoreOnClick(View v) {
+		boolean savedData = false;
 		if(this.undo) {
-			this.tmData.lowerTeleLoScore();
+			savedData = this.tmData.lowerTeleLoScore();
 		} else {
 			this.tmData.addTeleLoScore();
+			savedData = true;
 		}
+		this.tmData.setSavedDataState(savedData, "btnTeleLowScoreOnClick");
 		this.updateTeleScore();
 	}
 
 	public void btnTeleLoMissOnClick(View v) {
+		boolean savedData = false;
 		if(this.undo) {
-			this.tmData.lowerTeleLoMiss();
+			savedData = this.tmData.lowerTeleLoMiss();
 		} else {
 			this.tmData.addTeleLoMiss();
+			savedData = true;
 		}
+		this.tmData.setSavedDataState(savedData, "btnTeleLoMissOnClick");
 		this.updateTeleStat();
 	}
 	
 	protected void btnTeleLongPassOnClick(View v) {
+		boolean savedData = false;
 		if(this.undo) {
-			this.tmData.lowerTeleLongPass();
+			savedData = this.tmData.lowerTeleLongPass();
 		} else {
 			this.tmData.addTeleLongPass();
+			savedData = true;
 		}
+		this.tmData.setSavedDataState(savedData, "btnTeleLongPassOnClick");
 	}
 	
 	protected void btnTeleLongPassMissOnClick(View v) {
+		boolean savedData = false;
 		if(this.undo) {
-			this.tmData.lowerTeleLongPassMiss();
+			savedData = this.tmData.lowerTeleLongPassMiss();
 		} else {
 			this.tmData.addTeleLongPassMiss();
+			savedData = true;
 		}
+		this.tmData.setSavedDataState(savedData, "btnTeleLongPassMissOnClick");
 	}
 	
 	protected void btnTeleShortPassOnClick(View v) {
+		boolean savedData = false;
 		if(this.undo) {
-			this.tmData.lowerTeleShortPass();
+			savedData = this.tmData.lowerTeleShortPass();
 		} else {
 			this.tmData.addTeleShortPass();
+			savedData = true;
 		}
+		this.tmData.setSavedDataState(savedData, "btnTeleShortPassOnClick");
 	}
 	
 	protected void btnTeleShortPassMissOnClick(View v) {
+		boolean savedData = false;
 		if(this.undo) {
-			this.tmData.lowerTeleShortPassMiss();
+			savedData = this.tmData.lowerTeleShortPassMiss();
 		} else {
 			this.tmData.addTeleShortPassMiss();
+			savedData = true;
 		}
+		this.tmData.setSavedDataState(savedData, "btnTeleShortPassMissOnClick");
 	}
 	
 	protected void btnPossessBlueZoneOnClick(View v) {
+		boolean savedData = false;
 		if(this.undo) {
-			this.tmData.didNotPossessZone(ZONE.BLUE_ZONE);
+			savedData = this.tmData.didNotPossessZone(ZONE.BLUE_ZONE);
 		} else {
 			this.tmData.possessedZone(ZONE.BLUE_ZONE);
+			savedData = true;
 		}
+		this.tmData.setSavedDataState(savedData, "btnPossessBlueZoneOnClick");
 	}
 
 	protected void btnPossessedWhiteZoneOnClick(View v) {
+		boolean savedData = false;
 		if(this.undo) {
-			this.tmData.didNotPossessZone(ZONE.WHITE_ZONE);
+			savedData = this.tmData.didNotPossessZone(ZONE.WHITE_ZONE);
 		} else {
 			this.tmData.possessedZone(ZONE.WHITE_ZONE);
+			savedData = true;
 		}
+		this.tmData.setSavedDataState(savedData, "btnPossessedWhiteZoneOnClick");
 	}
 
 	protected void btnPossessedRedZoneOnClick(View v) {
+		boolean savedData = false;
 		if(this.undo) {
-			this.tmData.didNotPossessZone(ZONE.RED_ZONE);
+			savedData = this.tmData.didNotPossessZone(ZONE.RED_ZONE);
 		} else {
 			this.tmData.possessedZone(ZONE.RED_ZONE);
+			savedData = true;
 		}
+		this.tmData.setSavedDataState(savedData, "btnPossessedRedZoneOnClick");
 	}
 
 	protected void btnDefendBlueZoneOnClick(View v) {
+		boolean savedData = false;
 		if(this.undo) {
-			this.tmData.didNotDefendZone(ZONE.BLUE_ZONE);
+			savedData = this.tmData.didNotDefendZone(ZONE.BLUE_ZONE);
 		} else {
 			this.tmData.defendedZone(ZONE.BLUE_ZONE);
+			savedData = true;
 		}
+		this.tmData.setSavedDataState(savedData, "btnDefendBlueZoneOnClick");
 	}
 
 	protected void btnDefendWhiteZoneOnClick(View v) {
+		boolean savedData = false;
 		if(this.undo) {
-			this.tmData.didNotDefendZone(ZONE.WHITE_ZONE);
+			savedData = this.tmData.didNotDefendZone(ZONE.WHITE_ZONE);
 		} else {
 			this.tmData.defendedZone(ZONE.WHITE_ZONE);
+			savedData = true;
 		}
+		this.tmData.setSavedDataState(savedData, "btnDefendWhiteZoneOnClick");
 	}
 
 	protected void btnDefendRedZoneOnClick(View v) {
+		boolean savedData = false;
 		if(this.undo) {
-			this.tmData.didNotDefendZone(ZONE.RED_ZONE);
+			savedData = this.tmData.didNotDefendZone(ZONE.RED_ZONE);
 		} else {
 			this.tmData.defendedZone(ZONE.RED_ZONE);
+			savedData = true;
 		}
+		this.tmData.setSavedDataState(savedData, "btnDefendRedZoneOnClick");
 	}
 
 	protected void btnDefendGoalZoneOnClick(View v) {
+		boolean savedData = false;
 		if(this.undo) {
-			this.tmData.didNotDefendZone(ZONE.GOAL_ZONE);
+			savedData = this.tmData.didNotDefendZone(ZONE.GOAL_ZONE);
 		} else {
 			this.tmData.defendedZone(ZONE.GOAL_ZONE);
+			savedData = true;
 		}
+		this.tmData.setSavedDataState(savedData, "btnDefendGoalZoneOnClick");
 	}
 
 	protected void btnTrussTossOnClick(View v) {
+		boolean savedData = false;
 		if(this.undo) {
-			this.tmData.lowerTeleTrussToss();
+			savedData = this.tmData.lowerTeleTrussToss();
 		} else {
 			this.tmData.addTeleTrussToss();
+			savedData = true;
 		}
+		this.tmData.setSavedDataState(savedData, "btnTrussTossOnClick");
 	}
 
 	protected void btnTrussMissOnClick(View v) {
+		boolean savedData = false;
 		if(this.undo) {
-			this.tmData.lowerTeleTrussMiss();
+			savedData = this.tmData.lowerTeleTrussMiss();
 		} else {
 			this.tmData.addTeleTrussMiss();
+			savedData = true;
 		}
+		this.tmData.setSavedDataState(savedData, "btnTrussMissOnClick");
 	}
 
 	protected void btnTossCaughtOnClick(View v) {
+		boolean savedData = false;
 		if(this.undo) {
-			this.tmData.lowerTeleTossCatch();
+			savedData = this.tmData.lowerTeleTossCatch();
 		} else {
 			this.tmData.addTeleTossCatch();
+			savedData = true;
 		}
+		this.tmData.setSavedDataState(savedData, "btnTossCaughtOnClick");
 	}
 
 	protected void btnTossMissedOnClick(View v) {
+		boolean savedData = false;
 		if(this.undo) {
-			this.tmData.lowerTeleTossMiss();
+			savedData = this.tmData.lowerTeleTossMiss();
 		} else {
 			this.tmData.addTeleTossMiss();
+			savedData = true;
 		}
+		this.tmData.setSavedDataState(savedData, "btnTossMissedOnClick");
 	}
 
 	private void updateTeleScore() {
@@ -332,17 +383,6 @@ public class TeamMatchTeleModeFragment extends Fragment implements OnClickListen
 	protected void updateTeleStat() {
 		if(this.txtTeleStat != null && this.tmData != null) {
 			this.txtTeleStat.setText(String.format("%.2f%%", this.tmData.getTeleShotPercentage()));
-		}
-	}
-
-	private void setButtonBackgrounds() {
-		int color = Color.LTGRAY;
-		if(this.undo) {
-			color = Color.DKGRAY;
-		}
-		
-		for(Integer bID : buttonHash.keySet()) {
-			this.buttonHash.get(bID).setBackgroundColor(color);
 		}
 	}
 }

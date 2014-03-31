@@ -20,7 +20,6 @@ public class TeamMatchInformationActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_team_match_information);
 		
-		int prePosition = getIntent().getIntExtra("position", 0);
 		Long tmID = getIntent().getLongExtra(TeamMatchDBAdapter._ID, -1);
 		
 		FTSUtilities.printToConsole("Creating TeamMatchInformationActivity");

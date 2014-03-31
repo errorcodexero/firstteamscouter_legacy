@@ -4,7 +4,6 @@ import java.util.Hashtable;
 
 import com.wilsonvillerobotics.firstteamscouter.utilities.FTSUtilities;
 
-import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,12 +14,11 @@ import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.Switch;
 import android.widget.TextView;
-import android.widget.ToggleButton;
 import android.support.v4.app.Fragment;
 
 public class TeamMatchAutoModeFragment extends Fragment implements OnClickListener{
 	public static String myTitle;
-	private Integer teamMatchID;
+	protected Long teamMatchID;
 	private TeamMatchData tmData;
 	
 	private Integer buttonIDs[] = {
@@ -49,7 +47,7 @@ public class TeamMatchAutoModeFragment extends Fragment implements OnClickListen
     	
     	myTitle = "Auto Mode";
     	
-    	this.teamMatchID = getArguments() != null ? getArguments().getInt("tmID") : -1;
+    	this.teamMatchID = getArguments() != null ? getArguments().getLong("tmID") : -1;
     	
         View rootView = inflater.inflate(R.layout.fragment_team_match_automode, container, false);
         
@@ -135,97 +133,110 @@ public class TeamMatchAutoModeFragment extends Fragment implements OnClickListen
 	}
 
 	public void btnAutoHiScoreHotOnClick(View v) {
+		boolean savedData = false;
 		if(this.undo) {
-			this.tmData.lowerAutoHiScore();
-			this.tmData.lowerHiHotBonus();
+			savedData = this.tmData.lowerAutoHiScore();
+			savedData |= this.tmData.lowerHiHotBonus();
 		} else {
 			this.tmData.addAutoHiScore();
 			this.tmData.addHiHotBonus();
+			savedData = true;
 		}
+		this.tmData.setSavedDataState(savedData, "btnAutoHiScoreHotOnClick"); 
 		updateAutoScore();
 	}
 	
 	public void btnAutoHiScoreColdOnClick(View v) {
+		boolean savedData = false;
 		if(this.undo) {
-			this.tmData.lowerAutoHiScore();
+			savedData = this.tmData.lowerAutoHiScore();
 		} else {
 			this.tmData.addAutoHiScore();
+			savedData = true;
 		}
+		this.tmData.setSavedDataState(savedData, "btnAutoHiScoreColdOnClick");
 		updateAutoScore();
 	}
 	
 	public void btnAutoLoScoreHotOnClick(View v) {
+		boolean savedData = false;
 		if(this.undo) {
-			this.tmData.lowerAutoLoScore();
-			this.tmData.lowerLoHotBonus();
+			savedData = this.tmData.lowerAutoLoScore();
+			savedData |= this.tmData.lowerLoHotBonus();
 		} else {
 			this.tmData.addAutoLoScore();
 			this.tmData.addLoHotBonus();
+			savedData = true;
 		}
+		this.tmData.setSavedDataState(savedData, "btnAutoLoScoreHotOnClick");
 		updateAutoScore();
 	}
 	
 	public void btnAutoLoScoreColdOnClick(View v) {
+		boolean savedData = false;
 		if(this.undo) {
-			this.tmData.lowerAutoLoScore();
+			savedData = this.tmData.lowerAutoLoScore();
 		} else {
 			this.tmData.addAutoLoScore();
+			savedData = true;
 		}
+		this.tmData.setSavedDataState(savedData, "btnAutoLoScoreColdOnClick");
 		updateAutoScore();
 	}
 	
 	public void btnAutoHiMissOnClick(View v) {
+		boolean savedData = false;
 		if(this.undo) {
-			this.tmData.lowerAutoHiMiss();
+			savedData = this.tmData.lowerAutoHiMiss();
 		} else {
 			this.tmData.addAutoHiMiss();
+			savedData = true;
 		}
+		this.tmData.setSavedDataState(savedData, "btnAutoHiMissOnClick");
 	}
 	
 	public void btnAutoLoMissOnClick(View v) {
+		boolean savedData = false;
 		if(this.undo) {
-			this.tmData.lowerAutoLoMiss();
+			savedData = this.tmData.lowerAutoLoMiss();
 		} else {
 			this.tmData.addAutoLoMiss();
+			savedData = true;
 		}
+		this.tmData.setSavedDataState(savedData, "btnAutoLoMissOnClick");
 	}
 	
 	protected void btnAutoDefendOnClick(View v) {
+		boolean savedData = false;
 		if(this.undo) {
-			this.tmData.lowerAutoDefend();	
+			savedData = this.tmData.lowerAutoDefend();	
 		} else {
 			this.tmData.addAutoDefend();
+			savedData = true;
 		}
+		this.tmData.setSavedDataState(savedData, "btnAutoDefendOnClick");
 	}
 
 	protected void btnAutoMoveOnClick(View v) {
+		boolean savedData = false;
 		if(this.undo) {
 			this.tmData.didNotMoveInAuto();
+			savedData = false;
 		} else {
 			this.tmData.movedInAuto();
+			savedData = true;
 		}
+		this.tmData.setSavedDataState(savedData, "btnAutoMoveOnClick");
 	}
 
 	protected void btnAutoCollectOnClick(View v) {
+		boolean savedData = false;
 		if(this.undo) {
-			this.tmData.lowerAutoCollect();
+			savedData = this.tmData.lowerAutoCollect();
 		} else {
 			this.tmData.addAutoCollect();
+			savedData = true;
 		}
-	}
-	
-	private void setButtonStyles() {
-		int color = Color.BLUE;
-		//int style = R.style.btnStyleOrange;
-		if(this.undo) {
-			color = Color.RED;
-			//style = R.style.btnStyleShakespeare;
-		}
-		
-		for(Integer bID : buttonHash.keySet()) {
-			//this.buttonHash.get(bID).setBackgroundColor(color);
-			this.buttonHash.get(bID).setTextColor(color);
-			//this.buttonHash.get(bID).setBackgroundResource(style);
-		}
+		this.tmData.setSavedDataState(savedData, "btnAutoCollectOnClick");
 	}
 }

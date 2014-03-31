@@ -1,8 +1,5 @@
 package com.wilsonvillerobotics.firstteamscouter;
 
-import java.util.ArrayList;
-import java.util.Hashtable;
-
 import com.wilsonvillerobotics.firstteamscouter.TeamMatchData.BALL_CONTROL;
 import com.wilsonvillerobotics.firstteamscouter.TeamMatchData.ROBOT_ROLE;
 import com.wilsonvillerobotics.firstteamscouter.utilities.FTSUtilities;
@@ -13,10 +10,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.View.OnClickListener;
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
-import android.widget.CompoundButton.OnCheckedChangeListener;
+import java.util.Hashtable;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.ToggleButton;
 import android.support.v4.app.Fragment;
 import android.text.Editable;
@@ -24,7 +19,8 @@ import android.text.TextWatcher;
 
 public class TeamMatchNotesFragment extends Fragment implements OnClickListener{
 	public static String myTitle;
-	private Integer teamMatchID;
+	protected Long teamMatchID;
+	private boolean initializing;
 	
 	private ToggleButton tbtnBrokeDown;
 	private ToggleButton tbtnNoMove;
@@ -60,9 +56,10 @@ public class TeamMatchNotesFragment extends Fragment implements OnClickListener{
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
     	
+    	this.initializing = true;
     	myTitle = "Notes";
  
-    	this.teamMatchID = getArguments() != null ? getArguments().getInt("tmID") : -1;
+    	this.teamMatchID = getArguments() != null ? getArguments().getLong("tmID") : -1;
 
     	View rootView = inflater.inflate(R.layout.fragment_team_match_notes, container, false);
         
@@ -93,6 +90,7 @@ public class TeamMatchNotesFragment extends Fragment implements OnClickListener{
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 tmData.setNoteText(s);
+                if(!initializing) tmData.setSavedDataState(true, "txtTMNotes.addTextChangedListener");
             }
 
             @Override
@@ -106,6 +104,7 @@ public class TeamMatchNotesFragment extends Fragment implements OnClickListener{
     	this.updateNotes();
     	this.updateCheckboxes();
     	
+    	this.initializing = false;
         return rootView;
     }
     
@@ -157,6 +156,7 @@ public class TeamMatchNotesFragment extends Fragment implements OnClickListener{
     
 	@Override
 	public void onClick(View v) {
+		if(this.tmData != null) this.tmData.setSavedDataState(true, "Notes::onClick");
 		switch (v.getId()) {
         case R.id.tbtnBrokeDown:
         	tbtnBrokeDownOnClick(v);

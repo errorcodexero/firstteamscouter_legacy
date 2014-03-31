@@ -5,15 +5,12 @@ package com.wilsonvillerobotics.firstteamscouter;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.util.Hashtable;
 
 import android.content.Context;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.os.Environment;
-import android.widget.TextView;
-import android.content.ContextWrapper;
 
 import com.wilsonvillerobotics.firstteamscouter.dbAdapters.MatchDataDBAdapter;
 import com.wilsonvillerobotics.firstteamscouter.dbAdapters.TeamDataDBAdapter;
@@ -125,8 +122,12 @@ public class TeamMatchData {
 		}
 	}
 
-    private Boolean tmDataSaved;
-	
+	private Boolean tmDBHasSavedData;		// This record has data saved in the db
+    //private Boolean tmDBHasDataToExport; 	// This record has data in the db ready to export - will be changed to false after the data is exported
+    private Boolean tmDataToSave;			// The data has changed and needs to be saved
+    private Boolean prevSavedData;
+	//private Boolean prevHasDataToExport;
+
 	protected TeamMatchDBAdapter tmDBAdapter;
 	protected Context context;
 	
@@ -200,8 +201,7 @@ public class TeamMatchData {
 	protected Boolean robotRole[];
 	
     protected Boolean ballControl[];
-
-
+	
 	public TeamMatchData(Context c, String tID, Long teamMatchID) { //, String tnum, String mnum) {
 		this.context = c;
 		this.tabletID = tID;
@@ -254,7 +254,12 @@ public class TeamMatchData {
 		this.noMove = false;
 		this.lostConnection = false;
 		
-		this.tmDataSaved = false;
+		this.tmDBHasSavedData = false;
+		//this.tmDBHasDataToExport = false;
+		this.tmDataToSave = false;
+		this.prevSavedData = false;
+		//this.prevHasDataToExport = false;
+
 
 		this.robotRole = new Boolean[ROBOT_ROLE.values().length];
 		for(ROBOT_ROLE rr : ROBOT_ROLE.values()) {
@@ -420,7 +425,8 @@ public class TeamMatchData {
 	
 	private Hashtable<String, Boolean> getBoolValueHash() {
 		Hashtable<String, Boolean> htBoolValues = new Hashtable<String, Boolean>();
-		htBoolValues.put(TeamMatchDBAdapter.COLUMN_NAME_TEAM_MATCH_DATA_UPDATED, this.tmDataSaved);
+		htBoolValues.put(TeamMatchDBAdapter.COLUMN_NAME_TEAM_MATCH_HAS_SAVED_DATA, this.tmDBHasSavedData);
+		//htBoolValues.put(TeamMatchDBAdapter.COLUMN_NAME_TEAM_MATCH_DATA_READY_TO_EXPORT, this.tmDBHasDataToExport);
 		htBoolValues.put(TeamMatchDBAdapter.COLUMN_NAME_AUTO_MOVE, this.autoMove);
 		htBoolValues.put(TeamMatchDBAdapter.COLUMN_NAME_BROKE_DOWN, this.brokeDown);
 		htBoolValues.put(TeamMatchDBAdapter.COLUMN_NAME_NO_MOVE, this.noMove);
@@ -442,7 +448,8 @@ public class TeamMatchData {
 
 	private String getBoolCSVHeader() {
 		String retVal = "";
-		retVal += TeamMatchDBAdapter.COLUMN_NAME_TEAM_MATCH_DATA_UPDATED + COMMA;
+		retVal += TeamMatchDBAdapter.COLUMN_NAME_TEAM_MATCH_HAS_SAVED_DATA + COMMA;
+		//retVal += TeamMatchDBAdapter.COLUMN_NAME_TEAM_MATCH_DATA_READY_TO_EXPORT + COMMA;
 		retVal += TeamMatchDBAdapter.COLUMN_NAME_AUTO_MOVE + COMMA;
 		retVal += TeamMatchDBAdapter.COLUMN_NAME_BROKE_DOWN + COMMA;
 		retVal += TeamMatchDBAdapter.COLUMN_NAME_NO_MOVE + COMMA;
@@ -464,7 +471,8 @@ public class TeamMatchData {
 
 	private String getBoolCSVString() {
 		String retVal = "";
-		retVal += this.tmDataSaved + COMMA;
+		retVal += this.tmDBHasSavedData + COMMA;
+		//retVal += this.tmDBHasDataToExport + COMMA;
 		retVal += this.autoMove + COMMA;
 		retVal += this.brokeDown + COMMA;
 		retVal += this.noMove + COMMA;
@@ -485,99 +493,116 @@ public class TeamMatchData {
 	}
 
 	public boolean save() {
-		this.savingData();
-		if(this.tmDBAdapter != null) {
-			try{
-				Hashtable<String, Integer> htIntValues = getIntValueHash();
-				Hashtable<String, Boolean> htBoolValues = getBoolValueHash();
-				
-				for (ZONE z : ZONE.values()) {
-					FTSUtilities.printToConsole("TeamMatchData::save : Zone: " + z.name().toString() + "\nAssist: " + z.dbAssistColName +
-							"\nDefend: " + z.dbDefendColName);
-					htIntValues.put(z.dbDefendColName, this.getZoneDefends(z));
+		boolean dataWasSaved = false;
+		if(this.hasDataToSave()) {
+			this.savingData();
+			if(this.tmDBAdapter != null) {
+				try{
+					Hashtable<String, Integer> htIntValues = getIntValueHash();
+					Hashtable<String, Boolean> htBoolValues = getBoolValueHash();
 					
-					if(z != ZONE.GOAL_ZONE) {
-						htIntValues.put(z.dbAssistColName, this.getZoneAssists(z));
-					}
-				}
-				
-				/***
-				 * Add new fields for robot role, starting position, and ball control
-				 * 
-				 * Create a Boolean hash like the int hash above to hold all of the Boolean values
-				 */
-
-				Boolean retVal = this.tmDBAdapter.updateTeamMatch(this.teamMatchID, this.teamID, this.matchID, this.teamMatchNotes, htBoolValues, htIntValues);
-				FileOutputStream fo = null;
-				boolean append = false;
-				
-				try {
-				    String storageState = Environment.getExternalStorageState();
-				    if (retVal && storageState.equals(Environment.MEDIA_MOUNTED)) {
-				    	File filePath = context.getExternalFilesDir(null);
-				        File file = new File(filePath, saveFileName);
-				        FTSUtilities.printToConsole("TeamMatchData::save : file " + ((file == null) ? "IS NULL" : "IS VALID") + "\n");
-				        
-				        if(!file.exists()) {
-				        	file.createNewFile();
-				        } else {
-				        	append = true;
-				        }
-			        	
-				        fo = new FileOutputStream(file, append);
-				        
-				        if(!append) {
-					        String headerOut = "tablet_id" + COMMA;
-					        headerOut += TeamMatchDBAdapter._ID + COMMA + TeamMatchDBAdapter.COLUMN_NAME_TEAM_ID + COMMA;
-					        headerOut += TeamMatchDBAdapter.COLUMN_NAME_MATCH_ID + COMMA;
-					        headerOut += getIntCSVHeader() + COMMA;
-					        headerOut += getBoolCSVHeader() + COMMA;
-					        headerOut += TeamMatchDBAdapter.COLUMN_NAME_TEAM_MATCH_NOTES + "\n";
-					        
-					        fo.write(headerOut.getBytes());
-				        }
-		        	    
-		        	    String csvOut = this.tabletID + COMMA;
-		        	    csvOut += this.teamMatchID + COMMA + this.teamNumber + COMMA + this.matchNumber + COMMA;
-		        	    csvOut += getIntCSVString() + COMMA;
-		        	    csvOut += getBoolCSVString() + COMMA;
-		        	    csvOut += this.teamMatchNotes.replaceAll(COMMA, ";").replaceAll("\n", " ");
-		        	    csvOut += "\n";
-			        	fo.write(csvOut.getBytes());
-				    }
-				}
-				catch(Exception e) {
-					FTSUtilities.printToConsole("TeamMatchData::save : Exception accessing file");
-				}
-				finally {
-					try {
-						if(fo != null) {
-							fo.close();
+					for (ZONE z : ZONE.values()) {
+						FTSUtilities.printToConsole("TeamMatchData::save : Zone: " + z.name().toString() + "\nAssist: " + z.dbAssistColName +
+								"\nDefend: " + z.dbDefendColName);
+						htIntValues.put(z.dbDefendColName, this.getZoneDefends(z));
+						
+						if(z != ZONE.GOAL_ZONE) {
+							htIntValues.put(z.dbAssistColName, this.getZoneAssists(z));
 						}
-					} catch (IOException e) {
-						e.printStackTrace();
 					}
+					
+					/***
+					 * Add new fields for robot role, starting position, and ball control
+					 * 
+					 * Create a Boolean hash like the int hash above to hold all of the Boolean values
+					 */
+	
+					Boolean retVal = this.tmDBAdapter.updateTeamMatch(this.teamMatchID, this.teamID, this.matchID, this.teamMatchNotes, htBoolValues, htIntValues);
+					FileOutputStream fo = null;
+					boolean append = false;
+					
+					try {
+					    String storageState = Environment.getExternalStorageState();
+					    if (retVal && storageState.equals(Environment.MEDIA_MOUNTED)) {
+					    	File filePath = context.getExternalFilesDir(null);
+					        File file = new File(filePath, saveFileName);
+					        FTSUtilities.printToConsole("TeamMatchData::save : file " + ((file == null) ? "IS NULL" : "IS VALID") + "\n");
+					        
+					        if(!file.exists()) {
+					        	file.createNewFile();
+					        } else {
+					        	append = true;
+					        }
+				        	
+					        fo = new FileOutputStream(file, append);
+					        
+					        if(!append) {
+						        String headerOut = "tablet_id" + COMMA;
+						        headerOut += TeamMatchDBAdapter._ID + COMMA + TeamMatchDBAdapter.COLUMN_NAME_TEAM_ID + COMMA;
+						        headerOut += TeamMatchDBAdapter.COLUMN_NAME_MATCH_ID + COMMA;
+						        headerOut += getIntCSVHeader() + COMMA;
+						        headerOut += getBoolCSVHeader() + COMMA;
+						        headerOut += TeamMatchDBAdapter.COLUMN_NAME_TEAM_MATCH_NOTES + "\n";
+						        
+						        fo.write(headerOut.getBytes());
+					        }
+			        	    
+			        	    String csvOut = this.tabletID + COMMA;
+			        	    csvOut += this.teamMatchID + COMMA + this.teamNumber + COMMA + this.matchNumber + COMMA;
+			        	    csvOut += getIntCSVString() + COMMA;
+			        	    csvOut += getBoolCSVString() + COMMA;
+			        	    csvOut += this.teamMatchNotes.replaceAll(COMMA, ";").replaceAll("\n", " ");
+			        	    csvOut += "\n";
+				        	fo.write(csvOut.getBytes());
+				        	
+				        	dataWasSaved = true;
+					    }
+					}
+					catch(Exception e) {
+						FTSUtilities.printToConsole("TeamMatchData::save : Exception accessing file");
+						dataWasSaved = false;
+					}
+					finally {
+						try {
+							if(fo != null) {
+								fo.close();
+							}
+						} catch (IOException e) {
+							e.printStackTrace();
+						}
+					}
+					FTSUtilities.printToConsole("Update Successful? : " + retVal.toString());
+					return retVal;
+				} catch (NumberFormatException e) {
+					this.teamNumber = -1;
+					this.dataSaveFailed();
+					dataWasSaved = false;
 				}
-				FTSUtilities.printToConsole("Update Successful? : " + retVal.toString());
-				return retVal;
-			} catch (NumberFormatException e) {
-				this.teamNumber = -1;
-				this.dataSaveFailed();
 			}
 		}
-		return false;
+		return dataWasSaved;
 	}
 
 	private void savingData() {
-		this.tmDataSaved = true;
+		this.prevSavedData = this.tmDBHasSavedData;
+		//this.prevHasDataToExport = this.tmDBHasDataToExport;
+		
+		this.tmDBHasSavedData = true;
+		//this.tmDBHasDataToExport = true;
+		this.tmDataToSave = false;
 	}
 	
 	private void dataSaveFailed() {
-		this.tmDataSaved = false;
+		this.tmDBHasSavedData = this.prevSavedData;
+		//this.tmDBHasDataToExport = this.prevHasDataToExport;
+		this.tmDataToSave = true;
+		
+		this.prevSavedData = false;
+		//this.prevHasDataToExport = false;
 	}
 	
-	public Boolean hasSavedData() {
-		return this.tmDataSaved;
+	public Boolean hasDataToSave() {
+		return this.tmDataToSave;
 	}
 
 	public void loadTeamMatchData() {
@@ -593,14 +618,15 @@ public class TeamMatchData {
 			
 			this.matchID = tmCursor.getLong(tmCursor.getColumnIndexOrThrow(TeamMatchDBAdapter.COLUMN_NAME_MATCH_ID));
 			this.teamID = tmCursor.getLong(tmCursor.getColumnIndexOrThrow(TeamMatchDBAdapter.COLUMN_NAME_TEAM_ID));
-			this.tmDataSaved = Boolean.parseBoolean(tmCursor.getString(tmCursor.getColumnIndexOrThrow(TeamMatchDBAdapter.COLUMN_NAME_TEAM_MATCH_DATA_UPDATED)));
+			//this.tmDBHasDataToExport = Boolean.parseBoolean(tmCursor.getString(tmCursor.getColumnIndexOrThrow(TeamMatchDBAdapter.COLUMN_NAME_TEAM_MATCH_HAS_SAVED_DATA)));
+			this.tmDBHasSavedData = Boolean.parseBoolean(tmCursor.getString(tmCursor.getColumnIndexOrThrow(TeamMatchDBAdapter.COLUMN_NAME_TEAM_MATCH_HAS_SAVED_DATA)));
 			
 			Hashtable<String, Integer> nums = this.tmDBAdapter.getTeamAndMatchNumbersForTeamMatchID(teamMatchID);
 			
 			this.teamNumber = nums.get(TeamDataDBAdapter.COLUMN_NAME_TEAM_NUMBER);
 			this.matchNumber = nums.get(MatchDataDBAdapter.COLUMN_NAME_MATCH_NUMBER);
 			
-			if(this.tmDataSaved) {
+			if(this.tmDBHasSavedData) {
 				FTSUtilities.printToConsole("TeamMatchData::loadTeamMatchData : Loading Saved Data\n");
 				this.autoHiScore = tmCursor.getInt(tmCursor.getColumnIndexOrThrow(TeamMatchDBAdapter.COLUMN_NAME_AUTO_HI_SCORE));
 				this.autoHiHot = tmCursor.getInt(tmCursor.getColumnIndexOrThrow(TeamMatchDBAdapter.COLUMN_NAME_AUTO_HI_HOT));
@@ -658,7 +684,7 @@ public class TeamMatchData {
 				this.teamMatchNotes = tmCursor.getString(tmCursor.getColumnIndexOrThrow(TeamMatchDBAdapter.COLUMN_NAME_TEAM_MATCH_NOTES));
 
 			} else {
-				FTSUtilities.printToConsole("TeamMatchData::loadTeamMatchData : No Saved Data : tmDataSaved:: " + this.tmDataSaved.toString() + "\n");
+				FTSUtilities.printToConsole("TeamMatchData::loadTeamMatchData : No Saved Data : tmDBHasSavedData:: " + this.tmDBHasSavedData.toString() + "\n");
 			}
 		}
 		catch (SQLException e) {
@@ -739,11 +765,6 @@ public class TeamMatchData {
 		return (boolVal ? 1 : 0);
 	}
 
-	private int getDefensiveRating() {
-		int retVal = this.getZoneAssists(ZONE.RED_ZONE) + this.getZoneAssists(ZONE.WHITE_ZONE) + this.getZoneAssists(ZONE.BLUE_ZONE);
-		return retVal;
-	}
-
 	public int getZoneAssists(ZONE z) {
 		return this.zonePossessed[z.id];
 	}
@@ -808,6 +829,12 @@ public class TeamMatchData {
 	
 	public void setNoteText(CharSequence s) {
 		this.teamMatchNotes = s.toString();
+	}
+	
+	public void setSavedDataState(Boolean savedData, String caller) {
+		this.tmDataToSave |= savedData;
+		
+		FTSUtilities.printToConsole("TeamMatchData::setSavedDataState : New State : " + this.tmDataToSave.toString() + "   caller: " + caller);
 	}
 
 	/*************************************
@@ -922,144 +949,169 @@ public class TeamMatchData {
 	 *************************************/
 
 	/*************************************
-	 *            AUTONOMOUS			 *
+	 *            AUTONOMOUS			 
+	 * @return *
 	 *************************************/
-	public void lowerAutoHiScore() {
+	public boolean lowerAutoHiScore() {
 		if(this.autoHiScore > 0) {
 			this.autoHiScore--;
 		}
+		return this.autoHiScore > 0;
 	}
 	
-	public void lowerHiHotBonus() {
+	public boolean lowerHiHotBonus() {
 		if(this.autoHiHot > 0) {
 			this.autoHiHot--;
 		}
+		return this.autoHiHot > 0;
 	}
 
-	public void lowerAutoHiMiss() {
+	public boolean lowerAutoHiMiss() {
 		if(this.autoHiMiss > 0) {
 			this.autoHiMiss--;
 		}
+		return this.autoHiMiss > 0;
 	}
 
-	public void lowerAutoLoScore() {
+	public boolean lowerAutoLoScore() {
 		if(this.autoLoScore > 0) {
 			this.autoLoScore--;
 		}
+		return this.autoLoScore > 0;
 	}
 
-	public void lowerLoHotBonus() {
+	public boolean lowerLoHotBonus() {
 		if(this.autoLoHot > 0) {
 			this.autoLoHot--;
 		}
+		return this.autoLoHot > 0;
 	}
 	
-	public void lowerAutoLoMiss() {
+	public boolean lowerAutoLoMiss() {
 		if(this.autoLoMiss > 0) {
 			this.autoLoMiss--;
 		}
+		return this.autoLoMiss > 0;
 	}
 
 	public void didNotMoveInAuto() {
 		this.autoMove = false;
 	}
 
-	public void lowerAutoCollect() {
+	public boolean lowerAutoCollect() {
 		if(this.autoCollect > 0) {
 			this.autoCollect--;
 		}
+		return this.autoCollect > 0;
 	}
 
-	public void lowerAutoDefend() {
+	public boolean lowerAutoDefend() {
 		if(this.autoDefend > 0) {
 			this.autoDefend--;
 			didNotDefendZone(ZONE.GOAL_ZONE);
 		}
+		return this.autoDefend > 0;
 	}
 
 	/*************************************
-	 *              TELEOP	 			 *
+	 *              TELEOP	 			 
+	 * @return *
 	 *************************************/
-	public void lowerTeleHiScore() {
+	public boolean lowerTeleHiScore() {
 		if(this.teleHiScore > 0) {
 			this.teleHiScore--;
 		}
+		return this.teleHiScore > 0;
 	}
 
-	public void lowerTeleHiMiss() {
+	public boolean lowerTeleHiMiss() {
 		if(this.teleHiMiss > 0) {
 			this.teleHiMiss--;
 		}
+		return this.teleHiMiss > 0;
 	}
 
-	public void lowerTeleLoScore() {
+	public boolean lowerTeleLoScore() {
 		if(this.teleLoScore > 0) {
 			this.teleLoScore--;
 		}
+		return this.teleLoScore > 0;
 	}
 
-	public void lowerTeleLoMiss() {
+	public boolean lowerTeleLoMiss() {
 		if(this.teleLoMiss > 0) {
 			this.teleLoMiss--;
 		}
+		return this.teleLoMiss > 0;
 	}
 	
-	public void lowerTeleLongPass() {
+	public boolean lowerTeleLongPass() {
 		if(this.longPassSuccess > 0) {
 			this.longPassSuccess--;
 		}
+		return this.longPassSuccess > 0;
 	}
 	
-	public void lowerTeleLongPassMiss() {
+	public boolean lowerTeleLongPassMiss() {
 		if(this.longPassMiss > 0) {
-			this.longPassMiss--;		}
+			this.longPassMiss--;
+		}
+		return this.longPassMiss > 0;
 	}
 	
-	public void lowerTeleShortPass() {
+	public boolean lowerTeleShortPass() {
 		if(this.shortPassSuccess > 0) {
 			this.shortPassSuccess--;
 		}
+		return this.shortPassSuccess > 0;
 	}
 	
-	public void lowerTeleShortPassMiss() {
+	public boolean lowerTeleShortPassMiss() {
 		if(this.shortPassMiss > 0) {
 			this.shortPassMiss--;
 		}
+		return this.shortPassMiss > 0;
 	}
 	
-	public void didNotDefendZone(ZONE z) {
+	public boolean didNotDefendZone(ZONE z) {
 		if(this.zoneDefended[z.id] > 0) {
 			this.zoneDefended[z.id]--;
 		}
+		return this.zoneDefended[z.id] > 0;
 	}
 	
-	public void didNotPossessZone(ZONE z) {
+	public boolean didNotPossessZone(ZONE z) {
 		if(this.zonePossessed[z.id] > 0) {
 			this.zonePossessed[z.id]--;
 		}
+		return this.zonePossessed[z.id] > 0;
 	}
 
-	public void lowerTeleTrussToss() {
+	public boolean lowerTeleTrussToss() {
 		if(this.trussToss > 0) {
 			this.trussToss--;
 		}
+		return this.trussToss > 0;
 	}
 	
-	public void lowerTeleTrussMiss() {
+	public boolean lowerTeleTrussMiss() {
 		if(this.trussMiss > 0) {
 			this.trussMiss--;
 		}
+		return this.trussMiss > 0;
 	}
 	
-	public void lowerTeleTossCatch() {
+	public boolean lowerTeleTossCatch() {
 		if(this.tossCatch > 0) {
 			this.tossCatch--;
 		}
+		return this.tossCatch > 0;
 	}
 	
-	public void lowerTeleTossMiss() {
+	public boolean lowerTeleTossMiss() {
 		if(this.tossMiss > 0) {
 			this.tossMiss--;
 		}
+		return this.tossMiss > 0;
 	}
 }

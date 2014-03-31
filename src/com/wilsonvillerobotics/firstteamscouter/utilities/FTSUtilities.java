@@ -1,4 +1,4 @@
-	package com.wilsonvillerobotics.firstteamscouter.utilities;
+package com.wilsonvillerobotics.firstteamscouter.utilities;
 
 import java.io.File;
 import java.util.Hashtable;
@@ -6,23 +6,25 @@ import java.util.Set;
 
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
-import android.bluetooth.BluetoothDevice;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Environment;
-import android.view.View;
 import android.widget.Button;
 
 public class FTSUtilities {
 
 	public static Boolean DEBUG = true;
-	private static int testTeamNums[] = {1425, 1520, 2929, 1114, 500, 600, 700, 800, 900, 1000};
 	public static String alliancePositions[] = {"Red1","Red2","Red3","Blue1","Blue2","Blue3",};
 	
 	private static Hashtable<Integer, String> testTeamData = new Hashtable<Integer, String>(){
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
+
 		{ 
 			put(1425, "Error Code Xero");
 			put(1520, "Flaming Chickens");

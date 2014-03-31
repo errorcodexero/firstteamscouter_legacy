@@ -5,31 +5,25 @@ import java.util.Hashtable;
 import com.wilsonvillerobotics.firstteamscouter.TeamMatchData.STARTING_LOC;
 import com.wilsonvillerobotics.firstteamscouter.utilities.FTSUtilities;
 
-import android.app.ActionBar;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
-import android.widget.Button;
-import android.widget.CompoundButton;
-import android.widget.TextView;
 import android.widget.ToggleButton;
 import android.support.v4.app.Fragment;
 
 public class TeamMatchStartingPositionFragment extends Fragment implements OnClickListener {
 
 	private TeamMatchData tmData;
-	private Long teamMatchID;
-	public static String myTitle;
+	protected Long teamMatchID;
+	public static String myTitle = "Starting Position";
 	Hashtable<STARTING_LOC, ToggleButton> buttonHash;
 	
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
 
-    	this.myTitle = "Starting Position";
     	this.teamMatchID = getArguments() != null ? getArguments().getLong("tmID") : -1;
     	
         View rootView = inflater.inflate(R.layout.fragment_team_match_starting_position, container, false);
@@ -170,6 +164,7 @@ public class TeamMatchStartingPositionFragment extends Fragment implements OnCli
 			FTSUtilities.printToConsole("TeamMatchStartingPositionFragment::setOrResetStartingLoc : Resetting SL: " + sl.toString() + "\n");
 			this.setStartingLoc(STARTING_LOC.FIELD_NOT_SET);
 		}
+		this.tmData.setSavedDataState(true, "setOrResetStartingLoc");
 	}
 
 	private void btnStartRightOnClick(View v) {

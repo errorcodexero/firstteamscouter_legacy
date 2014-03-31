@@ -2,7 +2,6 @@ package com.wilsonvillerobotics.firstteamscouter.dbAdapters;
 
 import java.util.Enumeration;
 import java.util.Hashtable;
-import java.util.Set;
 
 import com.wilsonvillerobotics.firstteamscouter.utilities.FTSUtilities;
 
@@ -20,7 +19,8 @@ public class TeamMatchDBAdapter implements BaseColumns {
     public static final String COLUMN_NAME_TEAM_ID = "team_id";
     public static final String COLUMN_NAME_MATCH_ID = "match_id";
     public static final String COLUMN_NAME_TEAM_MATCH_ALLIANCE_POSITION = "alliance_position";
-    public static final String COLUMN_NAME_TEAM_MATCH_DATA_UPDATED = "team_match_data_updated";
+    public static final String COLUMN_NAME_TEAM_MATCH_DATA_READY_TO_EXPORT = "data_ready_to_export";
+    public static final String COLUMN_NAME_TEAM_MATCH_HAS_SAVED_DATA = "team_match_has_saved_data";
     public static final String COLUMN_NAME_AUTO_SCORE = "auto_score";
     public static final String COLUMN_NAME_AUTO_HI_SCORE = "auto_hi_score";
     public static final String COLUMN_NAME_AUTO_LO_SCORE = "auto_lo_score";
@@ -71,14 +71,15 @@ public class TeamMatchDBAdapter implements BaseColumns {
     
     // This needs to be moved to the team_match_notes_data
     public static final String COLUMN_NAME_TEAM_MATCH_NOTES = "team_match_notes";
-
+	
     private String[] allColumnNames = new String[]{
     		_ID,
     		COLUMN_NAME_TEAM_MATCH_ID,
     	    COLUMN_NAME_TEAM_ID,
     	    COLUMN_NAME_MATCH_ID,
     	    COLUMN_NAME_TEAM_MATCH_ALLIANCE_POSITION,
-    	    COLUMN_NAME_TEAM_MATCH_DATA_UPDATED,
+    	    COLUMN_NAME_TEAM_MATCH_DATA_READY_TO_EXPORT,
+    	    COLUMN_NAME_TEAM_MATCH_HAS_SAVED_DATA,
     	    COLUMN_NAME_AUTO_SCORE,
     	    COLUMN_NAME_AUTO_HI_SCORE,
     	    COLUMN_NAME_AUTO_LO_SCORE,
@@ -223,7 +224,7 @@ public class TeamMatchDBAdapter implements BaseColumns {
         args.put(COLUMN_NAME_TEAM_MATCH_ALLIANCE_POSITION, alliancePosition);
         args.put(COLUMN_NAME_TEAM_ID, team_id);
         args.put(COLUMN_NAME_MATCH_ID, String.valueOf(match_id));
-        args.put(COLUMN_NAME_TEAM_MATCH_DATA_UPDATED, Boolean.TRUE.toString());
+        args.put(COLUMN_NAME_TEAM_MATCH_HAS_SAVED_DATA, Boolean.TRUE.toString());
         return this.mDb.insert(TABLE_NAME, null, args);
     }
 
@@ -246,6 +247,7 @@ public class TeamMatchDBAdapter implements BaseColumns {
         args.put(COLUMN_NAME_TEAM_ID, team_id);
         args.put(COLUMN_NAME_MATCH_ID, match_id);
         args.put(COLUMN_NAME_TEAM_MATCH_NOTES, tmNotes);
+        args.put(COLUMN_NAME_TEAM_MATCH_DATA_READY_TO_EXPORT, Boolean.TRUE.toString());
         
         Enumeration<String> boolKeys = boolVals.keys();
         while(boolKeys.hasMoreElements()) {
@@ -263,6 +265,29 @@ public class TeamMatchDBAdapter implements BaseColumns {
         
         return this.mDb.update(TABLE_NAME, args, WHERE, null) >0; 
     }
+    
+    public boolean resetTeamMatchDataExportField(Cursor exportedData) {
+    	FTSUtilities.printToConsole("TeamMatchDBAdapter::resetTeamMatchDataExportField\n");
+    	
+    	long rowID = Long.MIN_VALUE;
+    	
+    	exportedData.moveToPosition(-1);	// position before the first record
+    	
+    	while(exportedData.moveToNext()) {
+    		rowID = exportedData.getLong(exportedData.getColumnIndex(TeamMatchDBAdapter._ID));
+    		
+    		ContentValues args = new ContentValues();
+            args.put(_ID, rowID);
+            args.put(COLUMN_NAME_TEAM_MATCH_DATA_READY_TO_EXPORT, Boolean.FALSE.toString());
+            
+            String WHERE = TeamMatchDBAdapter._ID + "=" + rowID;
+            
+            return this.mDb.update(TABLE_NAME, args, WHERE, null) >0;
+    	}
+    	
+    	
+    	return false;
+    }
 
     /**
      * Return a Cursor over the list of all entries in the database
@@ -273,8 +298,19 @@ public class TeamMatchDBAdapter implements BaseColumns {
 
         return this.mDb.query(TABLE_NAME, new String[] { _ID,
         		COLUMN_NAME_TEAM_ID, COLUMN_NAME_MATCH_ID, COLUMN_NAME_TEAM_MATCH_ALLIANCE_POSITION,
-        		COLUMN_NAME_AUTO_SCORE, COLUMN_NAME_TELE_SCORE, COLUMN_NAME_TEAM_MATCH_DATA_UPDATED
+        		COLUMN_NAME_AUTO_SCORE, COLUMN_NAME_TELE_SCORE, COLUMN_NAME_TEAM_MATCH_HAS_SAVED_DATA
         		}, null, null, null, null, null);
+    }
+
+    /**
+     * Return a Cursor over the list of all entries in the database
+     * 
+     * @return Cursor over all Match Data entries that have data ready to export
+     */
+    public Cursor getTeamMatchesWithDataToExport() {
+    	String WHERE = TeamMatchDBAdapter.COLUMN_NAME_TEAM_MATCH_DATA_READY_TO_EXPORT + "=" + Boolean.TRUE.toString();
+
+        return this.mDb.query(TABLE_NAME, this.allColumnNames, WHERE, null, null, null, null);
     }
 
     /**
@@ -323,6 +359,9 @@ public class TeamMatchDBAdapter implements BaseColumns {
     public Cursor getMatchesForTeam(long teamID) {
     	String selection = COLUMN_NAME_TEAM_ID + "=" + String.valueOf(teamID);
     	Cursor mCursor = this.mDb.query(TABLE_NAME, this.allColumnNames, selection, null, null, null, COLUMN_NAME_MATCH_ID);
+    	if(mCursor != null) {
+    		mCursor.moveToFirst();
+    	}
     	return mCursor;
     }
 

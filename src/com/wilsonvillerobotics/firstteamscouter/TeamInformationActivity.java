@@ -7,12 +7,10 @@ import com.wilsonvillerobotics.firstteamscouter.utilities.FTSUtilities;
 import android.os.Bundle;
 import android.app.Activity;
 import android.database.Cursor;
-import android.text.Spannable;
 import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 
 public class TeamInformationActivity extends Activity {
 
@@ -27,7 +25,6 @@ public class TeamInformationActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_team_information);
 		
-		int prePosition = getIntent().getIntExtra("position", 0);
 		teamNumber = getIntent().getIntExtra(TeamDataDBAdapter.COLUMN_NAME_TEAM_NUMBER, -1);
 		
 		FTSUtilities.printToConsole("Creating TeamInformationActivity");

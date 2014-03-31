@@ -10,14 +10,13 @@ import android.support.v4.app.Fragment;
 public class TeamMatchTeamNumberDisplayFragment extends Fragment {
 
 	private TeamMatchData tmData;
-	private long teamMatchID;
-	public static String myTitle;
+	protected Long teamMatchID;
+	public static String myTitle = "Team Number Display";
 	
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
 
-    	this.myTitle = "Team Number Display";
     	this.teamMatchID = getArguments() != null ? getArguments().getLong("tmID") : -1;
     	
         View rootView = inflater.inflate(R.layout.fragment_team_match_teamnumber_display, container, false);

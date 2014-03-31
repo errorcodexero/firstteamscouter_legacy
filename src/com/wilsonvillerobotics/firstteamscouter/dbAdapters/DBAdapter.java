@@ -11,7 +11,7 @@ public class DBAdapter {
 
     public static final String DATABASE_NAME = "FIRSTTeamScouter"; //$NON-NLS-1$
 
-    public static final int DATABASE_VERSION = 2;
+    public static final int DATABASE_VERSION = 3;
     
     private static final int CREATE_TABLE_SQL = 0;
     private static final int DELETE_TABLE_SQL = 1;
@@ -240,7 +240,8 @@ public class DBAdapter {
     		TeamMatchDBAdapter.COLUMN_NAME_TEAM_ID + INT_TYPE + COMMA_SEP +
     		TeamMatchDBAdapter.COLUMN_NAME_MATCH_ID + TEXT_TYPE + COMMA_SEP +
     		TeamMatchDBAdapter.COLUMN_NAME_TEAM_MATCH_ALLIANCE_POSITION + TEXT_TYPE + COMMA_SEP +
-    		TeamMatchDBAdapter.COLUMN_NAME_TEAM_MATCH_DATA_UPDATED + BOOL_TYPE + COMMA_SEP +
+    		TeamMatchDBAdapter.COLUMN_NAME_TEAM_MATCH_HAS_SAVED_DATA + BOOL_TYPE + COMMA_SEP +
+    		TeamMatchDBAdapter.COLUMN_NAME_TEAM_MATCH_DATA_READY_TO_EXPORT + BOOL_TYPE + COMMA_SEP +
     		TeamMatchDBAdapter.COLUMN_NAME_AUTO_SCORE + INT_TYPE + COMMA_SEP +
     		TeamMatchDBAdapter.COLUMN_NAME_AUTO_HI_SCORE + INT_TYPE + COMMA_SEP +
     		TeamMatchDBAdapter.COLUMN_NAME_AUTO_LO_SCORE + INT_TYPE + COMMA_SEP +
@@ -336,7 +337,7 @@ public class DBAdapter {
     private final Context context; 
     //private DatabaseHelper DBHelper;
     public DatabaseHelper DBHelper;
-    private SQLiteDatabase db;
+    protected SQLiteDatabase db;
 
     /**
      * Constructor
