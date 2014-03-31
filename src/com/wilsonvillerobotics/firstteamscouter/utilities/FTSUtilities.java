@@ -1,4 +1,4 @@
-package com.wilsonvillerobotics.firstteamscouter.utilities;
+	package com.wilsonvillerobotics.firstteamscouter.utilities;
 
 import java.io.File;
 import java.util.Hashtable;
@@ -10,9 +10,11 @@ import android.bluetooth.BluetoothDevice;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Environment;
 import android.view.View;
+import android.widget.Button;
 
 public class FTSUtilities {
 
@@ -108,5 +110,13 @@ public class FTSUtilities {
 		values.put(BluetoothShare.TIMESTAMP, ts);
 		Uri contentUri = context.getContentResolver().insert(BluetoothShare.CONTENT_URI, values);
 		return contentUri;
+	}
+	
+	public static void setButtonStyles(Hashtable<Integer, Button> buttonHash, Boolean undo) {
+		int color = (undo) ? Color.RED : Color.BLUE;
+		
+		for(Integer bID : buttonHash.keySet()) {
+			buttonHash.get(bID).setTextColor(color);
+		}
 	}
 }

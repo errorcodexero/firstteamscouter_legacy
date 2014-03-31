@@ -32,13 +32,15 @@ public final class R {
         public static final int note_container_width=0x7f060005;
     }
     public static final class drawable {
-        public static final int edittext_bg=0x7f020000;
-        public static final int field_800x367_blue_on_left=0x7f020001;
-        public static final int field_800x367_red_on_left=0x7f020002;
-        public static final int field_end_800_367=0x7f020003;
-        public static final int ic_launcher=0x7f020004;
-        public static final int starting_position_background=0x7f020005;
-        public static final int starting_position_background_800_367=0x7f020006;
+        public static final int custom_btn_orange=0x7f020000;
+        public static final int custom_btn_shakespeare=0x7f020001;
+        public static final int edittext_bg=0x7f020002;
+        public static final int field_800x367_blue_on_left=0x7f020003;
+        public static final int field_800x367_red_on_left=0x7f020004;
+        public static final int field_end_800_367=0x7f020005;
+        public static final int ic_launcher=0x7f020006;
+        public static final int starting_position_background=0x7f020007;
+        public static final int starting_position_background_800_367=0x7f020008;
     }
     public static final class id {
         public static final int SaveLayout=0x7f0a0028;
@@ -337,6 +339,8 @@ public final class R {
  All customizations that are NOT specific to a particular API-level can go here. 
          */
         public static final int AppTheme=0x7f080001;
+        public static final int btnStyleOrange=0x7f080003;
+        public static final int btnStyleShakespeare=0x7f080002;
     }
     public static final class xml {
         public static final int preferences=0x7f040000;

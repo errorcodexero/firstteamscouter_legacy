@@ -2,9 +2,8 @@ package com.wilsonvillerobotics.firstteamscouter;
 
 import java.util.Hashtable;
 
-import com.wilsonvillerobotics.firstteamscouter.TeamMatchData.STARTING_LOC;
+import com.wilsonvillerobotics.firstteamscouter.utilities.FTSUtilities;
 
-import android.app.ActionBar;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -18,7 +17,6 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 import android.support.v4.app.Fragment;
-import android.support.v4.view.ViewPager;
 
 public class TeamMatchAutoModeFragment extends Fragment implements OnClickListener{
 	public static String myTitle;
@@ -65,7 +63,7 @@ public class TeamMatchAutoModeFragment extends Fragment implements OnClickListen
 			@Override
 			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 				undo = isChecked;
-				setButtonBackgrounds();
+				FTSUtilities.setButtonStyles(buttonHash, undo);
 			}
         	
         });
@@ -216,14 +214,18 @@ public class TeamMatchAutoModeFragment extends Fragment implements OnClickListen
 		}
 	}
 	
-	private void setButtonBackgrounds() {
-		int color = Color.LTGRAY;
+	private void setButtonStyles() {
+		int color = Color.BLUE;
+		//int style = R.style.btnStyleOrange;
 		if(this.undo) {
-			color = Color.DKGRAY;
+			color = Color.RED;
+			//style = R.style.btnStyleShakespeare;
 		}
 		
 		for(Integer bID : buttonHash.keySet()) {
-			this.buttonHash.get(bID).setBackgroundColor(color);
+			//this.buttonHash.get(bID).setBackgroundColor(color);
+			this.buttonHash.get(bID).setTextColor(color);
+			//this.buttonHash.get(bID).setBackgroundResource(style);
 		}
 	}
 }

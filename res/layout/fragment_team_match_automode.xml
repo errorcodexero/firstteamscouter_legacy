@@ -49,9 +49,9 @@
         android:layout_gravity="center"
         android:layout_marginLeft="20dp"
         android:layout_row="1"
-        android:background="@android:drawable/btn_default"
         android:paddingLeft="10dp"
-        android:text="@string/text_button_hot_score" />
+        android:text="@string/text_button_hot_score"
+        android:textColor="#0000FF" />
 
     <Button
         android:id="@+id/btnAutoHiScoreCold"
@@ -60,8 +60,8 @@
         android:layout_column="2"
         android:layout_gravity="center"
         android:layout_row="1"
-        android:background="@android:drawable/btn_default"
-        android:text="@string/text_button_cold_score" />
+        android:text="@string/text_button_cold_score"
+        android:textColor="#0000FF" />
 
     <Button
         android:id="@+id/btnAutoHiMiss"
@@ -70,8 +70,8 @@
         android:layout_column="3"
         android:layout_gravity="center"
         android:layout_row="8"
-        android:background="@android:drawable/btn_default"
-        android:text="@string/text_button_miss_score" />
+        android:text="@string/text_button_miss_score"
+        android:textColor="#0000FF" />
 
     <Button
         android:id="@+id/btnAutoCollect"
@@ -80,8 +80,9 @@
         android:layout_column="8"
         android:layout_gravity="center"
         android:layout_row="11"
-        android:background="@android:drawable/btn_default"
-        android:text="@string/text_button_auto_collect" />
+        android:text="@string/text_button_auto_collect"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:textColor="#0000FF" />
 
     <Button
         android:id="@+id/btnAutoDefend"
@@ -90,8 +91,9 @@
         android:layout_column="9"
         android:layout_gravity="center"
         android:layout_row="11"
-        android:background="@android:drawable/btn_default"
-        android:text="@string/text_button_auto_defend" />
+        android:text="@string/text_button_auto_defend"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:textColor="#0000FF" />
 
     <Button
         android:id="@+id/btnAutoLoScoreHot"
@@ -101,8 +103,8 @@
         android:layout_gravity="center"
         android:layout_marginLeft="20dp"
         android:layout_row="11"
-        android:background="@android:drawable/btn_default"
-        android:text="@string/text_button_hot_score" />
+        android:text="@string/text_button_hot_score"
+        android:textColor="#0000FF" />
 
     <Button
         android:id="@+id/btnAutoLoScoreCold"
@@ -111,8 +113,8 @@
         android:layout_column="1"
         android:layout_gravity="center"
         android:layout_row="12"
-        android:background="@android:drawable/btn_default"
-        android:text="@string/text_button_cold_score" />
+        android:text="@string/text_button_cold_score"
+        android:textColor="#0000FF" />
 
     <Button
         android:id="@+id/btnAutoLoMiss"
@@ -121,8 +123,8 @@
         android:layout_column="3"
         android:layout_gravity="center"
         android:layout_row="12"
-        android:background="@android:drawable/btn_default"
-        android:text="@string/text_button_miss_score" />
+        android:text="@string/text_button_miss_score"
+        android:textColor="#0000FF" />
 
     <Button
         android:id="@+id/btnAutoMove"
@@ -131,8 +133,9 @@
         android:layout_column="7"
         android:layout_gravity="center"
         android:layout_row="11"
-        android:background="@android:drawable/btn_default"
-        android:text="@string/text_button_auto_move" />
+        android:text="@string/text_button_auto_move"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:textColor="#0000FF" />
 
     <TextView
         android:id="@+id/lblAutoLoScore"
