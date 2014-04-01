@@ -11,7 +11,7 @@ public class TabsPagerAdapter extends FragmentPagerAdapter {
 	private Integer matchNumber;
 	private TeamMatchData tmData;
 	
-	public static String tabTitles[] = { "Team Number", "Starting Position", "Auto Mode", "Tele Mode", "Notes" };
+	public static String tabTitles[] = { "1: Team #", "2: Position", "3: Auto", "4: Tele", "5: Notes" };
 	
     public TabsPagerAdapter(FragmentManager fm, TeamMatchData tmD) {  //, Integer tmID, String tNum, String mNum) {
         super(fm);

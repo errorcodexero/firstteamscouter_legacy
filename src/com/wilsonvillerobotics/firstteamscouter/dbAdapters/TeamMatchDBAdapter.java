@@ -318,6 +318,9 @@ public class TeamMatchDBAdapter implements BaseColumns {
      * 
      * @return Cursor over all unique Match numbers
      */
+    /**
+     * TODO - move this to MatchDataDBAdapter
+     */
     public Cursor getAllMatchNumbers() {
     	String SELECT_QUERY = "SELECT DISTINCT t2." + MatchDataDBAdapter.COLUMN_NAME_MATCH_NUMBER + ", t2." + MatchDataDBAdapter._ID;
     	SELECT_QUERY += " FROM " + TeamMatchDBAdapter.TABLE_NAME + " AS t1";
@@ -325,8 +328,6 @@ public class TeamMatchDBAdapter implements BaseColumns {
     	SELECT_QUERY += " ON t1." + TeamMatchDBAdapter.COLUMN_NAME_MATCH_ID + " = t2." + MatchDataDBAdapter._ID;
     	SELECT_QUERY += " ORDER BY " + MatchDataDBAdapter.COLUMN_NAME_MATCH_NUMBER + " ASC";
     	return this.mDb.rawQuery(SELECT_QUERY, null);
-        //return this.mDb.query(TABLE_NAME, new String[] { _ID, COLUMN_NAME_TEAM_MATCH_ALLIANCE_POSITION,
-        //		COLUMN_NAME_MATCH_ID, COLUMN_NAME_TEAM_MATCH_DATA_UPDATED}, null, null, COLUMN_NAME_MATCH_ID, null, COLUMN_NAME_MATCH_ID + " ASC");
     }
 
     /**

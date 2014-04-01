@@ -32,12 +32,12 @@ public class TeamMatchTeamNumberDisplayFragment extends Fragment {
     	super.onActivityCreated(savedInstanceState);
     }
     
-    static TeamMatchTeamNumberDisplayFragment newInstance(Long teamMatchID2) {
+    static TeamMatchTeamNumberDisplayFragment newInstance(Long teamMatchID) {
     	TeamMatchTeamNumberDisplayFragment f = new TeamMatchTeamNumberDisplayFragment();
 
         // Supply num input as an argument.
         Bundle args = new Bundle();
-        args.putLong("tmID", teamMatchID2);
+        args.putLong("tmID", teamMatchID);
         f.setArguments(args);
 
         return f;

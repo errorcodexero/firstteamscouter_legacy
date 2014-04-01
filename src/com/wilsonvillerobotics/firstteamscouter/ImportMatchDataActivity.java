@@ -55,6 +55,8 @@ public class ImportMatchDataActivity extends Activity {
 	private File myExportFile;
 	private File myTempFile;
 	private File saveDir;
+
+	private int numTestMatches;
 	
 	//getExternalStorageState()
 
@@ -63,6 +65,8 @@ public class ImportMatchDataActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_import_match_data);
+		
+		this.numTestMatches = 25;
 		
 		Intent intent = getIntent();
 		this.tabletID = intent.getStringExtra("tablet_id");
@@ -88,8 +92,15 @@ public class ImportMatchDataActivity extends Activity {
 			tDataDBAdapter = null;
 		}
 		
+		String statusMessage = "";
+		if(FTSUtilities.POPULATE_TEST_DATA) {
+			statusMessage = "Press the import button to import test data for " + numTestMatches + " teams\n";
+		} else {
+			statusMessage = "Press the 'Import' button to import matches from 'match_list_data.csv'\nExpected format is:\nTime : Match Type : Match Number : Red1 : Red2 : Red3 : Blue1 : Blue2 : Blue3";
+		}
+		
 		txtStatus = (TextView) findViewById(R.id.txtStatus);
-	    txtStatus.setText("Press the 'Import' button to import matches from 'match_list_data.csv'\nExpected format is:\nTime : Match Type : Match Number : Red1 : Red2 : Red3 : Blue1 : Blue2 : Blue3");
+	    txtStatus.setText(statusMessage);
 	    mProgressBar = (ProgressBar)findViewById(R.id.progressBar1);
 	    
 		btnOK = (Button) findViewById(R.id.btnImportMatchData);
@@ -98,9 +109,8 @@ public class ImportMatchDataActivity extends Activity {
 			@Override
 			public void onClick(View v) {
 				try {
-					if(FTSUtilities.DEBUG) {
-						int numMatches = 10;
-						tmDBAdapter.populateTestData(mDataDBAdapter.populateTestData(numMatches), tDataDBAdapter.populateTestData());
+					if(FTSUtilities.POPULATE_TEST_DATA) {
+						tmDBAdapter.populateTestData(mDataDBAdapter.populateTestData(numTestMatches), tDataDBAdapter.populateTestData());
 					} else {
 					    String storageState = Environment.getExternalStorageState();
 					    if (storageState.equals(Environment.MEDIA_MOUNTED)) {

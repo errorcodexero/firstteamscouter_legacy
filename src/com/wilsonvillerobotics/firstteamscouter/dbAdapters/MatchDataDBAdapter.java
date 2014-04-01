@@ -219,7 +219,7 @@ public class MatchDataDBAdapter implements BaseColumns {
     	this.deleteAllData();
     	
     	for(int i = 0; i < numMatches; i++) {
-    		matchIDs[i] = this.createMatchData(i);
+    		matchIDs[i] = this.createMatchData(i + 1);
     	}
     	return matchIDs;
     }

@@ -11,7 +11,7 @@ public class DBAdapter {
 
     public static final String DATABASE_NAME = "FIRSTTeamScouter"; //$NON-NLS-1$
 
-    public static final int DATABASE_VERSION = 3;
+    public static final int DATABASE_VERSION = 4;
     
     private static final int CREATE_TABLE_SQL = 0;
     private static final int DELETE_TABLE_SQL = 1;
@@ -86,7 +86,7 @@ public class DBAdapter {
 	        MatchDataDBAdapter.COLUMN_NAME_MATCH_DATA_ID + INT_TYPE + COMMA_SEP +
 	        MatchDataDBAdapter.COLUMN_NAME_MATCH_TIME + TEXT_TYPE + COMMA_SEP +
 	        MatchDataDBAdapter.COLUMN_NAME_MATCH_TYPE + TEXT_TYPE + COMMA_SEP +
-	        MatchDataDBAdapter.COLUMN_NAME_MATCH_NUMBER + TEXT_TYPE + COMMA_SEP +
+	        MatchDataDBAdapter.COLUMN_NAME_MATCH_NUMBER + INT_TYPE + COMMA_SEP +
 	        MatchDataDBAdapter.COLUMN_NAME_MATCH_LOCATION + TEXT_TYPE + COMMA_SEP +
 	        MatchDataDBAdapter.COLUMN_NAME_RED_TEAM_ONE_ID + INT_TYPE + COMMA_SEP +
 	        MatchDataDBAdapter.COLUMN_NAME_RED_TEAM_TWO_ID + INT_TYPE + COMMA_SEP +
@@ -238,7 +238,7 @@ public class DBAdapter {
     		AUTO_INC_ID + 
     		TeamMatchDBAdapter.COLUMN_NAME_TEAM_MATCH_ID + INT_TYPE + COMMA_SEP +
     		TeamMatchDBAdapter.COLUMN_NAME_TEAM_ID + INT_TYPE + COMMA_SEP +
-    		TeamMatchDBAdapter.COLUMN_NAME_MATCH_ID + TEXT_TYPE + COMMA_SEP +
+    		TeamMatchDBAdapter.COLUMN_NAME_MATCH_ID + INT_TYPE + COMMA_SEP +
     		TeamMatchDBAdapter.COLUMN_NAME_TEAM_MATCH_ALLIANCE_POSITION + TEXT_TYPE + COMMA_SEP +
     		TeamMatchDBAdapter.COLUMN_NAME_TEAM_MATCH_HAS_SAVED_DATA + BOOL_TYPE + COMMA_SEP +
     		TeamMatchDBAdapter.COLUMN_NAME_TEAM_MATCH_DATA_READY_TO_EXPORT + BOOL_TYPE + COMMA_SEP +

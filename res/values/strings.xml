@@ -36,6 +36,7 @@
     <string name="title_activity_enter_team_match_data">Enter Team Match Data</string>
     <string name="title_activity_team_informatrion">Team Information</string>
     <string name="title_activity_view_data">View Data</string>
+    <string name="label_scouting_team">You Are Scouting Team #</string>
     <string name="label_team_number">Team #: </string>
     <string name="label_team_name">Team Name: </string>
     <string name="label_team_location">Team Location: </string>
