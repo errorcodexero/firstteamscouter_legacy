@@ -1,7 +1,7 @@
 import os
 
 #rootDir = "D:\\Profiles\\TomS\\Documents\\FIRST Robotics\\2014\\First Team Scouter\\tablet data files"
-rootDir = "C:\\Users\\Tom\\Documents\\FIRST Robotics\\2014\\First Team Scouter\\Wilsonville Data"
+rootDir = "C:\\Users\\Tom\\Documents\\FIRST Robotics\\2014\\First Team Scouter\\Oregon City Data"
 
 filesToParse = []
 fileExt = '.csv'
@@ -48,7 +48,7 @@ for csvFile in filesToParse :
         print csvFile
         print saveFile
 
-outFilePath = rootDir + "\\WilsonvilleMasterData.csv"
+outFilePath = rootDir + "\\OregonCityMasterData.csv"
 outFile = open(outFilePath, 'a')
 
 print "Parsed " + str(filesParsed) + " csv files\n"

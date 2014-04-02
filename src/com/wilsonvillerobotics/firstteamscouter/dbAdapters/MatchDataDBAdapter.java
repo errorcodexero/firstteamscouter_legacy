@@ -213,6 +213,20 @@ public class MatchDataDBAdapter implements BaseColumns {
         return this.mDb.update(TABLE_NAME, args, _ID + "=" + id, null) >0; 
     }
     
+    public Cursor getTeamIDsForMatchByAlliancePosition(long matchID) {
+    	String SELECT_QUERY = "SELECT t1." + MatchDataDBAdapter._ID;
+    	SELECT_QUERY += ", t1." + MatchDataDBAdapter.COLUMN_NAME_MATCH_NUMBER;
+    	SELECT_QUERY += ", t1." + MatchDataDBAdapter.COLUMN_NAME_RED_TEAM_ONE_ID;
+    	SELECT_QUERY += ", t1." + MatchDataDBAdapter.COLUMN_NAME_RED_TEAM_TWO_ID;
+    	SELECT_QUERY += ", t1." + MatchDataDBAdapter.COLUMN_NAME_RED_TEAM_THREE_ID;
+    	SELECT_QUERY += ", t1." + MatchDataDBAdapter.COLUMN_NAME_BLUE_TEAM_ONE_ID;
+    	SELECT_QUERY += ", t1." + MatchDataDBAdapter.COLUMN_NAME_BLUE_TEAM_TWO_ID;
+    	SELECT_QUERY += ", t1." + MatchDataDBAdapter.COLUMN_NAME_BLUE_TEAM_THREE_ID;
+		SELECT_QUERY += " FROM " + MatchDataDBAdapter.TABLE_NAME + " AS t1";
+    	SELECT_QUERY += " WHERE t1." + MatchDataDBAdapter._ID + "=" + matchID;
+    	return this.mDb.rawQuery(SELECT_QUERY, null);
+    }
+    
     public long[] populateTestData(int numMatches) {
     	FTSUtilities.printToConsole("MatchDataDBAdapter::populateTestData\n");
     	long matchIDs[] = new long[numMatches];

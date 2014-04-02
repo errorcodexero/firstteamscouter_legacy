@@ -39,6 +39,7 @@ public class ImportMatchDataActivity extends Activity {
 	private TeamDataDBAdapter tDataDBAdapter;
 	private Button btnOK;
 	private TextView txtStatus;
+	private TextView txtTestDataAlert;
 	protected ProgressBar mProgressBar;
 	protected boolean mbActive;
 	protected String tabletID;
@@ -93,14 +94,20 @@ public class ImportMatchDataActivity extends Activity {
 		}
 		
 		String statusMessage = "";
+		String testDataAlertMessage = "";
 		if(FTSUtilities.POPULATE_TEST_DATA) {
 			statusMessage = "Press the import button to import test data for " + numTestMatches + " teams\n";
+			testDataAlertMessage = "TEST DATA MODE";
 		} else {
 			statusMessage = "Press the 'Import' button to import matches from 'match_list_data.csv'\nExpected format is:\nTime : Match Type : Match Number : Red1 : Red2 : Red3 : Blue1 : Blue2 : Blue3";
 		}
 		
 		txtStatus = (TextView) findViewById(R.id.txtStatus);
 	    txtStatus.setText(statusMessage);
+	    
+	    txtTestDataAlert = (TextView) findViewById(R.id.txtTestDataAlert);
+	    txtTestDataAlert.setText(testDataAlertMessage);
+	    
 	    mProgressBar = (ProgressBar)findViewById(R.id.progressBar1);
 	    
 		btnOK = (Button) findViewById(R.id.btnImportMatchData);
@@ -108,9 +115,11 @@ public class ImportMatchDataActivity extends Activity {
 			
 			@Override
 			public void onClick(View v) {
+				String importStatusMessage = "";
 				try {
 					if(FTSUtilities.POPULATE_TEST_DATA) {
 						tmDBAdapter.populateTestData(mDataDBAdapter.populateTestData(numTestMatches), tDataDBAdapter.populateTestData());
+						importStatusMessage = "Test data import complete";
 					} else {
 					    String storageState = Environment.getExternalStorageState();
 					    if (storageState.equals(Environment.MEDIA_MOUNTED)) {
@@ -170,12 +179,13 @@ public class ImportMatchDataActivity extends Activity {
 						        }
 						        inputReader.close();
 	
-						        txtStatus.setText(txtStatus.getText() + "\nLines Parsed: " + lineCount + "\nMatches Created: " + matchCount + "\nTeamMatch Records Created: " + teamCount);
+						        importStatusMessage = txtStatus.getText() + "\nLines Parsed: " + lineCount + "\nMatches Created: " + matchCount + "\nTeamMatch Records Created: " + teamCount;
 					        } else {
-					        	txtStatus.setText("ERROR: could not find file:\n" + file.toString());
+					        	importStatusMessage = "ERROR: could not find file:\n" + file.toString();
 					        }
 					    }
 					}
+					txtStatus.setText(importStatusMessage);
 				} catch (Exception e) {
 					FTSUtilities.printToConsole("ImportMatchDataActivity::btnOK.onClick : ERROR");
 				    e.printStackTrace();
