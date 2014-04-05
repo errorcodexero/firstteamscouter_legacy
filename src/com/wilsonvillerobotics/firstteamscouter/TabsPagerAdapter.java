@@ -10,12 +10,14 @@ public class TabsPagerAdapter extends FragmentPagerAdapter {
 	private Integer teamNumber;
 	private Integer matchNumber;
 	private TeamMatchData tmData;
+	protected Boolean fieldOrientationRedOnRight;
 	
 	public static String tabTitles[] = { "1: Team #", "2: Position", "3: Auto", "4: Tele", "5: Notes" };
 	
-    public TabsPagerAdapter(FragmentManager fm, TeamMatchData tmD) {  //, Integer tmID, String tNum, String mNum) {
+    public TabsPagerAdapter(FragmentManager fm, TeamMatchData tmD, Boolean fieldOrientationRedOnRight) {  //, Integer tmID, String tNum, String mNum) {
         super(fm);
         this.tmData = tmD;
+        this.fieldOrientationRedOnRight = fieldOrientationRedOnRight;
         
         if(this.tmData != null) {
         	this.teamMatchID = tmData.teamMatchID;
@@ -49,6 +51,7 @@ public class TabsPagerAdapter extends FragmentPagerAdapter {
             return tmaFrag;
         case 3:
         	TeamMatchTeleModeFragment tmtFrag =  TeamMatchTeleModeFragment.newInstance(this.teamMatchID);
+        	tmtFrag.setFieldOrientation(fieldOrientationRedOnRight);
         	tmtFrag.setTeamMatchData(tmData);
         	return tmtFrag;
         case 4:

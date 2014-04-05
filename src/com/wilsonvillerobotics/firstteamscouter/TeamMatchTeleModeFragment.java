@@ -3,7 +3,6 @@ package com.wilsonvillerobotics.firstteamscouter;
 import java.util.Hashtable;
 
 import com.wilsonvillerobotics.firstteamscouter.TeamMatchData.ZONE;
-
 import com.wilsonvillerobotics.firstteamscouter.utilities.FTSUtilities;
 
 import android.os.Bundle;
@@ -13,6 +12,8 @@ import android.view.ViewGroup;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.CompoundButton;
+import android.widget.GridLayout;
+import android.widget.GridLayout.Spec;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.CompoundButton.OnCheckedChangeListener;
@@ -22,10 +23,12 @@ public class TeamMatchTeleModeFragment extends Fragment implements OnClickListen
 	public static String myTitle;
 	protected Long teamMatchID;
 	private TeamMatchData tmData;
+	protected Boolean fieldOrientationRedOnRight;
 	
 	protected int teleScore;
 	protected TextView txtTeleScore;
 	protected TextView txtTeleStat;
+	protected GridLayout gridTeleModeLayout;
 
 	private Integer buttonIDs[] = {
 			R.id.btnTeleHiScore,
@@ -90,6 +93,45 @@ public class TeamMatchTeleModeFragment extends Fragment implements OnClickListen
 	        buttonHash.put(ID, (Button) rootView.findViewById(ID));
 	        buttonHash.get(ID).setOnClickListener(this);
         }
+        
+        this.gridTeleModeLayout = (GridLayout) rootView.findViewById(R.id.gridTeleModeLayout);
+        
+        
+        Spec colSpecLeft = GridLayout.spec(5, 1);
+        Spec colSpecRight = GridLayout.spec(8, 2);
+        
+        Button bluePossess = buttonHash.get(R.id.btnPossessBlueZone);
+    	Button redPossess = buttonHash.get(R.id.btnPossessRedZone);
+    	Button blueDefend = buttonHash.get(R.id.btnDefendBlueZone);
+    	Button redDefend = buttonHash.get(R.id.btnDefendRedZone);
+    	
+        GridLayout.LayoutParams bluePossessLP = (GridLayout.LayoutParams)bluePossess.getLayoutParams();
+        GridLayout.LayoutParams redPossessLP = (GridLayout.LayoutParams)redPossess.getLayoutParams();
+        GridLayout.LayoutParams blueDefendLP = (GridLayout.LayoutParams)blueDefend.getLayoutParams();
+        GridLayout.LayoutParams redDefendLP = (GridLayout.LayoutParams)redDefend.getLayoutParams();
+    	
+        if(fieldOrientationRedOnRight) {
+        	rootView.setBackgroundDrawable(getResources().getDrawable(R.drawable.field_800x367_blue_on_left));
+        	
+        	bluePossessLP.columnSpec = colSpecLeft;
+        	blueDefendLP.columnSpec = colSpecLeft;
+        	
+        	redPossessLP.columnSpec = colSpecRight;
+        	redDefendLP.columnSpec = colSpecRight;
+        } else {
+        	rootView.setBackgroundDrawable(getResources().getDrawable(R.drawable.field_800x367_red_on_left));
+        	        	
+        	bluePossessLP.columnSpec = colSpecRight;
+        	blueDefendLP.columnSpec = colSpecRight;
+        	
+        	redPossessLP.columnSpec = colSpecLeft;
+        	redDefendLP.columnSpec = colSpecLeft;
+        }
+        
+        bluePossess.setLayoutParams(bluePossessLP);
+        redPossess.setLayoutParams(redPossessLP);
+        blueDefend.setLayoutParams(blueDefendLP);
+        redDefend.setLayoutParams(redDefendLP);
 
 		return rootView;
     }
@@ -384,5 +426,10 @@ public class TeamMatchTeleModeFragment extends Fragment implements OnClickListen
 		if(this.txtTeleStat != null && this.tmData != null) {
 			this.txtTeleStat.setText(String.format("%.2f%%", this.tmData.getTeleShotPercentage()));
 		}
+	}
+
+	public void setFieldOrientation(Boolean fieldOrientationRedOnRight) {
+		FTSUtilities.printToConsole("TeamMatchTeleModeFragment::setFieldOrientation : red on right: " + fieldOrientationRedOnRight.toString());
+		this.fieldOrientationRedOnRight = fieldOrientationRedOnRight;
 	}
 }

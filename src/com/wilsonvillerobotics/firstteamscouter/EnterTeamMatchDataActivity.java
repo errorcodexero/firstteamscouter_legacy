@@ -24,6 +24,7 @@ public class EnterTeamMatchDataActivity extends FragmentActivity implements Acti
 	private TextView txtTeamNumber;
 	private TextView txtMatchNumber;
 	private String tabletID;
+	protected Boolean fieldOrientationRedOnRight;
 	
 	private int viewState = 0;
 	
@@ -43,6 +44,8 @@ public class EnterTeamMatchDataActivity extends FragmentActivity implements Acti
 		FTSUtilities.printToConsole("EnterTeamMatchDataActivity::OnCreate : teamMatchID: " + String.valueOf(teamMatchID));
 		this.tabletID = intent.getStringExtra("tablet_id");
 		this.tabletID = (this.tabletID != null) ? this.tabletID : "Unknown Tablet ID";
+		
+		this.fieldOrientationRedOnRight = intent.getBooleanExtra("field_orientation", false);
 		//String teamNumber = intent.getStringExtra(TeamMatchDBAdapter.COLUMN_NAME_TEAM_ID);
 		//String matchNumber = intent.getStringExtra(TeamMatchDBAdapter.COLUMN_NAME_MATCH_ID);
 		
@@ -53,7 +56,7 @@ public class EnterTeamMatchDataActivity extends FragmentActivity implements Acti
 		// Initialization
         viewPager = (ViewPager) findViewById(R.id.pager);
         actionBar = getActionBar();
-        mAdapter = new TabsPagerAdapter(getSupportFragmentManager(), tmData); //, teamMatchID, teamNumber, matchNumber);
+        mAdapter = new TabsPagerAdapter(getSupportFragmentManager(), tmData, fieldOrientationRedOnRight); //, teamMatchID, teamNumber, matchNumber);
         
         viewPager.setAdapter(mAdapter);
         actionBar.setHomeButtonEnabled(false);

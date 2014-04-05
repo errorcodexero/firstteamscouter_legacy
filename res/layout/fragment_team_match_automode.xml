@@ -3,7 +3,7 @@
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
     android:alignmentMode="alignBounds"
-    android:background="@drawable/field_end_800_367"
+    android:background="@drawable/field_end_800_367_blue"
     android:columnCount="12"
     android:orientation="horizontal"
     android:paddingLeft="25dp"

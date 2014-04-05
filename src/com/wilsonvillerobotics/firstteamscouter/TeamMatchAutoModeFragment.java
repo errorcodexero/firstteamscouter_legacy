@@ -4,6 +4,7 @@ import java.util.Hashtable;
 
 import com.wilsonvillerobotics.firstteamscouter.utilities.FTSUtilities;
 
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -73,6 +74,12 @@ public class TeamMatchAutoModeFragment extends Fragment implements OnClickListen
         for(int ID : buttonIDs) {
 	        buttonHash.put(ID, (Button) rootView.findViewById(ID));
 	        buttonHash.get(ID).setOnClickListener(this);
+        }
+
+        if(this.tmData.tabletID.startsWith("Red")) {
+        	rootView.setBackgroundDrawable(getResources().getDrawable(R.drawable.field_end_800_367_red));
+        } else if(this.tmData.tabletID.startsWith("Blue")) {
+        	rootView.setBackgroundDrawable(getResources().getDrawable(R.drawable.field_end_800_367_blue));
         }
 
         return rootView;

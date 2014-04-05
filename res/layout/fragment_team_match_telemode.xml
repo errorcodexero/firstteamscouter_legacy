@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <GridLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/gridTeleModeLayout"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:background="@drawable/field_800x367_blue_on_left"
+    android:background="@drawable/field_800x367_red_on_left"
     android:columnCount="17"
     android:orientation="horizontal"
     android:rowCount="15" >
@@ -18,6 +19,10 @@
     <Space
         android:layout_width="80dp"
         android:layout_column="13" />
+
+    <Space
+        android:layout_height="40dp"
+        android:layout_row="9" />
 
     <TextView
         android:id="@+id/lblTeleScore"
@@ -86,6 +91,7 @@
         android:layout_rowSpan="1"
         android:background="@android:drawable/btn_default"
         android:text="@string/text_button_lo_score"
+        android:textAppearance="?android:attr/textAppearanceSmall"
         android:textColor="#0000FF" />
 
     <Button
@@ -100,6 +106,7 @@
         android:layout_rowSpan="1"
         android:background="@android:drawable/btn_default"
         android:text="@string/text_button_hi_score"
+        android:textAppearance="?android:attr/textAppearanceSmall"
         android:textColor="#0000FF" />
 
     <Button
@@ -112,6 +119,7 @@
         android:layout_rowSpan="2"
         android:background="@android:drawable/btn_default"
         android:text="@string/text_button_hi_miss"
+        android:textAppearance="?android:attr/textAppearanceSmall"
         android:textColor="#0000FF" />
 
     <Button
@@ -124,6 +132,7 @@
         android:layout_rowSpan="2"
         android:background="@android:drawable/btn_default"
         android:text="@string/text_button_lo_miss"
+        android:textAppearance="?android:attr/textAppearanceSmall"
         android:textColor="#0000FF" />
 
     <Button
@@ -135,6 +144,7 @@
         android:layout_row="10"
         android:background="@android:drawable/btn_default"
         android:text="@string/text_button_truss_toss"
+        android:textAppearance="?android:attr/textAppearanceSmall"
         android:textColor="#0000FF" />
 
     <Button
@@ -146,6 +156,7 @@
         android:layout_row="10"
         android:background="@android:drawable/btn_default"
         android:text="@string/text_button_truss_miss"
+        android:textAppearance="?android:attr/textAppearanceSmall"
         android:textColor="#0000FF" />
 
     <Button
@@ -157,6 +168,7 @@
         android:layout_row="10"
         android:background="@android:drawable/btn_default"
         android:text="@string/text_button_catch_caught"
+        android:textAppearance="?android:attr/textAppearanceSmall"
         android:textColor="#0000FF" />
 
     <Button
@@ -168,30 +180,35 @@
         android:layout_row="10"
         android:background="@android:drawable/btn_default"
         android:text="@string/text_button_catch_miss"
+        android:textAppearance="?android:attr/textAppearanceSmall"
         android:textColor="#0000FF" />
 
     <Button
         android:id="@+id/btnPossessBlueZone"
         android:layout_width="78dp"
         android:layout_height="78dp"
-        android:layout_column="5"
+        android:layout_column="8"
+        android:layout_columnSpan="2"
         android:layout_gravity="center"
         android:layout_row="3"
         android:layout_rowSpan="2"
         android:background="@android:drawable/btn_default"
         android:text="@string/text_button_blue"
+        android:textAppearance="?android:attr/textAppearanceSmall"
         android:textColor="#0000FF" />
 
     <Button
         android:id="@+id/btnDefendBlueZone"
         android:layout_width="78dp"
         android:layout_height="78dp"
-        android:layout_column="5"
+        android:layout_column="8"
+        android:layout_columnSpan="2"
         android:layout_gravity="center"
         android:layout_row="6"
         android:layout_rowSpan="2"
         android:background="@android:drawable/btn_default"
         android:text="@string/text_button_blue"
+        android:textAppearance="?android:attr/textAppearanceSmall"
         android:textColor="#0000FF" />
 
     <Button
@@ -205,6 +222,7 @@
         android:layout_rowSpan="2"
         android:background="@android:drawable/btn_default"
         android:text="@string/text_button_white"
+        android:textAppearance="?android:attr/textAppearanceSmall"
         android:textColor="#0000FF" />
 
     <Button
@@ -218,32 +236,33 @@
         android:layout_rowSpan="2"
         android:background="@android:drawable/btn_default"
         android:text="@string/text_button_white"
+        android:textAppearance="?android:attr/textAppearanceSmall"
         android:textColor="#0000FF" />
 
     <Button
         android:id="@+id/btnPossessRedZone"
         android:layout_width="78dp"
         android:layout_height="78dp"
-        android:layout_column="8"
-        android:layout_columnSpan="2"
+        android:layout_column="5"
         android:layout_gravity="center"
         android:layout_row="3"
         android:layout_rowSpan="2"
         android:background="@android:drawable/btn_default"
         android:text="@string/text_button_red"
+        android:textAppearance="?android:attr/textAppearanceSmall"
         android:textColor="#0000FF" />
 
     <Button
         android:id="@+id/btnDefendRedZone"
         android:layout_width="78dp"
         android:layout_height="78dp"
-        android:layout_column="8"
-        android:layout_columnSpan="2"
+        android:layout_column="5"
         android:layout_gravity="center"
         android:layout_row="6"
         android:layout_rowSpan="2"
         android:background="@android:drawable/btn_default"
         android:text="@string/text_button_red"
+        android:textAppearance="?android:attr/textAppearanceSmall"
         android:textColor="#0000FF" />
 
     <Button
@@ -256,7 +275,8 @@
         android:layout_row="6"
         android:layout_rowSpan="2"
         android:background="@android:drawable/btn_default"
-        android:text="@string/text_button_goal"
+        android:text="@string/text_button_goalie"
+        android:textAppearance="?android:attr/textAppearanceSmall"
         android:textColor="#0000FF" />
 
     <Space
@@ -282,6 +302,7 @@
         android:layout_row="10"
         android:background="@android:drawable/btn_default"
         android:text="@string/text_button_long_pass"
+        android:textAppearance="?android:attr/textAppearanceSmall"
         android:textColor="#0000FF" />
 
     <Button
@@ -293,6 +314,7 @@
         android:layout_row="10"
         android:background="@android:drawable/btn_default"
         android:text="@string/text_button_long_pass_miss"
+        android:textAppearance="?android:attr/textAppearanceSmall"
         android:textColor="#0000FF" />
 
     <Button
@@ -305,6 +327,7 @@
         android:layout_row="10"
         android:background="@android:drawable/btn_default"
         android:text="@string/text_button_short_pass"
+        android:textAppearance="?android:attr/textAppearanceSmall"
         android:textColor="#0000FF" />
 
     <Button
@@ -317,6 +340,7 @@
         android:layout_row="10"
         android:background="@android:drawable/btn_default"
         android:text="@string/text_button_short_pass_miss"
+        android:textAppearance="?android:attr/textAppearanceSmall"
         android:textColor="#0000FF" />
 
 </GridLayout>

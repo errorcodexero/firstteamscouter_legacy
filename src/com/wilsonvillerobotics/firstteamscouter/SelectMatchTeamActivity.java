@@ -46,6 +46,8 @@ public class SelectMatchTeamActivity extends Activity {
 	private TextView lblBlue2;
 	private TextView lblBlue3;
 	
+	protected Boolean fieldOrientationRedOnRight;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -53,6 +55,7 @@ public class SelectMatchTeamActivity extends Activity {
 		
 		Intent intent = getIntent();
 		this.tabletID = intent.getStringExtra("tablet_id");
+		this.fieldOrientationRedOnRight = intent.getBooleanExtra("field_orientation", false);
 
 		txtRed1 = (TextView) findViewById(R.id.txtRed1);
 		txtRed2 = (TextView) findViewById(R.id.txtRed2);
@@ -252,6 +255,7 @@ public class SelectMatchTeamActivity extends Activity {
             	
             	teamMatchIntent = new Intent(arg1.getContext(), EnterTeamMatchDataActivity.class);
                 teamMatchIntent.putExtra("tablet_id", tabletID);
+                teamMatchIntent.putExtra("field_orientation", fieldOrientationRedOnRight);
                 teamMatchIntent.putExtra("position", arg3);
                 teamMatchIntent.putExtra(TeamMatchDBAdapter.COLUMN_NAME_TEAM_ID, teamID);
                 teamMatchIntent.putExtra(TeamMatchDBAdapter.COLUMN_NAME_MATCH_ID, matchID);

@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.app.Activity;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
+import android.preference.SwitchPreference;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.view.Menu;
@@ -23,6 +24,7 @@ public class MainActivity extends Activity {
 	private DBAdapter mDBAdapter;
 	private TextView txtTabletID;
 	private String tabletID;
+	public Boolean fieldOrientRedOnRight;
 	
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,6 +47,7 @@ public class MainActivity extends Activity {
 			public void onClick(View v) {
 				Intent intent = new Intent(v.getContext(), TeamDataListActivity.class);
 				intent.putExtra("tablet_id", tabletID);
+				intent.putExtra("field_orientation", fieldOrientRedOnRight);
 				startActivity(intent);
 			}
 		});
@@ -55,6 +58,7 @@ public class MainActivity extends Activity {
 			public void onClick(View v) {
 				Intent intent = new Intent(v.getContext(), ImportMatchDataActivity.class);
 				intent.putExtra("tablet_id", tabletID);
+				intent.putExtra("field_orientation", fieldOrientRedOnRight);
 				startActivity(intent);
 			}
 		});
@@ -65,6 +69,7 @@ public class MainActivity extends Activity {
 			public void onClick(View v) {
 				Intent intent = new Intent(v.getContext(), SelectMatchTeamActivity.class);
 				intent.putExtra("tablet_id", tabletID);
+				intent.putExtra("field_orientation", fieldOrientRedOnRight);
 				startActivity(intent);
 			}
 		});
@@ -146,7 +151,8 @@ public class MainActivity extends Activity {
     
     private void loadPref() {
 		SharedPreferences mySharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-		  
+		
+		this.fieldOrientRedOnRight = mySharedPreferences.getBoolean("field_orientation", false);
 		this.tabletID = mySharedPreferences.getString("tablet_id_from_list", "Undefined Tablet ID");
 		this.txtTabletID.setText(this.tabletID);
   	}

@@ -27,7 +27,7 @@
     <string name="text_button_red">Red</string>
     <string name="text_button_white">White</string>
     <string name="text_button_blue">Blue</string>
-    <string name="text_button_goal">Goal</string>
+    <string name="text_button_goalie">Goalie</string>
     <string name="text_button_long_pass">Long Pass</string>
     <string name="text_button_long_pass_miss">LPass Miss</string>
     <string name="text_button_short_pass">Short Pass</string>
