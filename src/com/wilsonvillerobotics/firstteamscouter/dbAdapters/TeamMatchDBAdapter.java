@@ -383,6 +383,23 @@ public class TeamMatchDBAdapter implements BaseColumns {
     }
 
     /**
+     * Return a Cursor positioned at the entry that matches the given rowId
+     * @param rowId
+     * @return Cursor positioned to matching entry, if found
+     * @throws SQLException if entry could not be found/retrieved
+     */
+    public long getTeamMatchID(long matchID, long teamID) throws SQLException {
+
+    	String WHERE = TeamMatchDBAdapter.COLUMN_NAME_MATCH_ID + "=" + matchID;
+    	WHERE += " AND " + TeamMatchDBAdapter.COLUMN_NAME_TEAM_ID + "=" + teamID;
+        Cursor mCursor = this.mDb.query(true, TABLE_NAME, this.allColumnNames, WHERE, null, null, null, null, null);
+        if (mCursor != null) {
+            mCursor.moveToFirst();
+        }
+        return mCursor.getLong(mCursor.getColumnIndex(_ID));
+    }
+
+    /**
      * Return a Cursor positioned at the entry that matches the given TeamMatchID
      * @param tmID
      * @return Cursor positioned to matching entry, if found
@@ -409,26 +426,32 @@ public class TeamMatchDBAdapter implements BaseColumns {
         return this.mDb.delete(TABLE_NAME, _ID + "=" + rowId, null) > 0;
     }
     
-    void deleteAllData()
+    public void deleteAllData()
     {
         mDb.delete(TABLE_NAME, null, null);
     }
     
-    public void populateTestData(long[] matchIDs, long[] teamIDs) {
+    public boolean populateTestData(long[] matchIDs, long[] teamIDs) {
     	FTSUtilities.printToConsole("TeamMatchDBAdapter::populateTestData\n");
     	deleteAllData();
-    	
+    	MatchDataDBAdapter mdDBAdapter = new MatchDataDBAdapter(this.mCtx).open();
     	//Set<Integer> teamNums = FTSUtilities.getTestTeamNumbers(); // {1425, 1520, 2929, 1114, 500, 600, 700, 800, 900, 1000};
     	int teamOffset = 0;
+    	boolean result = true;
     	for(long matchID : matchIDs) {
-	    	for(int i = 0; i < 6; i++) {
+    		FTSUtilities.printToConsole("TeamMatchDBAdapter::populateTestData : Creating matchID: " + matchID + "\n");
+    		long tempTeamIDs[] = new long[6];
+	    	for(int i = 0; i < FTSUtilities.ALLIANCE_POSITION.NOT_SET.allianceID(); i++) {
 	    		int teamIndex = (i + teamOffset) % teamIDs.length;
-	    		this.createTeamMatch(FTSUtilities.alliancePositions[i], teamIDs[teamIndex], matchID);
+	    		tempTeamIDs[i] = teamIDs[teamIndex];
+	    		result &= (this.createTeamMatch(FTSUtilities.ALLIANCE_POSITION.getAlliancePositionForID(i), teamIDs[teamIndex], matchID) >= 0);
 	    	}
 	    	if(++teamOffset >= teamIDs.length) {
 	    		teamOffset = 0;
 	    	}
+	    	result &= mdDBAdapter.setTeamIDsForMatchID(matchID, tempTeamIDs);
     	}
+    	return result;
     }
 
 	public Hashtable<String, Integer> getTeamAndMatchNumbersForTeamMatchID(long teamMatchID) {

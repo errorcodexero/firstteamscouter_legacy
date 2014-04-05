@@ -24,8 +24,8 @@ public class TeamMatchData {
 	private int LO_POINTS = 1;
 	private int TRUSS_TOSS_POINTS = 10;
 	private int TRUSS_CATCH_POINTS = 10;
-	private String tabletID;
-	private String saveFileName;
+	protected String tabletID;
+	private String saveFileNameSuffix;
 	protected String COMMA = ",";
 	
 	public enum ROBOT_ROLE {
@@ -211,7 +211,7 @@ public class TeamMatchData {
 		this.teamNumber = -1; //tnum;
 		this.matchNumber = -1; //mnum;
 		
-		this.saveFileName = this.tabletID + "_match_data_export";
+		this.saveFileNameSuffix = "match_data_export";
 		
 		//this.statHash = new Hashtable<String, Integer>();
 		//this.statHash.put("autoHiScore", 0);
@@ -491,6 +491,10 @@ public class TeamMatchData {
 		
 		return retVal;
 	}
+	
+	public String getCSVHeaderString() {
+        return FTSUtilities.getCSVHeaderString();
+	}
 
 	public boolean save() {
 		boolean dataWasSaved = false;
@@ -525,41 +529,55 @@ public class TeamMatchData {
 					    String storageState = Environment.getExternalStorageState();
 					    if (retVal && storageState.equals(Environment.MEDIA_MOUNTED)) {
 					    	File filePath = context.getExternalFilesDir(null);
+					    	String saveFileName = this.tabletID + "_" + this.matchNumber + "_" + this.teamNumber + "_" + saveFileNameSuffix;
 					        File file = new File(filePath, saveFileName);
 					        FTSUtilities.printToConsole("TeamMatchData::save : file " + ((file == null) ? "IS NULL" : "IS VALID") + "\n");
 					        
 					        if(!file.exists()) {
 					        	file.createNewFile();
-					        } else {
-					        	append = true;
 					        }
 				        	
 					        fo = new FileOutputStream(file, append);
 					        
 					        if(!append) {
-						        String headerOut = "tablet_id" + COMMA;
-						        headerOut += TeamMatchDBAdapter._ID + COMMA + TeamMatchDBAdapter.COLUMN_NAME_TEAM_ID + COMMA;
-						        headerOut += TeamMatchDBAdapter.COLUMN_NAME_MATCH_ID + COMMA;
-						        headerOut += getIntCSVHeader() + COMMA;
-						        headerOut += getBoolCSVHeader() + COMMA;
-						        headerOut += TeamMatchDBAdapter.COLUMN_NAME_TEAM_MATCH_NOTES + "\n";
-						        
+						        String headerOut = getCSVHeaderString();
 						        fo.write(headerOut.getBytes());
 					        }
 			        	    
 			        	    String csvOut = this.tabletID + COMMA;
+			        	    FTSUtilities.printToConsole("TeamMatchData::save : csvOut: *" + csvOut + "*");
 			        	    csvOut += this.teamMatchID + COMMA + this.teamNumber + COMMA + this.matchNumber + COMMA;
+			        	    FTSUtilities.printToConsole("TeamMatchData::save : csvOut: *" + csvOut + "*");
 			        	    csvOut += getIntCSVString() + COMMA;
+			        	    FTSUtilities.printToConsole("TeamMatchData::save : csvOut: *" + csvOut + "*");
 			        	    csvOut += getBoolCSVString() + COMMA;
-			        	    csvOut += this.teamMatchNotes.replaceAll(COMMA, ";").replaceAll("\n", " ");
+			        	    FTSUtilities.printToConsole("TeamMatchData::save : csvOut: *" + csvOut + "*");
+			        	    if(this.teamMatchNotes.compareTo("") != 0) {
+			        	    	csvOut += this.teamMatchNotes.replaceAll(COMMA, ";").replaceAll("\n", " ");
+			        	    }
+			        	    FTSUtilities.printToConsole("TeamMatchData::save : csvOut: *" + csvOut + "*");
 			        	    csvOut += "\n";
+			        	    
+			        	    FTSUtilities.printToConsole("TeamMatchData::save : csvOut: *" + csvOut + "*");
+			        	    
 				        	fo.write(csvOut.getBytes());
 				        	
 				        	dataWasSaved = true;
 					    }
 					}
+					catch(IOException e) {
+						FTSUtilities.printToConsole("TeamMatchData::save : IOException accessing file");
+						e.printStackTrace();
+						dataWasSaved = false;
+					}
+					catch(NullPointerException e) {
+						FTSUtilities.printToConsole("TeamMatchData::save : NullPointerException");
+						e.printStackTrace();
+						dataWasSaved = false;
+					}
 					catch(Exception e) {
-						FTSUtilities.printToConsole("TeamMatchData::save : Exception accessing file");
+						FTSUtilities.printToConsole("TeamMatchData::save : Exception");
+						e.printStackTrace();
 						dataWasSaved = false;
 					}
 					finally {
@@ -682,6 +700,7 @@ public class TeamMatchData {
 				this.ballControl[BALL_CONTROL.LO_TO_LO.id] = Boolean.parseBoolean(tmCursor.getString(tmCursor.getColumnIndexOrThrow(TeamMatchDBAdapter.COLUMN_NAME_BALL_CONTROL_LO_TO_LO)));
 				
 				this.teamMatchNotes = tmCursor.getString(tmCursor.getColumnIndexOrThrow(TeamMatchDBAdapter.COLUMN_NAME_TEAM_MATCH_NOTES));
+				this.teamMatchNotes = (this.teamMatchNotes == null) ? "" : this.teamMatchNotes;
 
 			} else {
 				FTSUtilities.printToConsole("TeamMatchData::loadTeamMatchData : No Saved Data : tmDBHasSavedData:: " + this.tmDBHasSavedData.toString() + "\n");

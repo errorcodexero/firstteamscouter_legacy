@@ -150,21 +150,23 @@ public class MatchDataDBAdapter implements BaseColumns {
 
     /**
      * Return a Cursor positioned at the entry that matches the given rowId
-     * @param rowId
+     * @param matchID
      * @return Cursor positioned to matching entry, if found
      * @throws SQLException if entry could not be found/retrieved
      */
-    public Cursor getMatchDataEntry(long rowId) throws SQLException {
-
-        Cursor mCursor =
-
-        this.mDb.query(true, TABLE_NAME, new String[] { _ID, 
+    public Cursor getMatchDataEntry(long matchID) throws SQLException {
+    	FTSUtilities.printToConsole("MatchDataDBAdapter::getMatchDataEntry : matchID: " + matchID + "\n");
+		
+        Cursor mCursor = this.mDb.query(true, TABLE_NAME, new String[] { _ID, 
         		COLUMN_NAME_MATCH_TIME, COLUMN_NAME_MATCH_TYPE, COLUMN_NAME_MATCH_NUMBER, COLUMN_NAME_MATCH_LOCATION, 
         		COLUMN_NAME_RED_TEAM_ONE_ID, COLUMN_NAME_RED_TEAM_TWO_ID, COLUMN_NAME_RED_TEAM_THREE_ID,
         		COLUMN_NAME_BLUE_TEAM_ONE_ID, COLUMN_NAME_BLUE_TEAM_TWO_ID, COLUMN_NAME_BLUE_TEAM_THREE_ID, COLUMN_NAME_MATCH_DATA_UPDATED
-        		}, _ID + "=" + rowId, null, null, null, null, null);
+        		}, _ID + "=" + matchID, null, null, null, null, null);
         if (mCursor != null) {
             mCursor.moveToFirst();
+            FTSUtilities.printToConsole("MatchDataDBAdapter::getMatchDataEntry : numItems: " + mCursor.getCount() + "\n");
+        } else {
+        	FTSUtilities.printToConsole("MatchDataDBAdapter::getMatchDataEntry : Cursor is NULL\n");
         }
         return mCursor;
     }
@@ -209,7 +211,7 @@ public class MatchDataDBAdapter implements BaseColumns {
     	args.put(COLUMN_NAME_BLUE_TEAM_ONE_ID, blue_one_id);
     	args.put(COLUMN_NAME_BLUE_TEAM_TWO_ID, blue_two_id);
     	args.put(COLUMN_NAME_BLUE_TEAM_THREE_ID, blue_three_id);
-    	args.put(COLUMN_NAME_MATCH_DATA_UPDATED, true);
+    	args.put(COLUMN_NAME_MATCH_DATA_UPDATED, Boolean.TRUE.toString());
         return this.mDb.update(TABLE_NAME, args, _ID + "=" + id, null) >0; 
     }
     
@@ -224,11 +226,39 @@ public class MatchDataDBAdapter implements BaseColumns {
     	SELECT_QUERY += ", t1." + MatchDataDBAdapter.COLUMN_NAME_BLUE_TEAM_THREE_ID;
 		SELECT_QUERY += " FROM " + MatchDataDBAdapter.TABLE_NAME + " AS t1";
     	SELECT_QUERY += " WHERE t1." + MatchDataDBAdapter._ID + "=" + matchID;
-    	return this.mDb.rawQuery(SELECT_QUERY, null);
+    	Cursor c = this.mDb.rawQuery(SELECT_QUERY, null);
+    	c.moveToFirst();
+    	
+    	return c;
     }
     
-    public long[] populateTestData(int numMatches) {
+	public boolean setTeamIDsForMatchID(long matchID, long teamIDs[]) {
+		FTSUtilities.printToConsole("MatchDataDBAdapter::setTeamIDsForMatchID : matchID: " + matchID + "  numTeamIDs: " + teamIDs.length + "\n");
+		ContentValues args = new ContentValues(); 
+    	args.put(COLUMN_NAME_RED_TEAM_ONE_ID, teamIDs[0]);
+    	args.put(COLUMN_NAME_RED_TEAM_TWO_ID, teamIDs[1]);
+    	args.put(COLUMN_NAME_RED_TEAM_THREE_ID, teamIDs[2]);
+    	args.put(COLUMN_NAME_BLUE_TEAM_ONE_ID, teamIDs[3]);
+    	args.put(COLUMN_NAME_BLUE_TEAM_TWO_ID, teamIDs[4]);
+    	args.put(COLUMN_NAME_BLUE_TEAM_THREE_ID, teamIDs[5]);
+    	args.put(COLUMN_NAME_MATCH_DATA_UPDATED, Boolean.TRUE.toString());
+    	
+    	Cursor c = getMatchDataEntry(matchID);
+    	if(c.getCount() > 0) {
+    		FTSUtilities.printToConsole("MatchDataDBAdapter::setTeamIDsForMatchID : Found " + c.getCount() + " record(s) for matchID: " + matchID + "\n");
+    		return this.mDb.update(TABLE_NAME, args, _ID + "=" + matchID, null) >0;
+    	} else {
+    		FTSUtilities.printToConsole("MatchDataDBAdapter::setTeamIDsForMatchID : NO RECORD FOUND FOR matchID: " + matchID + "\n");
+    		return false;
+    	}
+    	
+	}
+
+	public long[] populateTestData(int numMatches) {
     	FTSUtilities.printToConsole("MatchDataDBAdapter::populateTestData\n");
+
+    	this.deleteAllData();
+    	
     	long matchIDs[] = new long[numMatches];
     	this.deleteAllData();
     	
@@ -237,9 +267,4 @@ public class MatchDataDBAdapter implements BaseColumns {
     	}
     	return matchIDs;
     }
-
-	public Cursor getTeamNumbersforMatch(long matchID) {
-		
-		return null;
-	}
 }

@@ -11,6 +11,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.SQLException;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.View;
@@ -19,6 +20,7 @@ import android.widget.Button;
 import android.widget.SimpleCursorAdapter;
 import android.widget.Spinner;
 import android.widget.AdapterView.OnItemSelectedListener;
+import android.widget.TextView;
 
 public class SelectMatchTeamActivity extends Activity {
 
@@ -30,6 +32,20 @@ public class SelectMatchTeamActivity extends Activity {
 	protected Intent teamMatchIntent;
 	private String tabletID;
 	
+	private TextView txtRed1;
+	private TextView txtRed2;
+	private TextView txtRed3;
+	private TextView txtBlue1;
+	private TextView txtBlue2;
+	private TextView txtBlue3;
+	
+	private TextView lblRed1;
+	private TextView lblRed2;
+	private TextView lblRed3;
+	private TextView lblBlue1;
+	private TextView lblBlue2;
+	private TextView lblBlue3;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -37,6 +53,20 @@ public class SelectMatchTeamActivity extends Activity {
 		
 		Intent intent = getIntent();
 		this.tabletID = intent.getStringExtra("tablet_id");
+
+		txtRed1 = (TextView) findViewById(R.id.txtRed1);
+		txtRed2 = (TextView) findViewById(R.id.txtRed2);
+		txtRed3 = (TextView) findViewById(R.id.txtRed3);
+		txtBlue1 = (TextView) findViewById(R.id.txtBlue1);
+		txtBlue2 = (TextView) findViewById(R.id.txtBlue2);
+		txtBlue3 = (TextView) findViewById(R.id.txtBlue3);
+		
+		lblRed1 = (TextView) findViewById(R.id.lblRed1);
+		lblRed2 = (TextView) findViewById(R.id.lblRed2);
+		lblRed3 = (TextView) findViewById(R.id.lblRed3);
+		lblBlue1 = (TextView) findViewById(R.id.lblBlue1);
+		lblBlue2 = (TextView) findViewById(R.id.lblBlue2);
+		lblBlue3 = (TextView) findViewById(R.id.lblBlue3);
 		
 		teamID = -1;
 		matchID = -1;
@@ -167,23 +197,65 @@ public class SelectMatchTeamActivity extends Activity {
             	
             	Hashtable<String, String> teamsForMatch = new Hashtable<String, String>();
             	
-            	String red1 = MatchDataDBAdapter.COLUMN_NAME_RED_TEAM_ONE_ID;
+            	/*String red1 = MatchDataDBAdapter.COLUMN_NAME_RED_TEAM_ONE_ID;
             	String red2 = MatchDataDBAdapter.COLUMN_NAME_RED_TEAM_TWO_ID;
             	String red3 = MatchDataDBAdapter.COLUMN_NAME_RED_TEAM_THREE_ID;
             	String blue1 = MatchDataDBAdapter.COLUMN_NAME_BLUE_TEAM_ONE_ID;
             	String blue2 = MatchDataDBAdapter.COLUMN_NAME_BLUE_TEAM_TWO_ID;
-            	String blue3 = MatchDataDBAdapter.COLUMN_NAME_BLUE_TEAM_THREE_ID;
+            	String blue3 = MatchDataDBAdapter.COLUMN_NAME_BLUE_TEAM_THREE_ID;*/
             	
-            	/*teamsForMatch.put(red1, teamIDs.getString(teamIDs.getColumnIndexOrThrow(red1)));
-            	teamsForMatch.put(red2, teamIDs.getString(teamIDs.getColumnIndexOrThrow(red2)));
-            	teamsForMatch.put(red3, teamIDs.getString(teamIDs.getColumnIndexOrThrow(red3)));
-            	teamsForMatch.put(blue1, teamIDs.getString(teamIDs.getColumnIndexOrThrow(blue1)));
-            	teamsForMatch.put(blue2, teamIDs.getString(teamIDs.getColumnIndexOrThrow(blue2)));
-            	teamsForMatch.put(blue3, teamIDs.getString(teamIDs.getColumnIndexOrThrow(blue3)));
-            	*/
+            	teamsForMatch.put("Red1", teamIDs.getString(teamIDs.getColumnIndexOrThrow(MatchDataDBAdapter.COLUMN_NAME_RED_TEAM_ONE_ID)));
+            	teamsForMatch.put("Red2", teamIDs.getString(teamIDs.getColumnIndexOrThrow(MatchDataDBAdapter.COLUMN_NAME_RED_TEAM_TWO_ID)));
+            	teamsForMatch.put("Red3", teamIDs.getString(teamIDs.getColumnIndexOrThrow(MatchDataDBAdapter.COLUMN_NAME_RED_TEAM_THREE_ID)));
+            	teamsForMatch.put("Blue1", teamIDs.getString(teamIDs.getColumnIndexOrThrow(MatchDataDBAdapter.COLUMN_NAME_BLUE_TEAM_ONE_ID)));
+            	teamsForMatch.put("Blue2", teamIDs.getString(teamIDs.getColumnIndexOrThrow(MatchDataDBAdapter.COLUMN_NAME_BLUE_TEAM_TWO_ID)));
+            	teamsForMatch.put("Blue3", teamIDs.getString(teamIDs.getColumnIndexOrThrow(MatchDataDBAdapter.COLUMN_NAME_BLUE_TEAM_THREE_ID)));
             	
+            	mDBAdapter.close();
             	
-            	//FTSUtilities.printToConsole("SelectTeamMatchActivity::spinMatchNum.onItemSelected : teamNumbers Cursor Length: " + teamNumbers.getCount());
+            	TeamDataDBAdapter tDBAdapter = new TeamDataDBAdapter(getBaseContext()).open();
+            	
+            	txtRed1.setText(String.valueOf(tDBAdapter.getTeamNumberFromID(Long.valueOf(teamsForMatch.get("Red1")))));
+            	txtRed2.setText(String.valueOf(tDBAdapter.getTeamNumberFromID(Long.valueOf(teamsForMatch.get("Red2")))));
+            	txtRed3.setText(String.valueOf(tDBAdapter.getTeamNumberFromID(Long.valueOf(teamsForMatch.get("Red3")))));
+            	txtBlue1.setText(String.valueOf(tDBAdapter.getTeamNumberFromID(Long.valueOf(teamsForMatch.get("Blue1")))));
+            	txtBlue2.setText(String.valueOf(tDBAdapter.getTeamNumberFromID(Long.valueOf(teamsForMatch.get("Blue2")))));
+            	txtBlue3.setText(String.valueOf(tDBAdapter.getTeamNumberFromID(Long.valueOf(teamsForMatch.get("Blue3")))));
+            	
+            	tDBAdapter.close();
+            	
+            	if(tabletID.compareTo("Red1") == 0) {
+            		lblRed1.setTextColor(Color.RED);
+            		txtRed1.setTextColor(Color.RED);
+            	} else if(tabletID.compareTo("Red2") == 0) {
+            		lblRed2.setTextColor(Color.RED);
+            		txtRed2.setTextColor(Color.RED);
+            	} else if(tabletID.compareTo("Red3") == 0) {
+            		lblRed3.setTextColor(Color.RED);
+            		txtRed3.setTextColor(Color.RED);
+            	} else if(tabletID.compareTo("Blue1") == 0) {
+            		lblBlue1.setTextColor(Color.BLUE);
+            		txtBlue1.setTextColor(Color.BLUE);
+            	} else if(tabletID.compareTo("Blue2") == 0) {
+            		lblBlue2.setTextColor(Color.BLUE);
+            		txtBlue2.setTextColor(Color.BLUE);
+            	} else if(tabletID.compareTo("Blue3") == 0) {
+            		lblBlue3.setTextColor(Color.BLUE);
+            		txtBlue3.setTextColor(Color.BLUE);
+            	}
+            	
+            	teamID = Long.parseLong(teamsForMatch.get(tabletID));
+            	
+            	long tmID = tmDBAdapter.getTeamMatchID(matchID, teamID);
+            	
+            	FTSUtilities.printToConsole("SelectTeamMatchActivity::spinTeamNum.onItemSelected : teamID: " + String.valueOf(teamID) + "  tmID: " + String.valueOf(tmID));
+            	
+            	teamMatchIntent = new Intent(arg1.getContext(), EnterTeamMatchDataActivity.class);
+                teamMatchIntent.putExtra("tablet_id", tabletID);
+                teamMatchIntent.putExtra("position", arg3);
+                teamMatchIntent.putExtra(TeamMatchDBAdapter.COLUMN_NAME_TEAM_ID, teamID);
+                teamMatchIntent.putExtra(TeamMatchDBAdapter.COLUMN_NAME_MATCH_ID, matchID);
+                teamMatchIntent.putExtra(TeamMatchDBAdapter._ID, String.valueOf(tmID));
             	
             	
 //				Spinner spinTeamNum = (Spinner)findViewById(R.id.spinTeamNumber);

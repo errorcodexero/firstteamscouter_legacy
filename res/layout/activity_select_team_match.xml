@@ -65,6 +65,176 @@
             android:gravity="center_vertical" />
     </LinearLayout> -->
 
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:orientation="horizontal" >
+
+        <GridLayout
+            android:id="@+id/gridRedAlliance"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="false"
+            android:layout_gravity="center"
+            android:layout_marginRight="25dp"
+            android:layout_toLeftOf="@+id/gridSpacer"
+            android:columnCount="2"
+            android:rowCount="4" >
+
+            <TextView
+                android:id="@+id/lblRed1"
+                android:layout_column="0"
+                android:layout_columnSpan="1"
+                android:layout_gravity="left"
+                android:layout_marginRight="10dp"
+                android:layout_row="1"
+                android:layout_rowSpan="1"
+                android:text="Red 1"
+                android:textAppearance="?android:attr/textAppearanceLarge" />
+
+            <TextView
+                android:id="@+id/txtRed1"
+                android:layout_column="1"
+                android:layout_columnSpan="1"
+                android:layout_gravity="left"
+                android:layout_marginLeft="10dp"
+                android:layout_row="1"
+                android:layout_rowSpan="1"
+                android:text="####"
+                android:textAppearance="?android:attr/textAppearanceLarge" />
+
+            <TextView
+                android:id="@+id/lblRed2"
+                android:layout_column="0"
+                android:layout_columnSpan="1"
+                android:layout_gravity="left"
+                android:layout_marginRight="10dp"
+                android:layout_row="2"
+                android:layout_rowSpan="1"
+                android:text="Red 2"
+                android:textAppearance="?android:attr/textAppearanceLarge" />
+
+            <TextView
+                android:id="@+id/txtRed2"
+                android:layout_column="1"
+                android:layout_columnSpan="1"
+                android:layout_gravity="left"
+                android:layout_marginLeft="10dp"
+                android:layout_row="2"
+                android:layout_rowSpan="1"
+                android:text="####"
+                android:textAppearance="?android:attr/textAppearanceLarge" />
+
+            <TextView
+                android:id="@+id/lblRed3"
+                android:layout_column="0"
+                android:layout_columnSpan="1"
+                android:layout_gravity="left"
+                android:layout_marginRight="10dp"
+                android:layout_row="3"
+                android:layout_rowSpan="1"
+                android:text="Red 3"
+                android:textAppearance="?android:attr/textAppearanceLarge" />
+
+            <TextView
+                android:id="@+id/txtRed3"
+                android:layout_column="1"
+                android:layout_columnSpan="1"
+                android:layout_gravity="left"
+                android:layout_marginLeft="10dp"
+                android:layout_row="3"
+                android:layout_rowSpan="1"
+                android:text="####"
+                android:textAppearance="?android:attr/textAppearanceLarge" />
+
+        </GridLayout>
+
+        <Space
+            android:id="@+id/gridSpacer"
+            android:layout_width="50dp"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true" />
+        
+        <GridLayout
+            android:id="@+id/gridBlueAlliance"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginLeft="25dp"
+            android:layout_toRightOf="@+id/gridSpacer"
+            android:columnCount="2"
+            android:rowCount="4" >
+
+            <TextView
+                android:id="@+id/lblBlue1"
+                android:layout_column="0"
+                android:layout_columnSpan="1"
+                android:layout_gravity="left"
+                android:layout_marginRight="10dp"
+                android:layout_row="1"
+                android:layout_rowSpan="1"
+                android:text="Blue 1"
+                android:textAppearance="?android:attr/textAppearanceLarge" />
+
+            <TextView
+                android:id="@+id/txtBlue1"
+                android:layout_column="1"
+                android:layout_columnSpan="1"
+                android:layout_gravity="left"
+                android:layout_marginLeft="10dp"
+                android:layout_row="1"
+                android:layout_rowSpan="1"
+                android:text="####"
+                android:textAppearance="?android:attr/textAppearanceLarge" />
+
+            <TextView
+                android:id="@+id/lblBlue2"
+                android:layout_column="0"
+                android:layout_columnSpan="1"
+                android:layout_gravity="left"
+                android:layout_marginRight="10dp"
+                android:layout_row="2"
+                android:layout_rowSpan="1"
+                android:text="Blue 2"
+                android:textAppearance="?android:attr/textAppearanceLarge" />
+
+            <TextView
+                android:id="@+id/txtBlue2"
+                android:layout_column="1"
+                android:layout_columnSpan="1"
+                android:layout_gravity="left"
+                android:layout_marginLeft="10dp"
+                android:layout_row="2"
+                android:layout_rowSpan="1"
+                android:text="####"
+                android:textAppearance="?android:attr/textAppearanceLarge" />
+
+            <TextView
+                android:id="@+id/lblBlue3"
+                android:layout_column="0"
+                android:layout_columnSpan="1"
+                android:layout_gravity="left"
+                android:layout_marginRight="10dp"
+                android:layout_row="3"
+                android:layout_rowSpan="1"
+                android:text="Blue 3"
+                android:textAppearance="?android:attr/textAppearanceLarge" />
+
+            <TextView
+                android:id="@+id/txtBlue3"
+                android:layout_column="1"
+                android:layout_columnSpan="1"
+                android:layout_gravity="left"
+                android:layout_marginLeft="10dp"
+                android:layout_row="3"
+                android:layout_rowSpan="1"
+                android:text="####"
+                android:textAppearance="?android:attr/textAppearanceLarge" />
+
+        </GridLayout>
+    </RelativeLayout>
+
     <Button
         android:id="@+id/btnSubmitTeamMatch"
         android:layout_width="wrap_content"

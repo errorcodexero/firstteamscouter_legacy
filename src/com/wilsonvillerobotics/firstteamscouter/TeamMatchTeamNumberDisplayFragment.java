@@ -1,5 +1,6 @@
 package com.wilsonvillerobotics.firstteamscouter;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,6 +24,14 @@ public class TeamMatchTeamNumberDisplayFragment extends Fragment {
 		
         TextView txtTeamNumberDisplay = (TextView) rootView.findViewById(R.id.txtTeamNumberDisplay);
         txtTeamNumberDisplay.setText(this.tmData.getTeamNumber());
+        
+        int backgroundColor = Color.WHITE;
+        if(this.tmData.tabletID.startsWith("Red")) {
+        	backgroundColor = Color.RED;
+        } else if(this.tmData.tabletID.startsWith("Blue")) {
+        	backgroundColor = Color.BLUE;
+        }
+        rootView.setBackgroundColor(backgroundColor);
         
 		return rootView;
 	}

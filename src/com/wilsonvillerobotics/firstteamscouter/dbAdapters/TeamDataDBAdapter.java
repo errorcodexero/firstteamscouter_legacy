@@ -74,6 +74,7 @@ public class TeamDataDBAdapter implements BaseColumns {
     	FTSUtilities.printToConsole("Opening TeamDataDBAdapter Database");
         this.mDbHelper = new DatabaseHelper(this.mCtx);
         this.mDb = this.mDbHelper.getWritableDatabase();
+        FTSUtilities.printToConsole("TeamDataDBAdapter::open : DB " + ((mDb == null) ? "IS" : "Is Not") + " null");
         return this;
     }
 
@@ -204,7 +205,24 @@ public class TeamDataDBAdapter implements BaseColumns {
         return mCursor;
     }
     
-    void deleteAllData()
+    /**
+     * Return a Cursor positioned at the entry that matches the given rowId
+     * @param rowId
+     * @return Cursor positioned to matching entry, if found
+     * @throws SQLException if entry could not be found/retrieved
+     */
+    public int getTeamNumberFromID(long teamID) throws SQLException {
+    	int teamNum = -1;
+
+    	Cursor mCursor = this.mDb.query(true, TABLE_NAME, new String[] { COLUMN_NAME_TEAM_NUMBER},
+        		_ID + "=" + teamID, null, null, null, null, null);
+        if (mCursor != null && mCursor.moveToFirst()) {
+            teamNum = mCursor.getInt(mCursor.getColumnIndex(COLUMN_NAME_TEAM_NUMBER));
+        }
+        return teamNum;
+    }
+    
+    public void deleteAllData()
     {
         mDb.delete(TABLE_NAME, null, null);
     }

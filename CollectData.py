@@ -1,7 +1,7 @@
 import os
 
 #rootDir = "D:\\Profiles\\TomS\\Documents\\FIRST Robotics\\2014\\First Team Scouter\\tablet data files"
-rootDir = "C:\\Users\\Tom\\Documents\\FIRST Robotics\\2014\\First Team Scouter\\Oregon City Data"
+rootDir = "C:\\Users\\Tom\\Documents\\FIRST Robotics\\2014\\First Team Scouter\\Corvallis Data"
 
 filesToParse = []
 fileExt = '.csv'
@@ -15,7 +15,7 @@ for entry in entries :
         print "Directory: " + path
         #csvFiles = [path + "\\" + f for f in os.listdir(path) if f.endswith(fileExt) and f.find('Copy') == -1]
         #filesToParse += csvFiles
-    elif os.path.isfile(path) and path.endswith(fileExt) :
+    elif os.path.isfile(path) and path.endswith(fileExt) and not path.endswith("CorvallisMasterData.csv") :
         #print "File: " + path
         filesToParse.append(path)
     else :
@@ -38,7 +38,8 @@ for csvFile in filesToParse :
     #path = "\\".join(pathArray[0:-1])
     #savePath = path + "\\saved"
     savePath = rootDir + "\\saved"
-    saveFile = savePath + "\\" + pathArray[-1]
+    numSaveFiles = len(os.listdir(savePath)) + 1
+    saveFile = savePath + "\\" + str(numSaveFiles) + "_" + pathArray[-1]
     if not os.path.isdir(savePath) :
        os.mkdir(savePath)
     try :
@@ -48,7 +49,7 @@ for csvFile in filesToParse :
         print csvFile
         print saveFile
 
-outFilePath = rootDir + "\\OregonCityMasterData.csv"
+outFilePath = rootDir + "\\CorvallisMasterData.csv"
 outFile = open(outFilePath, 'a')
 
 print "Parsed " + str(filesParsed) + " csv files\n"
