@@ -10,12 +10,14 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.StringReader;
+import java.net.MalformedURLException;
 import java.nio.channels.FileChannel;
 import java.util.Hashtable;
 
 import com.wilsonvillerobotics.firstteamscouter.dbAdapters.MatchDataDBAdapter;
 import com.wilsonvillerobotics.firstteamscouter.dbAdapters.TeamDataDBAdapter;
 import com.wilsonvillerobotics.firstteamscouter.dbAdapters.TeamMatchDBAdapter;
+import com.wilsonvillerobotics.firstteamscouter.utilities.FTPTransfer;
 //import com.wilsonvillerobotics.firstteamscouter.BluetoothSetupActivity;
 import com.wilsonvillerobotics.firstteamscouter.utilities.FTSUtilities;
 
@@ -51,15 +53,18 @@ public class ImportMatchDataActivity extends Activity {
 	
 	private String exportFileName;
 	private String tempFileName;
+	private String testFileName;
 	
 	private int BLUETOOTH_SEND = 32665;
 	
 	private Button btnConfigureBluetooth;
+	private Button btnFTPSend;
 	//private Intent bluetoothIntent;
 	
 	private File filePath;
 	private File myExportFile;
 	private File myTempFile;
+	private File myTestFile;
 	private File saveDir;
 
 	private int numTestMatches;
@@ -80,10 +85,12 @@ public class ImportMatchDataActivity extends Activity {
 		
 		this.exportFileName = tabletID + "_match_data_export.csv";
 		this.tempFileName = exportFileName + ".csv";
-		
+		this.testFileName = "test.txt";
+				
 		this.filePath = getExternalFilesDir(null);
 		this.myExportFile = new File(filePath, exportFileName);
 		this.myTempFile = new File(filePath, tempFileName);
+		this.myTestFile = new File(filePath, testFileName);
 		this.saveDir = new File(filePath.getAbsolutePath() + "/sent");
 		
 		try {
@@ -203,6 +210,35 @@ public class ImportMatchDataActivity extends Activity {
 				    e.printStackTrace();
 				}
 				txtStatus.setText(importStatusMessage);
+			}
+		});
+		
+		btnFTPSend = (Button) findViewById(R.id.btnFTPSend);
+		btnFTPSend.setOnClickListener(new View.OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				String ftpServer = "10.0.0.191";
+				String uName = "toms";
+				String pwd = "arwen";
+				
+				FTPTransfer ftp = new FTPTransfer(ftpServer, uName, pwd);
+				try {
+					myTestFile.createNewFile();
+					String header = FTSUtilities.getCSVHeaderString();
+					FileOutputStream fo = new FileOutputStream(myExportFile, false);
+					fo.write(header.getBytes());
+					fo.close();
+					
+					ftp.upload(myTestFile.getName(), myTestFile);
+					
+				} catch (FileNotFoundException e) {
+					e.printStackTrace();
+				} catch (MalformedURLException e) {
+					e.printStackTrace();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}				
 			}
 		});
 		
