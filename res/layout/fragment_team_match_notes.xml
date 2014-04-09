@@ -25,7 +25,7 @@
 	        android:layout_height="35dp"
 	        android:layout_alignLeft="@+id/tbtnBrokeDown"
 	        android:layout_below="@+id/tbtnBrokeDown"
-	        android:layout_marginTop="5dp"
+	        android:layout_marginTop="15dp"
 	        android:textOff="Lost Connect"
 	        android:textOn="Lost Connect" />
 
@@ -35,7 +35,7 @@
 	        android:layout_height="35dp"
 	        android:layout_alignLeft="@+id/tbtnLostConnection"
 	        android:layout_below="@+id/tbtnLostConnection"
-	        android:layout_marginTop="5dp"
+	        android:layout_marginTop="15dp"
 	        android:textOff="Didn&apos;t Move"
 	        android:textOn="Didn&apos;t Move" />
 
@@ -59,30 +59,35 @@
 	            android:id="@+id/chkRobotRolePasser"
 	            android:layout_width="175dp"
 	            android:layout_height="25dp"
+	            android:layout_marginTop="15dp"
 	            android:text="Passer" />
 
 	        <CheckBox
 	            android:id="@+id/chkRobotRoleCatcher"
 	            android:layout_width="100dp"
 	            android:layout_height="25dp"
+	            android:layout_marginTop="15dp"
 	            android:text="Catcher" />
 
 	        <CheckBox
 	            android:id="@+id/chkRobotRoleShooter"
 	            android:layout_width="100dp"
 	            android:layout_height="25dp"
+	            android:layout_marginTop="15dp"
 	            android:text="Shooter" />
 
 	        <CheckBox
 	            android:id="@+id/chkRobotRoleDefense"
 	            android:layout_width="100dp"
 	            android:layout_height="25dp"
+	            android:layout_marginTop="15dp"
 	            android:text="Defense" />
 
 	        <CheckBox
 	            android:id="@+id/chkRobotRoleGoalie"
 	            android:layout_width="100dp"
 	            android:layout_height="25dp"
+	            android:layout_marginTop="15dp"
 	            android:text="Goalie" />
 
 	    </LinearLayout>
@@ -107,36 +112,42 @@
 	            android:id="@+id/chkBallControlGroundPickup"
 	            android:layout_width="175dp"
 	            android:layout_height="25dp"
+	            android:layout_marginTop="15dp"
 	            android:text="Ground Pickup" />
 
 	        <CheckBox
 	            android:id="@+id/chkBallControlHumanLoad"
 	            android:layout_width="175dp"
 	            android:layout_height="25dp"
+	            android:layout_marginTop="15dp"
 	            android:text="Human Load" />
 
 	        <CheckBox
 	            android:id="@+id/chkBallControlHiToLo"
 	            android:layout_width="175dp"
 	            android:layout_height="25dp"
+	            android:layout_marginTop="15dp"
 	            android:text="Hi to Lo" />
 
 	        <CheckBox
 	            android:id="@+id/chkBallControlLoToHi"
 	            android:layout_width="175dp"
 	            android:layout_height="25dp"
+	            android:layout_marginTop="15dp"
 	            android:text="Lo to Hi" />
 
 	        <CheckBox
 	            android:id="@+id/chkBallControlHiToHi"
 	            android:layout_width="175dp"
 	            android:layout_height="25dp"
+	            android:layout_marginTop="15dp"
 	            android:text="Hi to Hi" />
 
 	        <CheckBox
 	            android:id="@+id/chkBallControlLoToLo"
 	            android:layout_width="175dp"
 	            android:layout_height="25dp"
+	            android:layout_marginTop="15dp"
 	            android:text="Lo to Lo" />
 
 	    </LinearLayout>

@@ -2,8 +2,10 @@ package com.wilsonvillerobotics.firstteamscouter;
 
 import java.util.Hashtable;
 
+import com.wilsonvillerobotics.firstteamscouter.TeamMatchData.STARTING_LOC;
 import com.wilsonvillerobotics.firstteamscouter.utilities.FTSUtilities;
 
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -12,6 +14,8 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CompoundButton;
+import android.widget.Toast;
+import android.widget.ToggleButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.Switch;
 import android.widget.TextView;
@@ -35,6 +39,7 @@ public class TeamMatchAutoModeFragment extends Fragment implements OnClickListen
 	};
 	
 	private Hashtable<Integer, Button> buttonHash;
+	private Hashtable<Integer, String> helpHash;
 	
 	protected int autoScore;
 	protected TextView txtAutoScore;
@@ -51,6 +56,17 @@ public class TeamMatchAutoModeFragment extends Fragment implements OnClickListen
     	this.teamMatchID = getArguments() != null ? getArguments().getLong("tmID") : -1;
     	
         View rootView = inflater.inflate(R.layout.fragment_team_match_automode, container, false);
+        
+        helpHash = new Hashtable<Integer, String>();
+    	helpHash.put(R.id.btnAutoHiScoreHot, "Score in the Hi Goal while lit for a Hot Goal");
+    	helpHash.put(R.id.btnAutoLoScoreHot, "Score in the Lo Goal while lit for a Hot Goal");
+    	helpHash.put(R.id.btnAutoHiScoreCold, "Score in the Hi Goal while unlit");
+    	helpHash.put(R.id.btnAutoLoScoreCold, "Score in the Lo Goal while unlit");
+    	helpHash.put(R.id.btnAutoHiMiss, "Missing a shot aimed for the Hi Goal");
+    	helpHash.put(R.id.btnAutoLoMiss, "Missing a shot aimed for the Lo Goal");
+    	helpHash.put(R.id.btnAutoMove, "Moving out of the white zone (completely) away rom the truss.");
+    	helpHash.put(R.id.btnAutoCollect, "Collecting a ball. Press button for each ball collected.");
+    	helpHash.put(R.id.btnAutoDefend, "Defending in Goalie Zone during autonomous.");
         
         buttonHash = new Hashtable<Integer, Button>(); 
 
@@ -98,35 +114,44 @@ public class TeamMatchAutoModeFragment extends Fragment implements OnClickListen
     
     @Override
     public void onClick(View v) {
-        switch (v.getId()) {
-        case R.id.btnAutoHiScoreHot:
-        	btnAutoHiScoreHotOnClick(v);
-        	break;
-        case R.id.btnAutoHiScoreCold:
-        	btnAutoHiScoreColdOnClick(v);
-        	break;
-        case R.id.btnAutoLoScoreHot:
-        	btnAutoLoScoreHotOnClick(v);
-        	break;
-        case R.id.btnAutoLoScoreCold:
-        	btnAutoLoScoreColdOnClick(v);
-    		break;
-        case R.id.btnAutoHiMiss:
-        	btnAutoHiMissOnClick(v);
-        	break;
-        case R.id.btnAutoLoMiss:
-        	btnAutoLoMissOnClick(v);
-        	break;
-        case R.id.btnAutoCollect:
-        	btnAutoCollectOnClick(v);
-        	break;
-        case R.id.btnAutoMove:
-        	btnAutoMoveOnClick(v);
-        	break;
-        case R.id.btnAutoDefend:
-        	btnAutoDefendOnClick(v);
-        	break;
-        }
+		EnterTeamMatchDataActivity act = ((EnterTeamMatchDataActivity)this.getActivity());
+		Integer btnID = v.getId();
+		
+		if(act.helpActive) {
+			act.disableHelp();
+			String message = this.helpHash.get(btnID);
+			Toast.makeText(getActivity(), message, Toast.LENGTH_LONG).show();
+		} else {
+	        switch (btnID) {
+	        case R.id.btnAutoHiScoreHot:
+	        	btnAutoHiScoreHotOnClick(v);
+	        	break;
+	        case R.id.btnAutoHiScoreCold:
+	        	btnAutoHiScoreColdOnClick(v);
+	        	break;
+	        case R.id.btnAutoLoScoreHot:
+	        	btnAutoLoScoreHotOnClick(v);
+	        	break;
+	        case R.id.btnAutoLoScoreCold:
+	        	btnAutoLoScoreColdOnClick(v);
+	    		break;
+	        case R.id.btnAutoHiMiss:
+	        	btnAutoHiMissOnClick(v);
+	        	break;
+	        case R.id.btnAutoLoMiss:
+	        	btnAutoLoMissOnClick(v);
+	        	break;
+	        case R.id.btnAutoCollect:
+	        	btnAutoCollectOnClick(v);
+	        	break;
+	        case R.id.btnAutoMove:
+	        	btnAutoMoveOnClick(v);
+	        	break;
+	        case R.id.btnAutoDefend:
+	        	btnAutoDefendOnClick(v);
+	        	break;
+	        }
+		}
     }
     
     public void setTeamMatchData(TeamMatchData tmD) {
