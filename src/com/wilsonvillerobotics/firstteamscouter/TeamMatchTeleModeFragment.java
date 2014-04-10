@@ -13,6 +13,7 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.GridLayout;
+import android.widget.Toast;
 import android.widget.GridLayout.Spec;
 import android.widget.Switch;
 import android.widget.TextView;
@@ -53,6 +54,7 @@ public class TeamMatchTeleModeFragment extends Fragment implements OnClickListen
 	};
 	
 	private Hashtable<Integer, Button> buttonHash;
+	private Hashtable<Integer, String> helpHash;
 	
 	protected Switch switchUndo;
 	
@@ -67,6 +69,27 @@ public class TeamMatchTeleModeFragment extends Fragment implements OnClickListen
     	this.teamMatchID = getArguments() != null ? getArguments().getLong("tmID") : -1;
 
         View rootView = inflater.inflate(R.layout.fragment_team_match_telemode, container, false);
+        
+        helpHash = new Hashtable<Integer, String>();
+    	helpHash.put(R.id.btnTeleHiScore,"Scoring in the Hi goal");
+    	helpHash.put(R.id.btnTeleHiMiss,"Missing a shot aimed at the Hi goal");
+    	helpHash.put(R.id.btnTeleLoScore,"Scoring in the Lo goal");
+    	helpHash.put(R.id.btnTeleLoMiss,"Missing a shot aimed at the Lo goal");
+    	helpHash.put(R.id.btnTeleLongPass,"Accurate pass across a long distance");
+    	helpHash.put(R.id.btnTeleLongPassMiss,"Missing a pass across a long distance");
+    	helpHash.put(R.id.btnDefendBlueZone,"Successfully defending in the Blue zone - blocking a pass, shot, or robot.");
+    	helpHash.put(R.id.btnDefendWhiteZone,"Successfully defending in the White zone - blocking a pass, shot, or robot.");
+    	helpHash.put(R.id.btnDefendRedZone,"Successfully defending in the Red zone - blocking a pass, shot, or robot.");
+    	helpHash.put(R.id.btnDefendGoalZone,"Successfully defending in the Goalie zone - blocking a shot aimed at the Hi goal.");
+    	helpHash.put(R.id.btnPossessBlueZone,"Successfully possessing the ball in the Blue zone");
+    	helpHash.put(R.id.btnPossessWhiteZone,"Successfully possessing the ball in the White zone");
+    	helpHash.put(R.id.btnPossessRedZone,"Successfully possessing the ball in the Red zone");
+    	helpHash.put(R.id.btnTrussToss,"Successful toss over the truss");
+    	helpHash.put(R.id.btnTrussMiss,"Failure to make a toss over the truss (bounced off, went out of bounds, too low, etc)");
+    	helpHash.put(R.id.btnTossCaught,"Successfully caught a toss over the truss!");
+    	helpHash.put(R.id.btnTossMiss,"Missed catching a toss over the truss");
+    	helpHash.put(R.id.btnTeleShortPass,"Accurate pass over short distance - usually two robots almost touching");
+    	helpHash.put(R.id.btnTeleShortPassMiss,"Missing a pass to another robot at a small distance");
 
         this.txtTeleScore = (TextView) rootView.findViewById(R.id.txtTeleScore);
         this.txtTeleStat = (TextView) rootView.findViewById(R.id.txtTeleStat);
@@ -153,52 +176,61 @@ public class TeamMatchTeleModeFragment extends Fragment implements OnClickListen
 
 	@Override
 	public void onClick(View v) {
-		switch (v.getId()) {
-        case R.id.btnTeleHiScore:
-			btnTeleHighScoreOnClick(v);
-			break;
-		case R.id.btnTeleLoScore:
-			btnTeleLowScoreOnClick(v);
-			break;
-		case R.id.btnTeleHiMiss:
-			btnTeleHiMissOnClick(v);
-			break;
-		case R.id.btnTeleLoMiss:
-			btnTeleLoMissOnClick(v);
-			break;
-		case R.id.btnTrussToss:
-			btnTrussTossOnClick(v);
-			break;
-		case R.id.btnTrussMiss:
-			btnTrussMissOnClick(v);
-			break;
-		case R.id.btnTossCaught:
-			btnTossCaughtOnClick(v);
-			break;
-		case R.id.btnTossMiss:
-			btnTossMissedOnClick(v);
-			break;
-		case R.id.btnDefendRedZone:
-			btnDefendRedZoneOnClick(v);
-			break;
-		case R.id.btnDefendWhiteZone:
-			btnDefendWhiteZoneOnClick(v);
-			break;
-		case R.id.btnDefendBlueZone:
-			btnDefendBlueZoneOnClick(v);
-		 	break;
-		case R.id.btnTeleLongPass:
-			btnTeleLongPassOnClick(v);
-			break;
-		case R.id.btnTeleLongPassMiss:
-			btnTeleLongPassMissOnClick(v);
-			break;
-		case R.id.btnTeleShortPass:
-			btnTeleShortPassOnClick(v);
-			break;
-		case R.id.btnTeleShortPassMiss:
-			btnTeleShortPassMissOnClick(v);
-			break;
+		EnterTeamMatchDataActivity act = ((EnterTeamMatchDataActivity)this.getActivity());
+		Integer btnID = v.getId();
+		
+		if(act.helpActive) {
+			act.disableHelp();
+			String message = this.helpHash.get(btnID);
+			Toast.makeText(getActivity(), message, Toast.LENGTH_LONG).show();
+		} else {
+			switch (btnID) {
+	        case R.id.btnTeleHiScore:
+				btnTeleHighScoreOnClick(v);
+				break;
+			case R.id.btnTeleLoScore:
+				btnTeleLowScoreOnClick(v);
+				break;
+			case R.id.btnTeleHiMiss:
+				btnTeleHiMissOnClick(v);
+				break;
+			case R.id.btnTeleLoMiss:
+				btnTeleLoMissOnClick(v);
+				break;
+			case R.id.btnTrussToss:
+				btnTrussTossOnClick(v);
+				break;
+			case R.id.btnTrussMiss:
+				btnTrussMissOnClick(v);
+				break;
+			case R.id.btnTossCaught:
+				btnTossCaughtOnClick(v);
+				break;
+			case R.id.btnTossMiss:
+				btnTossMissedOnClick(v);
+				break;
+			case R.id.btnDefendRedZone:
+				btnDefendRedZoneOnClick(v);
+				break;
+			case R.id.btnDefendWhiteZone:
+				btnDefendWhiteZoneOnClick(v);
+				break;
+			case R.id.btnDefendBlueZone:
+				btnDefendBlueZoneOnClick(v);
+			 	break;
+			case R.id.btnTeleLongPass:
+				btnTeleLongPassOnClick(v);
+				break;
+			case R.id.btnTeleLongPassMiss:
+				btnTeleLongPassMissOnClick(v);
+				break;
+			case R.id.btnTeleShortPass:
+				btnTeleShortPassOnClick(v);
+				break;
+			case R.id.btnTeleShortPassMiss:
+				btnTeleShortPassMissOnClick(v);
+				break;
+			}
 		}
 	}
 	

@@ -10,8 +10,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.View.OnClickListener;
 import android.widget.CheckBox;
+
 import java.util.Hashtable;
+
 import android.widget.EditText;
+import android.widget.Toast;
 import android.widget.ToggleButton;
 import android.support.v4.app.Fragment;
 import android.text.Editable;
@@ -46,6 +49,8 @@ public class TeamMatchNotesFragment extends Fragment implements OnClickListener{
 	};
 	
 	private Hashtable<Integer, CheckBox> htBallControl;
+	
+	private Hashtable<Integer, String> helpHash;
 
 	private EditText txtTMNotes;
 	
@@ -62,10 +67,28 @@ public class TeamMatchNotesFragment extends Fragment implements OnClickListener{
     	this.teamMatchID = getArguments() != null ? getArguments().getLong("tmID") : -1;
 
     	View rootView = inflater.inflate(R.layout.fragment_team_match_notes, container, false);
+    	
+    	helpHash = new Hashtable<Integer, String>();
+    	helpHash.put(R.id.chkRobotRolePasser,"The robot is a good passer");
+    	helpHash.put(R.id.chkRobotRoleCatcher,"The robot is good at catching the ball from another robot");
+    	helpHash.put(R.id.chkRobotRoleShooter,"The robot is a good shooter - could be lo or hi shots.");
+    	helpHash.put(R.id.chkRobotRoleDefense,"The robot does a good job of defending.");
+    	helpHash.put(R.id.chkRobotRoleGoalie,"The robot has special equipment to allow it to block hi shots in the Goalie zone, and is good at it.");
+    	helpHash.put(R.id.chkBallControlGroundPickup,"The robot can pick up a ball on the ground");
+    	helpHash.put(R.id.chkBallControlHumanLoad,"The robot is good at receiving the ball from the Human Player - can be ground pickup or toss catching");
+    	helpHash.put(R.id.chkBallControlHiToLo,"The robot can receive the ball above the ground and expel it on the ground");
+    	helpHash.put(R.id.chkBallControlLoToHi,"The robot can receive the ball on the ground and expel it above the ground");
+    	helpHash.put(R.id.chkBallControlHiToHi,"The robot can both receive and expel the ball above the ground");
+    	helpHash.put(R.id.chkBallControlLoToLo,"The robot can both receive and expel the ball on the ground");
         
     	this.tbtnBrokeDown = (ToggleButton) rootView.findViewById(R.id.tbtnBrokeDown);
+    	helpHash.put(R.id.tbtnBrokeDown,"The robot was broken down during the match - also used if robot did not make it to the field for the match");
+    	
     	this.tbtnNoMove = (ToggleButton) rootView.findViewById(R.id.tbtnNoMove);
+    	helpHash.put(R.id.tbtnNoMove,"The robot did not move, but you are unsure why");
+    	
     	this.tbtnLostConnection = (ToggleButton) rootView.findViewById(R.id.tbtnLostConnection);
+    	helpHash.put(R.id.tbtnLostConnection,"You know that the robot has lost connection to the field");
     	
     	this.tbtnBrokeDown.setOnClickListener(this);
     	this.tbtnNoMove.setOnClickListener(this);
@@ -156,50 +179,71 @@ public class TeamMatchNotesFragment extends Fragment implements OnClickListener{
     
 	@Override
 	public void onClick(View v) {
-		if(this.tmData != null) this.tmData.setSavedDataState(true, "Notes::onClick");
-		switch (v.getId()) {
-        case R.id.tbtnBrokeDown:
-        	tbtnBrokeDownOnClick(v);
-			break;
-        case R.id.tbtnNoMove:
-        	tbtnNoMoveOnClick(v);
-			break;
-        case R.id.tbtnLostConnection:
-        	tbtnLostConnectionOnClick(v);
-			break;
-        case R.id.chkRobotRolePasser:
-        	chkRobotRolePasserOnClick(v);
-        	break;
-        case R.id.chkRobotRoleCatcher:
-        	chkRobotRoleCatcherOnClick(v);
-        	break;
-        case R.id.chkRobotRoleShooter:
-        	chkRobotRoleShooterOnClickl(v);
-        	break;
-        case R.id.chkRobotRoleDefense:
-        	chkRobotRoleDefenseOnClick(v);
-        	break;
-        case R.id.chkRobotRoleGoalie:
-        	chkRobotRoleGoalieOnClick(v);
-        	break;
-        case R.id.chkBallControlGroundPickup:
-        	chkBallControlGroundPickupOnClick(v);
-        	break;
-        case R.id.chkBallControlHumanLoad:
-        	chkBallControlHumanLoadOnClick(v);
-        	break;
-        case R.id.chkBallControlHiToLo:
-        	chkBallControlHiToLoOnClick(v);
-        	break;
-        case R.id.chkBallControlLoToHi:
-        	chkBallControlLoToHiOnClick(v);
-        	break;
-        case R.id.chkBallControlHiToHi:
-        	chkBallControlHiToHiOnClick(v);
-        	break;
-        case R.id.chkBallControlLoToLo:
-        	chkBallControlLoToLoOnClick(v);
-        	break;
+		EnterTeamMatchDataActivity act = ((EnterTeamMatchDataActivity)this.getActivity());
+		Integer btnID = v.getId();
+		
+		if(act.helpActive) {
+			switch(btnID) {
+			case R.id.tbtnBrokeDown:
+	        case R.id.tbtnNoMove:
+	        case R.id.tbtnLostConnection:
+	        	ToggleButton tb = (ToggleButton)v;
+	        	tb.setChecked(!tb.isChecked());
+	        	break;
+	        default:
+	        	CheckBox cb = (CheckBox)v;
+	        	cb.setChecked(!cb.isChecked());
+	        	break;
+			}
+			act.disableHelp();
+			String message = this.helpHash.get(btnID);
+			Toast.makeText(getActivity(), message, Toast.LENGTH_LONG).show();
+		} else {
+			if(this.tmData != null) this.tmData.setSavedDataState(true, "Notes::onClick");
+			switch (btnID) {
+	        case R.id.tbtnBrokeDown:
+	        	tbtnBrokeDownOnClick(v);
+				break;
+	        case R.id.tbtnNoMove:
+	        	tbtnNoMoveOnClick(v);
+				break;
+	        case R.id.tbtnLostConnection:
+	        	tbtnLostConnectionOnClick(v);
+				break;
+	        case R.id.chkRobotRolePasser:
+	        	chkRobotRolePasserOnClick(v);
+	        	break;
+	        case R.id.chkRobotRoleCatcher:
+	        	chkRobotRoleCatcherOnClick(v);
+	        	break;
+	        case R.id.chkRobotRoleShooter:
+	        	chkRobotRoleShooterOnClickl(v);
+	        	break;
+	        case R.id.chkRobotRoleDefense:
+	        	chkRobotRoleDefenseOnClick(v);
+	        	break;
+	        case R.id.chkRobotRoleGoalie:
+	        	chkRobotRoleGoalieOnClick(v);
+	        	break;
+	        case R.id.chkBallControlGroundPickup:
+	        	chkBallControlGroundPickupOnClick(v);
+	        	break;
+	        case R.id.chkBallControlHumanLoad:
+	        	chkBallControlHumanLoadOnClick(v);
+	        	break;
+	        case R.id.chkBallControlHiToLo:
+	        	chkBallControlHiToLoOnClick(v);
+	        	break;
+	        case R.id.chkBallControlLoToHi:
+	        	chkBallControlLoToHiOnClick(v);
+	        	break;
+	        case R.id.chkBallControlHiToHi:
+	        	chkBallControlHiToHiOnClick(v);
+	        	break;
+	        case R.id.chkBallControlLoToLo:
+	        	chkBallControlLoToLoOnClick(v);
+	        	break;
+			}
 		}
 	}
     
