@@ -1,7 +1,10 @@
 import os
 
 #rootDir = "D:\\Profiles\\TomS\\Documents\\FIRST Robotics\\2014\\First Team Scouter\\tablet data files"
-rootDir = "C:\\Users\\Tom\\Documents\\FIRST Robotics\\2014\\First Team Scouter\\Corvallis Data"
+#rootDir = "C:\\Users\\Tom\\Documents\\FIRST Robotics\\2014\\First Team Scouter\\Corvallis Data"
+rootDir = "D:\\Profiles\\TomS\\Documents\\FIRST Robotics\\2014\\Portland Regional Championship"
+
+dataFile = "PortlandMasterData.csv"
 
 filesToParse = []
 fileExt = '.csv'
@@ -13,9 +16,7 @@ for entry in entries :
     path = rootDir + "\\" + entry
     if os.path.isdir(path) :
         print "Directory: " + path
-        #csvFiles = [path + "\\" + f for f in os.listdir(path) if f.endswith(fileExt) and f.find('Copy') == -1]
-        #filesToParse += csvFiles
-    elif os.path.isfile(path) and path.endswith(fileExt) and not path.endswith("CorvallisMasterData.csv") :
+    elif os.path.isfile(path) and path.endswith(fileExt) and not path.endswith(dataFile) :
         #print "File: " + path
         filesToParse.append(path)
     else :
@@ -38,10 +39,10 @@ for csvFile in filesToParse :
     #path = "\\".join(pathArray[0:-1])
     #savePath = path + "\\saved"
     savePath = rootDir + "\\saved"
-    numSaveFiles = len(os.listdir(savePath)) + 1
-    saveFile = savePath + "\\" + str(numSaveFiles) + "_" + pathArray[-1]
     if not os.path.isdir(savePath) :
        os.mkdir(savePath)
+    numSaveFiles = len(os.listdir(savePath)) + 1
+    saveFile = savePath + "\\" + str(numSaveFiles) + "_" + pathArray[-1]
     try :
         os.rename(csvFile, saveFile)
     except WindowsError as e :
@@ -49,7 +50,7 @@ for csvFile in filesToParse :
         print csvFile
         print saveFile
 
-outFilePath = rootDir + "\\CorvallisMasterData.csv"
+outFilePath = rootDir + "\\" + dataFile
 outFile = open(outFilePath, 'a')
 
 print "Parsed " + str(filesParsed) + " csv files\n"
