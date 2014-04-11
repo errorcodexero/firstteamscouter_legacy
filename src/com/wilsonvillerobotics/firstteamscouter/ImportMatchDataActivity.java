@@ -330,17 +330,17 @@ public class ImportMatchDataActivity extends Activity {
 								}
 							}
 							fo.close();
-
-							Intent sharingIntent = new Intent(android.content.Intent.ACTION_SEND);
-							sharingIntent.setType("text/plain");
-							sharingIntent.setComponent(new ComponentName("com.android.bluetooth", "com.android.bluetooth.opp.BluetoothOppLauncherActivity"));
-							sharingIntent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(myExportFile));
-							startActivityForResult(sharingIntent, BLUETOOTH_SEND);
-							FTSUtilities.printToConsole("ImportMatchDataActivity::btnOK.onClick : Sharing Activity Started");
 							
 							String exportedFileName = myExportFile.getName();
 							File exportFile = new File(exportDir, exportedFileName);
 							myExportFile.renameTo(exportFile);
+
+							Intent sharingIntent = new Intent(android.content.Intent.ACTION_SEND);
+							sharingIntent.setType("text/plain");
+							sharingIntent.setComponent(new ComponentName("com.android.bluetooth", "com.android.bluetooth.opp.BluetoothOppLauncherActivity"));
+							sharingIntent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(exportFile));
+							startActivityForResult(sharingIntent, BLUETOOTH_SEND);
+							FTSUtilities.printToConsole("ImportMatchDataActivity::btnOK.onClick : Sharing Activity Started");
 						} catch (FileNotFoundException e) {
 							e.printStackTrace();
 						} catch (IOException e) {
