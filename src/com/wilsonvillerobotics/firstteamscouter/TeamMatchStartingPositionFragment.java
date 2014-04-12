@@ -31,6 +31,14 @@ public class TeamMatchStartingPositionFragment extends Fragment implements OnCli
     	
         View rootView = inflater.inflate(R.layout.fragment_team_match_starting_position, container, false);
         
+        int backgroundResource = R.drawable.starting_position_background;
+        if(this.tmData.tabletID.startsWith("Red")) {
+        	backgroundResource = R.drawable.starting_position_red_background;
+        } else if(this.tmData.tabletID.startsWith("Blue")) {
+        	backgroundResource = R.drawable.starting_position_blue_background;
+        }
+        rootView.setBackgroundResource(backgroundResource);
+        
         this.helpHash = new Hashtable<STARTING_LOC, String>();
 		
         buttonHash = new Hashtable<STARTING_LOC, ToggleButton>();
