@@ -39,8 +39,12 @@ public final class R {
         public static final int field_800x367_red_on_left=0x7f020004;
         public static final int field_end_800_367=0x7f020005;
         public static final int ic_launcher=0x7f020006;
-        public static final int starting_position_background=0x7f020007;
-        public static final int starting_position_background_800_367=0x7f020008;
+        public static final int outline_toggle_blue=0x7f020007;
+        public static final int outline_toggle_red=0x7f020008;
+        public static final int outline_toggle_red_pic=0x7f020009;
+        public static final int starting_position_background=0x7f02000a;
+        public static final int starting_position_background_800_367=0x7f02000b;
+        public static final int toggle_drawable_outline=0x7f02000c;
     }
     public static final class id {
         public static final int SaveLayout=0x7f0a0028;
