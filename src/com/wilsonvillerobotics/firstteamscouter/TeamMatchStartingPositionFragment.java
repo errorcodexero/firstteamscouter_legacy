@@ -5,11 +5,13 @@ import java.util.Hashtable;
 import com.wilsonvillerobotics.firstteamscouter.TeamMatchData.STARTING_LOC;
 import com.wilsonvillerobotics.firstteamscouter.utilities.FTSUtilities;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.Toast;
 import android.widget.ToggleButton;
 import android.support.v4.app.Fragment;
 
@@ -19,6 +21,7 @@ public class TeamMatchStartingPositionFragment extends Fragment implements OnCli
 	protected Long teamMatchID;
 	public static String myTitle = "Starting Position";
 	Hashtable<STARTING_LOC, ToggleButton> buttonHash;
+	Hashtable<STARTING_LOC, String> helpHash;
 	
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -28,6 +31,8 @@ public class TeamMatchStartingPositionFragment extends Fragment implements OnCli
     	
         View rootView = inflater.inflate(R.layout.fragment_team_match_starting_position, container, false);
         
+        this.helpHash = new Hashtable<STARTING_LOC, String>();
+		
         buttonHash = new Hashtable<STARTING_LOC, ToggleButton>();
         
         //txtWidth = (TextView) rootView.findViewById(R.id.txtWidth);
@@ -36,26 +41,32 @@ public class TeamMatchStartingPositionFragment extends Fragment implements OnCli
         ToggleButton btnStartGoal = (ToggleButton) rootView.findViewById(R.id.btnStartGoal);
 		btnStartGoal.setOnClickListener(this);
 		buttonHash.put(STARTING_LOC.FIELD_GOAL, btnStartGoal);
+		helpHash.put(STARTING_LOC.FIELD_GOAL, "Positioned in opponents goalie zone");
         
 		ToggleButton btnStartLeft = (ToggleButton) rootView.findViewById(R.id.btnStartLeft);
 		btnStartLeft.setOnClickListener(this);
 		buttonHash.put(STARTING_LOC.FIELD_LEFT, btnStartLeft);
+		helpHash.put(STARTING_LOC.FIELD_LEFT, "Left of field, facing goal, truss at back.");
 		
 		ToggleButton btnStartLeftCenter = (ToggleButton) rootView.findViewById(R.id.btnStartLeftCenter);
 		btnStartLeftCenter.setOnClickListener(this);
 		buttonHash.put(STARTING_LOC.FIELD_LEFT_CENTER, btnStartLeftCenter);
+		helpHash.put(STARTING_LOC.FIELD_LEFT_CENTER, "Left-Center of field, facing goal, truss at back.");
 		
 		ToggleButton btnStartCenter = (ToggleButton) rootView.findViewById(R.id.btnStartCenter);
 		btnStartCenter.setOnClickListener(this);
 		buttonHash.put(STARTING_LOC.FIELD_CENTER, btnStartCenter);
+		helpHash.put(STARTING_LOC.FIELD_CENTER, "Center of field, facing goal, truss at back.");
 		
 		ToggleButton btnStartRightCenter = (ToggleButton) rootView.findViewById(R.id.btnStartRightCenter);
 		btnStartRightCenter.setOnClickListener(this);
 		buttonHash.put(STARTING_LOC.FIELD_RIGHT_CENTER, btnStartRightCenter);
+		helpHash.put(STARTING_LOC.FIELD_RIGHT_CENTER, "Right-Center of field, facing goal, truss at back.");
 		
 		ToggleButton btnStartRight = (ToggleButton) rootView.findViewById(R.id.btnStartRight);
 		btnStartRight.setOnClickListener(this);
 		buttonHash.put(STARTING_LOC.FIELD_RIGHT, btnStartRight);
+		helpHash.put(STARTING_LOC.FIELD_RIGHT, "Right of field, facing goal, truss at back.");
 
 		updateToggleButtonStates();
 		
@@ -114,24 +125,32 @@ public class TeamMatchStartingPositionFragment extends Fragment implements OnCli
     
     @Override
 	public void onClick(View v) {
+    	ToggleButton tb = (ToggleButton)v;
+    	
     	switch (v.getId()) {
         case R.id.btnStartGoal:
-        	btnStartGoalOnClick(v);
+        	positionButtonClick(STARTING_LOC.FIELD_GOAL);
+        	//btnStartGoalOnClick(v);
         	break;
         case R.id.btnStartLeft:
-        	btnStartLeftOnClick(v);
+        	positionButtonClick(STARTING_LOC.FIELD_LEFT);
+        	//btnStartLeftOnClick(v);
         	break;
         case R.id.btnStartLeftCenter:
-        	btnStartLeftCenterOnClick(v);
+        	positionButtonClick(STARTING_LOC.FIELD_LEFT_CENTER);
+        	//btnStartLeftCenterOnClick(v);
         	break;
         case R.id.btnStartCenter:
-        	btnStartCenterOnClick(v);
+        	positionButtonClick(STARTING_LOC.FIELD_CENTER);
+        	//btnStartCenterOnClick(v);
     		break;
         case R.id.btnStartRightCenter:
-        	btnStartRightCenterOnClick(v);
+        	positionButtonClick(STARTING_LOC.FIELD_RIGHT_CENTER);
+        	//btnStartRightCenterOnClick(v);
         	break;
         case R.id.btnStartRight:
-        	btnStartRightOnClick(v);
+        	positionButtonClick(STARTING_LOC.FIELD_RIGHT);
+        	//btnStartRightOnClick(v);
         	break;
         }
     }
@@ -167,40 +186,117 @@ public class TeamMatchStartingPositionFragment extends Fragment implements OnCli
 		this.tmData.setSavedDataState(true, "setOrResetStartingLoc");
 	}
 
+	/*
 	private void btnStartRightOnClick(View v) {
-		this.resetToggleButtonsExcept(STARTING_LOC.FIELD_RIGHT);
 		ToggleButton tb = (ToggleButton)v;
-		this.setOrResetStartingLoc(STARTING_LOC.FIELD_RIGHT, tb.isChecked());
+		STARTING_LOC sl = STARTING_LOC.FIELD_RIGHT;
+		EnterTeamMatchDataActivity act = ((EnterTeamMatchDataActivity)this.getActivity());
+		
+		if(act.helpActive) {
+			String message = this.helpHash.get(sl);
+			act.helpActive = false;
+			act.btnHelp.setTextColor(Color.BLUE);
+			Toast.makeText(getActivity(), message, Toast.LENGTH_LONG).show();
+		} else {
+			this.resetToggleButtonsExcept(sl);
+			this.setOrResetStartingLoc(sl, tb.isChecked());
+		}
 	}
 
 
 	private void btnStartRightCenterOnClick(View v) {
-		this.resetToggleButtonsExcept(STARTING_LOC.FIELD_RIGHT_CENTER);
 		ToggleButton tb = (ToggleButton)v;
-		this.setOrResetStartingLoc(STARTING_LOC.FIELD_RIGHT_CENTER, tb.isChecked());
+		STARTING_LOC sl = STARTING_LOC.FIELD_RIGHT_CENTER;
+		EnterTeamMatchDataActivity act = ((EnterTeamMatchDataActivity)this.getActivity());
+		
+		if(act.helpActive) {
+			String message = this.helpHash.get(sl);
+			act.helpActive = false;
+			act.btnHelp.setTextColor(Color.BLUE);
+			Toast.makeText(getActivity(), message, Toast.LENGTH_LONG).show();
+		} else {
+			this.resetToggleButtonsExcept(sl);
+			this.setOrResetStartingLoc(sl, tb.isChecked());
+		}
 	}
 
 	private void btnStartCenterOnClick(View v) {
-		this.resetToggleButtonsExcept(STARTING_LOC.FIELD_CENTER);
 		ToggleButton tb = (ToggleButton)v;
-		this.setOrResetStartingLoc(STARTING_LOC.FIELD_CENTER, tb.isChecked());
+		STARTING_LOC sl = STARTING_LOC.FIELD_CENTER;
+		EnterTeamMatchDataActivity act = ((EnterTeamMatchDataActivity)this.getActivity());
+		
+		if(act.helpActive) {
+			String message = this.helpHash.get(sl);
+			act.helpActive = false;
+			act.btnHelp.setTextColor(Color.BLUE);
+			Toast.makeText(getActivity(), message, Toast.LENGTH_LONG).show();
+		} else {
+			this.resetToggleButtonsExcept(sl);
+			this.setOrResetStartingLoc(sl, tb.isChecked());
+		}
 	}
 
 	private void btnStartLeftCenterOnClick(View v) {
-		this.resetToggleButtonsExcept(STARTING_LOC.FIELD_LEFT_CENTER);
 		ToggleButton tb = (ToggleButton)v;
-		this.setOrResetStartingLoc(STARTING_LOC.FIELD_LEFT_CENTER, tb.isChecked());
+		STARTING_LOC sl = STARTING_LOC.FIELD_LEFT_CENTER;
+		EnterTeamMatchDataActivity act = ((EnterTeamMatchDataActivity)this.getActivity());
+		
+		if(act.helpActive) {
+			String message = this.helpHash.get(sl);
+			act.helpActive = false;
+			act.btnHelp.setTextColor(Color.BLUE);
+			Toast.makeText(getActivity(), message, Toast.LENGTH_LONG).show();
+		} else {
+			this.resetToggleButtonsExcept(sl);
+			this.setOrResetStartingLoc(sl, tb.isChecked());
+		}
 	}
 
 	private void btnStartLeftOnClick(View v) {
-		this.resetToggleButtonsExcept(STARTING_LOC.FIELD_LEFT);
 		ToggleButton tb = (ToggleButton)v;
-		this.setOrResetStartingLoc(STARTING_LOC.FIELD_LEFT, tb.isChecked());
+		STARTING_LOC sl = STARTING_LOC.FIELD_LEFT;
+		EnterTeamMatchDataActivity act = ((EnterTeamMatchDataActivity)this.getActivity());
+		
+		if(act.helpActive) {
+			String message = this.helpHash.get(sl);
+			act.helpActive = false;
+			act.btnHelp.setTextColor(Color.BLUE);
+			Toast.makeText(getActivity(), message, Toast.LENGTH_LONG).show();
+		} else {
+			this.resetToggleButtonsExcept(sl);
+			this.setOrResetStartingLoc(sl, tb.isChecked());
+		}
 	}
 
 	private void btnStartGoalOnClick(View v) {
-		this.resetToggleButtonsExcept(STARTING_LOC.FIELD_GOAL);
 		ToggleButton tb = (ToggleButton)v;
-		this.setOrResetStartingLoc(STARTING_LOC.FIELD_GOAL, tb.isChecked());
+		STARTING_LOC sl = STARTING_LOC.FIELD_GOAL;
+		EnterTeamMatchDataActivity act = ((EnterTeamMatchDataActivity)this.getActivity());
+		
+		if(act.helpActive) {
+			String message = this.helpHash.get(sl);
+			act.helpActive = false;
+			act.btnHelp.setTextColor(Color.BLUE);
+			Toast.makeText(getActivity(), message, Toast.LENGTH_LONG).show();
+		} else {
+			this.resetToggleButtonsExcept(sl);
+			this.setOrResetStartingLoc(sl, tb.isChecked());
+		}
+	}
+	*/
+	
+	private void positionButtonClick(STARTING_LOC sl) {
+		ToggleButton tb = buttonHash.get(sl);
+		EnterTeamMatchDataActivity act = ((EnterTeamMatchDataActivity)this.getActivity());
+		
+		if(act.helpActive) {
+			tb.setChecked(!tb.isChecked());
+			act.disableHelp();
+			String message = this.helpHash.get(sl);
+			Toast.makeText(getActivity(), message, Toast.LENGTH_LONG).show();
+		} else {
+			this.resetToggleButtonsExcept(sl);
+			this.setOrResetStartingLoc(sl, tb.isChecked());
+		}
 	}
 }

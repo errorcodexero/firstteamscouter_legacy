@@ -69,13 +69,14 @@ public class TeamMatchData {
 	}
 	
 	public enum STARTING_LOC {
-		FIELD_RIGHT (0, "Field Right"),
-		FIELD_RIGHT_CENTER (1, "Field Right Center"),
-		FIELD_CENTER (2, "Field Center"),
-		FIELD_LEFT_CENTER (3, "Field Left Center"),
-		FIELD_LEFT (4, "Field Left"),
-		FIELD_GOAL (5, "Field Goal"),
-		FIELD_NOT_SET (6, "Field Position Not Set");
+		FIELD_NOT_SET (0, "Field Position Not Set"),
+		FIELD_RIGHT (1, "Field Right"),
+		FIELD_RIGHT_CENTER (2, "Field Right Center"),
+		FIELD_CENTER (3, "Field Center"),
+		FIELD_LEFT_CENTER (4, "Field Left Center"),
+		FIELD_LEFT (5, "Field Left"),
+		FIELD_GOAL (6, "Field Goal"),
+		FIELD_UNKNOWN (7, "Field Position Unknown");
 		
 		private int id;
 		private String positionName;

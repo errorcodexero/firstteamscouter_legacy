@@ -10,9 +10,12 @@ import android.app.FragmentTransaction;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.ViewPager;
 import android.view.Menu;
+import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.content.Intent;
+import android.graphics.Color;
 
 public class EnterTeamMatchDataActivity extends FragmentActivity implements ActionBar.TabListener {
 
@@ -25,8 +28,10 @@ public class EnterTeamMatchDataActivity extends FragmentActivity implements Acti
 	private TextView txtMatchNumber;
 	private String tabletID;
 	protected Boolean fieldOrientationRedOnRight;
+	protected Button btnHelp;
 	
 	private int viewState = 0;
+	protected Boolean helpActive;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -49,6 +54,19 @@ public class EnterTeamMatchDataActivity extends FragmentActivity implements Acti
 		//String teamNumber = intent.getStringExtra(TeamMatchDBAdapter.COLUMN_NAME_TEAM_ID);
 		//String matchNumber = intent.getStringExtra(TeamMatchDBAdapter.COLUMN_NAME_MATCH_ID);
 		
+		this.helpActive = false;
+		this.btnHelp = (Button) findViewById(R.id.btnHelp);
+		this.btnHelp.setOnClickListener(new View.OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				if(helpActive) {
+					disableHelp();
+				} else {
+					enableHelp();
+				}
+			}
+		});
 		
 		FTSUtilities.printToConsole("EnterTeamMatchDataActivity::OnCreate : Creating TeamMatchData\n");
 		this.tmData = new TeamMatchData(this.getBaseContext(), this.tabletID, teamMatchID); //, teamNumber, matchNumber);
@@ -191,5 +209,15 @@ public class EnterTeamMatchDataActivity extends FragmentActivity implements Acti
 	public void onTabUnselected(Tab tab, FragmentTransaction ft) {
         FTSUtilities.printToConsole("EnterTeamMatchDataActivity::onTabUnselected : viewState: " + viewState + "\n");
 		viewState++;
+	}
+	
+	public void enableHelp() {
+		this.helpActive = true;
+		this.btnHelp.setTextColor(Color.RED);
+	}
+
+	public void disableHelp() {
+		this.helpActive = false;
+		this.btnHelp.setTextColor(Color.BLUE);
 	}
 }
