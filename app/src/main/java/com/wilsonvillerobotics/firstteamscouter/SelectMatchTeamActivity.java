@@ -102,7 +102,8 @@ public class SelectMatchTeamActivity extends Activity {
 //      	  FTSUtilities.printToConsole("SelectMatchTeamActivity::onCreate : Populating Test Data\n");
 //      	  tmDBAdapter.populateTestData();
 //        }
-		
+
+        activateSubmitButton();
 		populateMatchNumberSpinner();
 	}
 
@@ -159,6 +160,11 @@ public class SelectMatchTeamActivity extends Activity {
 		getMenuInflater().inflate(R.menu.enter_data, menu);
 		return true;
 	}
+
+    private void activateSubmitButton() {
+        boolean activateSubmit = (this.tabletID.compareTo("Undefined Tablet ID") != 0);
+        this.btnSubmit.setEnabled(activateSubmit);
+    }
 
 	private void populateMatchNumberSpinner() {
 		if(tmDBAdapter == null) return;
@@ -246,9 +252,14 @@ public class SelectMatchTeamActivity extends Activity {
             		lblBlue3.setTextColor(Color.BLUE);
             		txtBlue3.setTextColor(Color.BLUE);
             	}
-            	
-            	teamID = Long.parseLong(teamsForMatch.get(tabletID));
-            	
+
+                String teamsForMatchID = teamsForMatch.get(tabletID);
+                if(teamsForMatchID == null) {
+                    teamID = -1;
+                } else {
+                    teamID = Long.parseLong(teamsForMatchID);
+                }
+
             	long tmID = tmDBAdapter.getTeamMatchID(matchID, teamID);
             	
             	FTSUtilities.printToConsole("SelectTeamMatchActivity::spinTeamNum.onItemSelected : teamID: " + String.valueOf(teamID) + "  tmID: " + String.valueOf(tmID));

@@ -5,12 +5,20 @@ import java.util.Hashtable;
 import com.wilsonvillerobotics.firstteamscouter.TeamMatchData.STARTING_LOC;
 import com.wilsonvillerobotics.firstteamscouter.utilities.FTSUtilities;
 
+import android.content.ClipData;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
+import android.view.DragEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.View.DragShadowBuilder;
+import android.view.View.OnDragListener;
+import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 import android.support.v4.app.Fragment;
@@ -40,46 +48,27 @@ public class TeamMatchStartingPositionFragment extends Fragment implements OnCli
         rootView.setBackgroundResource(backgroundResource);
         
         this.helpHash = new Hashtable<STARTING_LOC, String>();
-		
-        buttonHash = new Hashtable<STARTING_LOC, ToggleButton>();
-        
-        //txtWidth = (TextView) rootView.findViewById(R.id.txtWidth);
-        //txtHeight = (TextView) rootView.findViewById(R.id.txtHeight);
 
-        ToggleButton btnStartGoal = (ToggleButton) rootView.findViewById(R.id.btnStartGoal);
-		btnStartGoal.setOnClickListener(this);
-		buttonHash.put(STARTING_LOC.FIELD_GOAL, btnStartGoal);
-		helpHash.put(STARTING_LOC.FIELD_GOAL, "Positioned in opponents goalie zone");
-        
-		ToggleButton btnStartLeft = (ToggleButton) rootView.findViewById(R.id.btnStartLeft);
-		btnStartLeft.setOnClickListener(this);
-		buttonHash.put(STARTING_LOC.FIELD_LEFT, btnStartLeft);
-		helpHash.put(STARTING_LOC.FIELD_LEFT, "Left of field, facing goal, truss at back.");
-		
-		ToggleButton btnStartLeftCenter = (ToggleButton) rootView.findViewById(R.id.btnStartLeftCenter);
-		btnStartLeftCenter.setOnClickListener(this);
-		buttonHash.put(STARTING_LOC.FIELD_LEFT_CENTER, btnStartLeftCenter);
-		helpHash.put(STARTING_LOC.FIELD_LEFT_CENTER, "Left-Center of field, facing goal, truss at back.");
-		
-		ToggleButton btnStartCenter = (ToggleButton) rootView.findViewById(R.id.btnStartCenter);
-		btnStartCenter.setOnClickListener(this);
-		buttonHash.put(STARTING_LOC.FIELD_CENTER, btnStartCenter);
-		helpHash.put(STARTING_LOC.FIELD_CENTER, "Center of field, facing goal, truss at back.");
-		
-		ToggleButton btnStartRightCenter = (ToggleButton) rootView.findViewById(R.id.btnStartRightCenter);
-		btnStartRightCenter.setOnClickListener(this);
-		buttonHash.put(STARTING_LOC.FIELD_RIGHT_CENTER, btnStartRightCenter);
-		helpHash.put(STARTING_LOC.FIELD_RIGHT_CENTER, "Right-Center of field, facing goal, truss at back.");
-		
-		ToggleButton btnStartRight = (ToggleButton) rootView.findViewById(R.id.btnStartRight);
-		btnStartRight.setOnClickListener(this);
-		buttonHash.put(STARTING_LOC.FIELD_RIGHT, btnStartRight);
-		helpHash.put(STARTING_LOC.FIELD_RIGHT, "Right of field, facing goal, truss at back.");
+        rootView.findViewById(R.id.myimage1).setOnTouchListener(new MyTouchListener());
+        rootView.findViewById(R.id.layoutRelative).setOnDragListener(new MyDragListener());
 
-		updateToggleButtonStates();
-		
 		return rootView;
 	}
+
+    private final class MyTouchListener implements View.OnTouchListener {
+        @Override
+        public boolean onTouch(View view, MotionEvent motionEvent) {
+            if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
+                ClipData data = ClipData.newPlainText("", "");
+                DragShadowBuilder shadowBuilder = new View.DragShadowBuilder(view);
+                view.startDrag(data, shadowBuilder, view, 0);
+                view.setVisibility(View.INVISIBLE);
+                return true;
+            } else {
+                return false;
+            }
+        }
+    }
     
     private void updateToggleButtonStates() {
     	FTSUtilities.printToConsole("TeamMatchStartingPositionFragment::updateToggleButtons\n");
@@ -133,34 +122,7 @@ public class TeamMatchStartingPositionFragment extends Fragment implements OnCli
     
     @Override
 	public void onClick(View v) {
-    	ToggleButton tb = (ToggleButton)v;
-    	
-    	switch (v.getId()) {
-        case R.id.btnStartGoal:
-        	positionButtonClick(STARTING_LOC.FIELD_GOAL);
-        	//btnStartGoalOnClick(v);
-        	break;
-        case R.id.btnStartLeft:
-        	positionButtonClick(STARTING_LOC.FIELD_LEFT);
-        	//btnStartLeftOnClick(v);
-        	break;
-        case R.id.btnStartLeftCenter:
-        	positionButtonClick(STARTING_LOC.FIELD_LEFT_CENTER);
-        	//btnStartLeftCenterOnClick(v);
-        	break;
-        case R.id.btnStartCenter:
-        	positionButtonClick(STARTING_LOC.FIELD_CENTER);
-        	//btnStartCenterOnClick(v);
-    		break;
-        case R.id.btnStartRightCenter:
-        	positionButtonClick(STARTING_LOC.FIELD_RIGHT_CENTER);
-        	//btnStartRightCenterOnClick(v);
-        	break;
-        case R.id.btnStartRight:
-        	positionButtonClick(STARTING_LOC.FIELD_RIGHT);
-        	//btnStartRightOnClick(v);
-        	break;
-        }
+
     }
     
 	private void resetToggleButtonsExcept(STARTING_LOC loc) {
@@ -194,105 +156,6 @@ public class TeamMatchStartingPositionFragment extends Fragment implements OnCli
 		this.tmData.setSavedDataState(true, "setOrResetStartingLoc");
 	}
 
-	/*
-	private void btnStartRightOnClick(View v) {
-		ToggleButton tb = (ToggleButton)v;
-		STARTING_LOC sl = STARTING_LOC.FIELD_RIGHT;
-		EnterTeamMatchDataActivity act = ((EnterTeamMatchDataActivity)this.getActivity());
-		
-		if(act.helpActive) {
-			String message = this.helpHash.get(sl);
-			act.helpActive = false;
-			act.btnHelp.setTextColor(Color.BLUE);
-			Toast.makeText(getActivity(), message, Toast.LENGTH_LONG).show();
-		} else {
-			this.resetToggleButtonsExcept(sl);
-			this.setOrResetStartingLoc(sl, tb.isChecked());
-		}
-	}
-
-
-	private void btnStartRightCenterOnClick(View v) {
-		ToggleButton tb = (ToggleButton)v;
-		STARTING_LOC sl = STARTING_LOC.FIELD_RIGHT_CENTER;
-		EnterTeamMatchDataActivity act = ((EnterTeamMatchDataActivity)this.getActivity());
-		
-		if(act.helpActive) {
-			String message = this.helpHash.get(sl);
-			act.helpActive = false;
-			act.btnHelp.setTextColor(Color.BLUE);
-			Toast.makeText(getActivity(), message, Toast.LENGTH_LONG).show();
-		} else {
-			this.resetToggleButtonsExcept(sl);
-			this.setOrResetStartingLoc(sl, tb.isChecked());
-		}
-	}
-
-	private void btnStartCenterOnClick(View v) {
-		ToggleButton tb = (ToggleButton)v;
-		STARTING_LOC sl = STARTING_LOC.FIELD_CENTER;
-		EnterTeamMatchDataActivity act = ((EnterTeamMatchDataActivity)this.getActivity());
-		
-		if(act.helpActive) {
-			String message = this.helpHash.get(sl);
-			act.helpActive = false;
-			act.btnHelp.setTextColor(Color.BLUE);
-			Toast.makeText(getActivity(), message, Toast.LENGTH_LONG).show();
-		} else {
-			this.resetToggleButtonsExcept(sl);
-			this.setOrResetStartingLoc(sl, tb.isChecked());
-		}
-	}
-
-	private void btnStartLeftCenterOnClick(View v) {
-		ToggleButton tb = (ToggleButton)v;
-		STARTING_LOC sl = STARTING_LOC.FIELD_LEFT_CENTER;
-		EnterTeamMatchDataActivity act = ((EnterTeamMatchDataActivity)this.getActivity());
-		
-		if(act.helpActive) {
-			String message = this.helpHash.get(sl);
-			act.helpActive = false;
-			act.btnHelp.setTextColor(Color.BLUE);
-			Toast.makeText(getActivity(), message, Toast.LENGTH_LONG).show();
-		} else {
-			this.resetToggleButtonsExcept(sl);
-			this.setOrResetStartingLoc(sl, tb.isChecked());
-		}
-	}
-
-	private void btnStartLeftOnClick(View v) {
-		ToggleButton tb = (ToggleButton)v;
-		STARTING_LOC sl = STARTING_LOC.FIELD_LEFT;
-		EnterTeamMatchDataActivity act = ((EnterTeamMatchDataActivity)this.getActivity());
-		
-		if(act.helpActive) {
-			String message = this.helpHash.get(sl);
-			act.helpActive = false;
-			act.btnHelp.setTextColor(Color.BLUE);
-			Toast.makeText(getActivity(), message, Toast.LENGTH_LONG).show();
-		} else {
-			this.resetToggleButtonsExcept(sl);
-			this.setOrResetStartingLoc(sl, tb.isChecked());
-		}
-	}
-
-	private void btnStartGoalOnClick(View v) {
-		ToggleButton tb = (ToggleButton)v;
-		STARTING_LOC sl = STARTING_LOC.FIELD_GOAL;
-		EnterTeamMatchDataActivity act = ((EnterTeamMatchDataActivity)this.getActivity());
-		
-		if(act.helpActive) {
-			String message = this.helpHash.get(sl);
-			act.helpActive = false;
-			act.btnHelp.setTextColor(Color.BLUE);
-			Toast.makeText(getActivity(), message, Toast.LENGTH_LONG).show();
-		} else {
-			this.resetToggleButtonsExcept(sl);
-			this.setOrResetStartingLoc(sl, tb.isChecked());
-		}
-	}
-	*/
-	
 	private void positionButtonClick(STARTING_LOC sl) {
 		ToggleButton tb = buttonHash.get(sl);
 		EnterTeamMatchDataActivity act = ((EnterTeamMatchDataActivity)this.getActivity());
@@ -307,4 +170,48 @@ public class TeamMatchStartingPositionFragment extends Fragment implements OnCli
 			this.setOrResetStartingLoc(sl, tb.isChecked());
 		}
 	}
+
+    class MyDragListener implements OnDragListener {
+        Drawable enterShape = getResources().getDrawable(R.drawable.blue_metallic_outline_toggle_on);
+        Drawable normalShape = getResources().getDrawable(R.drawable.blue_metallic_outline_toggle_off);
+
+        @Override
+        public boolean onDrag(View v, DragEvent event) {
+            int action = event.getAction();
+            switch (event.getAction()) {
+                case DragEvent.ACTION_DRAG_STARTED:
+                    // do nothing
+                    break;
+                case DragEvent.ACTION_DRAG_ENTERED:
+                    //v.setBackgroundDrawable(enterShape);
+                    break;
+                case DragEvent.ACTION_DRAG_EXITED:
+                    //v.setBackgroundDrawable(normalShape);
+                    break;
+                case DragEvent.ACTION_DROP:
+                    // Dropped, reassign View to ViewGroup
+                    FTSUtilities.printToConsole("TeamMatchStartingPositionFragment::DragEvent::ACTION_DROP\n");
+                    View view = (View) event.getLocalState();
+                    int[] location = new int[2];
+                    view.getLocationOnScreen(location);
+                    String toastText = "Event View ID: " + view.getId() + "  Top: " + location[0] + "  Left: " + location[1] + " X: " + v.getX() + " Y: " + v.getY();
+                    Toast.makeText(getActivity(), toastText, Toast.LENGTH_LONG).show();
+                    v.getLocationOnScreen(location);
+                    toastText = "onDrag View ID: " + v.getId()  + " Top: " + location[0] + " Left: " + location[1] + " Top: " + v.getX() + " Left: " + v.getY();
+                    Toast.makeText(getActivity(), toastText, Toast.LENGTH_LONG).show();
+
+                    //ViewGroup owner = (ViewGroup) view.getParent();
+                    //owner.removeView(view);
+                    //LinearLayout container = (LinearLayout) v;
+                    //container.addView(view);
+                    //view.setVisibility(View.VISIBLE);
+                    break;
+                case DragEvent.ACTION_DRAG_ENDED:
+                    //v.setBackgroundDrawable(normalShape);
+                default:
+                    break;
+            }
+            return true;
+        }
+    }
 }
