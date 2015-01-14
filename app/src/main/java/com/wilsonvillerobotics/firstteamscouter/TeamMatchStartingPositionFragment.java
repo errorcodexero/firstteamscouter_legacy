@@ -19,6 +19,7 @@ import android.view.View.OnDragListener;
 import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 import android.support.v4.app.Fragment;
@@ -63,6 +64,9 @@ public class TeamMatchStartingPositionFragment extends Fragment implements OnCli
                 DragShadowBuilder shadowBuilder = new View.DragShadowBuilder(view);
                 view.startDrag(data, shadowBuilder, view, 0);
                 view.setVisibility(View.INVISIBLE);
+                return true;
+            } else if (motionEvent.getAction() == MotionEvent.ACTION_UP) {
+                view.setVisibility(View.VISIBLE);
                 return true;
             } else {
                 return false;
@@ -192,13 +196,17 @@ public class TeamMatchStartingPositionFragment extends Fragment implements OnCli
                     // Dropped, reassign View to ViewGroup
                     FTSUtilities.printToConsole("TeamMatchStartingPositionFragment::DragEvent::ACTION_DROP\n");
                     View view = (View) event.getLocalState();
-                    int[] location = new int[2];
-                    view.getLocationOnScreen(location);
-                    String toastText = "Event View ID: " + view.getId() + "  Top: " + location[0] + "  Left: " + location[1] + " X: " + v.getX() + " Y: " + v.getY();
+
+                    String toastText = "onDrag Event X: " + event.getX() + " Y: " + event.getY();
                     Toast.makeText(getActivity(), toastText, Toast.LENGTH_LONG).show();
-                    v.getLocationOnScreen(location);
-                    toastText = "onDrag View ID: " + v.getId()  + " Top: " + location[0] + " Left: " + location[1] + " Top: " + v.getX() + " Left: " + v.getY();
-                    Toast.makeText(getActivity(), toastText, Toast.LENGTH_LONG).show();
+
+                    RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
+                            RelativeLayout.LayoutParams.WRAP_CONTENT,
+                            RelativeLayout.LayoutParams.WRAP_CONTENT
+                    );
+                    params.setMargins((int)event.getX(), (int)event.getY(), 0, 0);
+                    view.setLayoutParams(params);
+                    view.setVisibility(View.VISIBLE);
 
                     //ViewGroup owner = (ViewGroup) view.getParent();
                     //owner.removeView(view);
